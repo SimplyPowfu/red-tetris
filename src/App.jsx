@@ -56,10 +56,10 @@ function App() {
   const [grid, setGrid] = useState(() => Array.from({length: 20}, () => Array(10).fill(null)));
   const [activeBlock, setActiveBlock] = useState(null);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => { fallBlock(); }, 500);
-    return () => clearInterval(intervalId);
-  }, [activeBlock, grid]); 
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => { fallBlock(); }, 500);
+  //   return () => clearInterval(intervalId);
+  // }, [activeBlock, grid]); 
 
   //tasti della tastiera
   useEffect(() => {
@@ -124,6 +124,40 @@ function App() {
       }
     }
     setGrid(gridCopy);
+  }
+
+  function getGhostRow() {
+    if (!activeBlock) return null;
+    const { shape, row, column } = activeBlock;
+    let gridCopy = grid.map(riga => [...riga]);
+    for (let i = 0; i < shape.length; i++) {
+      for (let j = 0; j < shape[i].length; j++) {
+        if (shape[i][j] !== null) {
+          gridCopy[row + i][column + j] = null;
+        }
+      }
+    }
+
+    let ghostRow = row;
+    while (true) {
+      let canMoveDown = true;
+      const nextRow = ghostRow + 1;
+      for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+          if (shape[i][j] !== null) {
+            const targetRow = nextRow + i;
+            if (targetRow >= 20 || gridCopy[targetRow][column + j] !== null) {
+              canMoveDown = false;
+              break;
+            }
+          }
+        }
+        if (!canMoveDown) break;
+      }
+      if (canMoveDown) ghostRow = nextRow;
+      else break;
+    }
+    return ghostRow;
   }
 
   function rotateClockwise(shape) {
@@ -298,7 +332,7 @@ function App() {
       const gridWithClearedLines = checkLines(gridCopy);
       setGrid(gridWithClearedLines);
       setActiveBlock(null);
-      addBlock();
+      // addBlock();
     }
   }
 
@@ -413,18 +447,10 @@ function App() {
       setGrid(gridCopy);
     }
   }
+  const ghostRow = getGhostRow();
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Local Tetris</h1>
       <div className='card'>
         <button onClick={() => clearGrid()}>
           Pulisci Griglia
@@ -435,39 +461,51 @@ function App() {
       </div>
       <div className="griglia">
         {grid.map((riga, i) =>
-          riga.map((cella, j) => (
-            <div
-              key={`${i}-${j}`}
-              className="cella"
-              style={{
-                backgroundColor: cella === null ? "white" : BlockColor[cella]
-              }}
-            />
-          ))
+          riga.map((cella, j) => {
+            let isGhost = false;
+            if (activeBlock && cella === null && ghostRow !== null) {
+              const { shape, column } = activeBlock;
+              const rigaRelativa = i - ghostRow;
+              const colonnaRelativa = j - column;
+              if (
+                rigaRelativa >= 0 && rigaRelativa < shape.length &&
+                colonnaRelativa >= 0 && colonnaRelativa < shape[0].length &&
+                shape[rigaRelativa][colonnaRelativa] !== null
+              ) {
+                isGhost = true;
+              }
+            }
+            // Definiamo il colore di base
+            let finalBgColor = "white";
+            if (cella !== null) {
+              finalBgColor = BlockColor[cella];
+            } else if (isGhost) {
+              // Colore del blocco attivo ma molto sbiadito (33 è l'alpha in esadecimale)
+              finalBgColor = `${BlockColor[activeBlock.type]}90`;
+            }
+            return (
+              <div
+                key={`${i}-${j}`}
+                className="cella"
+                style={{
+                  backgroundColor: finalBgColor,
+                  // Usiamo boxShadow invece di border per non rompere la griglia
+                  boxShadow: isGhost 
+                    ? `inset 0 0 0 5px ${BlockColor[activeBlock.type]}` 
+                    : 'inset 0 0 0 0px #ffffff',
+                }}
+              />
+            );
+          })
         )}
       </div>
       <div className='card'>
-        <button onClick={() => megaFallBlock()}>
-          mega⬇️
-        </button>
-        <button onClick={() => moveBlock('left')}>
-          ⬅️
-        </button>
-        <button onClick={() => fallBlock()}>
-          ⬇️
-        </button>
-        <button onClick={() => moveBlock('right')}>
-          ➡️
-        </button>
-        <button onClick={() => rotateBlock()}>
-          🔄
-        </button>
         <button onClick={() => addPenalty()}>
           ✖️
         </button>
       </div>
     </>
-  )
+  );
 }
 
 export default App
