@@ -188,7 +188,7 @@ function App() {
     //quante righe devono essere rimosse
     const removedCount = playableLines.length - remainingPlayable.length;
     
-    //if (removedCount > 1) chiamare addPenalty() (removedCount - 1) volte
+    //if (removedCount > 1) chiamare addPenalty() (removedCount - 1) volte agli altri player
     if (removedCount > 0) {
       const newEmptyLines = Array.from({ length: removedCount }, () => 
         Array(10).fill(null)
