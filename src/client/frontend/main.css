@@ -1,0 +1,64 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.auth-page {
+  background-color: #000;
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 300px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #444;
+  background-color: #111;
+  color: white;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+input:focus {
+  outline: none;
+  border-color: darkred;
+}
+
+.join-btn {
+  padding: 12px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.join-btn:hover {
+  background-color: rgb(102, 0, 0);
+}
+
+.message {
+  margin-top: 10px;
+  text-align: center;
+  color: #ff4d4d;
+}
