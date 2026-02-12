@@ -55,11 +55,12 @@ const Tetriminos = {
 function App() {
   const [grid, setGrid] = useState(() => Array.from({length: 20}, () => Array(10).fill(null)));
   const [activeBlock, setActiveBlock] = useState(null);
+  const [isGameOver, setIsGameOver] = useState(false);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => { fallBlock(); }, 500);
-  //   return () => clearInterval(intervalId);
-  // }, [activeBlock, grid]); 
+  useEffect(() => {
+    const intervalId = setInterval(() => { fallBlock(); }, 1000);
+    return () => clearInterval(intervalId);
+  }, [activeBlock, grid]); 
 
   //tasti della tastiera
   useEffect(() => {
@@ -84,81 +85,74 @@ function App() {
           break;
       }
     };
-
     // Aggiungiamo l'ascoltatore all'avvio del componente
     window.addEventListener('keydown', handleKeyDown);
-
     // IMPORTANTE: Pulizia dell'evento quando il componente viene smontato
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [moveBlock, fallBlock, rotateBlock, megaFallBlock]); // Dipendenze delle funzioni
 
+
+  function isValidPosition(shape, row, column, currentGrid) {
+    for (let i = 0; i < shape.length; i++) {
+      for (let j = 0; j < shape[i].length; j++) {
+        if (shape[i][j] !== null) {
+          const newRow = row + i;
+          const newCol = column + j;
+          if (
+            newCol < 0 ||
+            newCol >= 10 ||
+            newRow >= 20 ||
+            (newRow >= 0 && currentGrid[newRow][newCol] !== null)
+          ) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   function clearGrid(){
     const newGrid = Array.from({length: 20}, () => Array(10).fill(null))
     setGrid(newGrid);
     setActiveBlock(null);
+    setIsGameOver(false);
   }
 
-  function addBlock(){
-    const tipi = Object.keys(Tetriminos); // ["I","O","T","L","J","S","Z"]
-    const chiaveCasuale = tipi[Math.floor(Math.random() * tipi.length)];
-    const block = Tetriminos[chiaveCasuale];
-    const row = 0;
-    const column = 3;
+  function addBlock() {
+    if (isGameOver) return;
 
-    const newActiveBlock = {
-      shape: block,
-      row: row,
-      column: column,
-      type: chiaveCasuale
+    const types = Object.keys(Tetriminos);
+    const randomKey = types[Math.floor(Math.random() * types.length)];
+    const shape = Tetriminos[randomKey];
+
+    const newBlock = {
+      shape,
+      row: 0,
+      column: 3,
+      type: randomKey
     };
-    setActiveBlock(newActiveBlock);
 
-    const gridCopy = grid.map(riga => [...riga]);
-    for(let i = 0; i < block.length; i++) {
-      for (let j = 0; j < block[i].length; j++) {
-        if (block[i][j] !== null) {
-          gridCopy[i][column + j] = block[i][j];
-        }
-      }
+    if (!isValidPosition(shape, 0, 3, grid)) {
+      setIsGameOver(true);
+      return;
     }
-    setGrid(gridCopy);
+
+    setActiveBlock(newBlock);
   }
 
   function getGhostRow() {
     if (!activeBlock) return null;
     const { shape, row, column } = activeBlock;
-    let gridCopy = grid.map(riga => [...riga]);
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          gridCopy[row + i][column + j] = null;
-        }
-      }
-    }
-
     let ghostRow = row;
-    while (true) {
-      let canMoveDown = true;
-      const nextRow = ghostRow + 1;
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            const targetRow = nextRow + i;
-            if (targetRow >= 20 || gridCopy[targetRow][column + j] !== null) {
-              canMoveDown = false;
-              break;
-            }
-          }
-        }
-        if (!canMoveDown) break;
-      }
-      if (canMoveDown) ghostRow = nextRow;
-      else break;
+    while (isValidPosition(shape, ghostRow + 1, column, grid)) {
+      ghostRow++;
     }
     return ghostRow;
   }
+
 
   function rotateClockwise(shape) {
     const rows = shape.length;
@@ -175,68 +169,15 @@ function App() {
 
   function rotateBlock() {
     if (!activeBlock) return;
-    const { shape, row, column } = activeBlock;
-    let gridCopy = grid.map(riga => [...riga]);
+    const rotated = rotateClockwise(activeBlock.shape);
 
-    // Cancella temporaneamente il blocco dalla griglia
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          gridCopy[row + i][column + j] = null;
-        }
-      }
-    }
-
-    // Ruota il blocco
-    const newShape = rotateClockwise(shape);
-    const newRows = newShape.length;
-    const newCols = newShape[0].length;
-
-    let canRotate = true;
-    for (let i = 0; i < newRows; i++) {
-      for (let j = 0; j < newCols; j++) {
-        if (newShape[i][j] !== null) {
-          const newRow = row + i;
-          const newCol = column + j;
-
-          if (
-            newCol < 0 || newCol >= 10 || // bordi laterali
-            newRow < 0 || newRow >= 20 || // bordo inferiore/superiore (assumendo altezza 20)
-            (gridCopy[newRow][newCol] !== null) // collisione con blocchi statici
-          ) {
-            canRotate = false;
-            break;
-          }
-        }
-      }
-      if (!canRotate) break;
-    }
-
-    if (canRotate) {
-      for (let i = 0; i < newRows; i++) {
-        for (let j = 0; j < newCols; j++) {
-          if (newShape[i][j] !== null) {
-            gridCopy[row + i][column + j] = newShape[i][j];
-          }
-        }
-      }
-      setGrid(gridCopy);
+    if (isValidPosition(rotated, activeBlock.row, activeBlock.column, grid)) {
       setActiveBlock({
         ...activeBlock,
-        shape: newShape
+        shape: rotated
       });
-    } else {
-      // Ripristina il blocco originale se non può ruotare
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            gridCopy[row + i][column + j] = shape[i][j];
-          }
-        }
-      }
-      setGrid(gridCopy);
     }
-  }
+}
 
   function checkLines(currentGrid) {
     const penaltyLines = currentGrid.filter(row => row.includes('X'));
@@ -246,14 +187,14 @@ function App() {
     const remainingPlayable = playableLines.filter(row => row.some(cell => cell === null));
     //quante righe devono essere rimosse
     const removedCount = playableLines.length - remainingPlayable.length;
-
+    
+    //if (removedCount > 1) chiamare addPenalty() (removedCount - 1) volte
     if (removedCount > 0) {
       const newEmptyLines = Array.from({ length: removedCount }, () => 
         Array(10).fill(null)
       );
       return [...newEmptyLines, ...remainingPlayable, ...penaltyLines];
     }
-
     return currentGrid;
   }
 
@@ -264,235 +205,155 @@ function App() {
       return [...newGrid, penaltyRow];
     });
 
-    // 4. Importante: se c'è un blocco attivo, deve salire anche lui 
-    // per non finire "dentro" la griglia spostata
     if (activeBlock) {
-      setActiveBlock(prev => ({
-        ...prev,
-        row: prev.row - 1
-      }));
+      const pushedRow = activeBlock.row;
+      if (!isValidPosition(
+        activeBlock.shape,
+        pushedRow,
+        activeBlock.column,
+        grid
+      )) {
+        setIsGameOver(true);
+      } else {
+        setActiveBlock(prev => ({
+          ...prev,
+          row: pushedRow
+        }));
+      }
     }
   }
+
 
   function fallBlock() {
     if (!activeBlock) return;
     const { shape, row, column } = activeBlock;
+    const newRow = row + 1;
 
-    let gridCopy = grid.map(riga => [...riga]);
-    // Cancella temporaneamente il blocco per non farlo collidere da solo
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          gridCopy[row + i][column + j] = null;
-        }
-      }
-    }
-    // Check collisione
-    let canMoveDown = true;
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          const nextRow = row + i + 1;
-          // collisione con il fondo
-          if (nextRow >= 20) {
-            canMoveDown = false;
-            break;
-          }
-          // collisione con un blocco statico
-          if (gridCopy[nextRow][column + j] !== null) {
-            canMoveDown = false;
-            break;
-          }
-        }
-      }
-      if (!canMoveDown) break;
-    }
-    if (canMoveDown) {
-      const newRow = row + 1;
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            gridCopy[newRow + i][column + j] = shape[i][j];
-          }
-        }
-      }
-      setGrid(gridCopy);
-      setActiveBlock({
-        ...activeBlock,
-        row: newRow
-      });
+    if (isValidPosition(shape, newRow, column, grid)) {
+      setActiveBlock({ ...activeBlock, row: newRow });
     } else {
+      const newGrid = grid.map(r => [...r]);
+
       for (let i = 0; i < shape.length; i++) {
         for (let j = 0; j < shape[i].length; j++) {
           if (shape[i][j] !== null) {
-            gridCopy[row + i][column + j] = shape[i][j];
+            newGrid[row + i][column + j] = shape[i][j];
           }
         }
       }
-      const gridWithClearedLines = checkLines(gridCopy);
-      setGrid(gridWithClearedLines);
+      const cleared = checkLines(newGrid);
+      setGrid(cleared);
       setActiveBlock(null);
-      // addBlock();
+      addBlock();
     }
   }
 
   function megaFallBlock() {
     if (!activeBlock) return;
-    const { shape, column } = activeBlock;
-    let currentRow = activeBlock.row;
-    let gridCopy = grid.map(riga => [...riga]);
-    //Rimuovi temporaneamente il blocco attivo per i calcoli
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          gridCopy[currentRow + i][column + j] = null;
-        }
-      }
+    const { shape, row, column } = activeBlock;
+    let finalRow = row;
+
+    while (isValidPosition(shape, finalRow + 1, column, grid)) {
+      finalRow++;
     }
-    // Trova l'ultima riga possibile (simulando la caduta)
-    let finalRow = currentRow;
-    while (true) {
-      let canMoveDown = true;
-      const nextRow = finalRow + 1;
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            const targetRow = nextRow + i;
-            // Controllo collisione bordi o altri blocchi
-            if (targetRow >= 20 || gridCopy[targetRow][column + j] !== null) {
-              canMoveDown = false;
-              break;
-            }
-          }
-        }
-        if (!canMoveDown) break;
-      }
-      if (canMoveDown) {
-        finalRow = nextRow;
-      } else {
-        break;
-      }
-    }
+    const newGrid = grid.map(r => [...r]);
 
     for (let i = 0; i < shape.length; i++) {
       for (let j = 0; j < shape[i].length; j++) {
         if (shape[i][j] !== null) {
-          gridCopy[finalRow + i][column + j] = shape[i][j];
+          newGrid[finalRow + i][column + j] = shape[i][j];
         }
       }
     }
-    const gridWithClearedLines = checkLines(gridCopy);
-    setGrid(gridWithClearedLines);
+    const cleared = checkLines(newGrid);
+    setGrid(cleared);
     setActiveBlock(null);
-    // addBlock();
+    addBlock();
   }
 
   function moveBlock(direction) {
     if (!activeBlock) return;
-    const { shape, row, column } = activeBlock;
-
-    let gridCopy = grid.map(riga => [...riga]);
-    // Cancella temporaneamente il blocco
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          gridCopy[row + i][column + j] = null;
-        }
-      }
-    }
-
     const delta = direction === 'left' ? -1 : 1;
-    let canMove = true;
-    for (let i = 0; i < shape.length; i++) {
-      for (let j = 0; j < shape[i].length; j++) {
-        if (shape[i][j] !== null) {
-          const nextCol = column + j + delta;
-          // Collisione con i bordi
-          if (nextCol < 0 || nextCol >= 10) {
-            canMove = false;
-            break;
-          }
-          // Collisione con blocchi statici
-          if (gridCopy[row + i][nextCol] !== null) {
-            canMove = false;
-            break;
-          }
-        }
-      }
-      if (!canMove) break;
-    }
-    if (canMove) {
-      const newColumn = column + delta;
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            gridCopy[row + i][newColumn + j] = shape[i][j];
-          }
-        }
-      }
-      setGrid(gridCopy);
-      setActiveBlock({
-        ...activeBlock,
-        column: newColumn
-      });
-    } else {
-      // Ripristina il blocco alla posizione originale xche non si puo' muovere
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            gridCopy[row + i][column + j] = shape[i][j];
-          }
-        }
-      }
-      setGrid(gridCopy);
+    const { shape, row, column } = activeBlock;
+    const newColumn = column + delta;
+
+    if (isValidPosition(shape, row, newColumn, grid)) {
+      setActiveBlock({ ...activeBlock, column: newColumn });
     }
   }
+
   const ghostRow = getGhostRow();
 
   return (
-    <>
+    <div className="game-container">
       <div className='card'>
-        <button onClick={() => clearGrid()}>
-          Pulisci Griglia
-        </button>
-        <button onClick={() => addBlock()}>
-          Aggiungi Blocco
-        </button>
+        <button onClick={() => clearGrid()}>Pulisci Griglia</button>
+        <button onClick={() => addBlock()}>Aggiungi Blocco</button>
       </div>
       <div className="griglia">
+        {isGameOver && (
+          <div className="game-over-overlay">
+            <h2>GAME OVER</h2>
+            <button onClick={clearGrid}>Riprova</button>
+          </div>
+        )}
         {grid.map((riga, i) =>
           riga.map((cella, j) => {
+
+            let cellValue = cella;
             let isGhost = false;
-            if (activeBlock && cella === null && ghostRow !== null) {
-              const { shape, column } = activeBlock;
-              const rigaRelativa = i - ghostRow;
-              const colonnaRelativa = j - column;
+
+            // BLOCCO ATTIVO
+            if (activeBlock) {
+              const { shape, row, column, type } = activeBlock;
+              const relativeRow = i - row;
+              const relativeCol = j - column;
+
               if (
-                rigaRelativa >= 0 && rigaRelativa < shape.length &&
-                colonnaRelativa >= 0 && colonnaRelativa < shape[0].length &&
-                shape[rigaRelativa][colonnaRelativa] !== null
+                relativeRow >= 0 &&
+                relativeRow < shape.length &&
+                relativeCol >= 0 &&
+                relativeCol < shape[0].length &&
+                shape[relativeRow][relativeCol] !== null
+              ) {
+                cellValue = type;
+              }
+            }
+
+            // GHOST (solo se la cella è vuota)
+            if (
+              activeBlock &&
+              ghostRow !== null &&
+              cellValue === null
+            ) {
+              const { shape, column } = activeBlock;
+              const relativeRow = i - ghostRow;
+              const relativeCol = j - column;
+
+              if (
+                relativeRow >= 0 &&
+                relativeRow < shape.length &&
+                relativeCol >= 0 &&
+                relativeCol < shape[0].length &&
+                shape[relativeRow][relativeCol] !== null
               ) {
                 isGhost = true;
               }
             }
-            // Definiamo il colore di base
-            let finalBgColor = "white";
-            if (cella !== null) {
-              finalBgColor = BlockColor[cella];
-            } else if (isGhost) {
-              // Colore del blocco attivo ma molto sbiadito (33 è l'alpha in esadecimale)
-              finalBgColor = `${BlockColor[activeBlock.type]}90`;
-            }
+
+            const finalBgColor = cellValue
+              ? BlockColor[cellValue]
+              : "#050a20";
+
             return (
               <div
                 key={`${i}-${j}`}
                 className="cella"
                 style={{
                   backgroundColor: finalBgColor,
-                  // Usiamo boxShadow invece di border per non rompere la griglia
-                  boxShadow: isGhost 
-                    ? `inset 0 0 0 5px ${BlockColor[activeBlock.type]}` 
-                    : 'inset 0 0 0 0px #ffffff',
+                  boxShadow: isGhost
+                    ? `inset 0 0 0 2px ${BlockColor[activeBlock.type]}`
+                    : 'inset 0 0 0 1px rgba(255,255,255,0.05)'
                 }}
               />
             );
@@ -500,11 +361,9 @@ function App() {
         )}
       </div>
       <div className='card'>
-        <button onClick={() => addPenalty()}>
-          ✖️
-        </button>
+        <button onClick={() => addPenalty()}>✖️</button>
       </div>
-    </>
+    </div>
   );
 }
 
