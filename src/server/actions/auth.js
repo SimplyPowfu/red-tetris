@@ -15,11 +15,11 @@ export const logout = (senderId) => {
 
 		const state = getState();
 		const user = state.users[senderId];
-		if (!user) return;
+		if (!user) return ;
 
 		dispatch({
 			type: USER_LOGOUT,
 			payload: { userId: senderId, lobbyId: user.lobbyId },
-		})
+		});
 	}
 }

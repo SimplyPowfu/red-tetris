@@ -3,46 +3,75 @@ import {
 	SHIFT_LEFT,
 	SHIFT_RIGHT,
 	ROTATE,
+	MEGA_FALL,
 } from '../../tetris/actions/moves'
 
 import {
 	NEW_GRID,
 	NEW_BLOCK,
-	TOSTATIC_BLOCK,
 	COLLAPSE_LINE,
 	PENALITY_LINE,
 } from '../../tetris/actions/grid'
 
-import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr } from '../../tetris/gridManip'
+import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip'
+import { GAME_OVER } from '../actions/tetris'
+
+// function allGray(grid, block)
+// {
+// 	const newGrid = grid.map(row => [...row]);
+
+// 	for (let i = 0; i < newGrid.length; ++i) {
+// 		for (let j = 0; j < newGrid[i].length; ++j) {
+// 			if (newGrid[i][j] !== null)
+// 				newGrid[i][j] = 'X';
+// 		}
+// 	}
+
+// 	const newBlock = block;
+// 	for (let i = 0; i < newBlock.shape.length; ++i) {
+// 		for (let j = 0; j < newBlock.shape[i].length; ++j) {
+// 			if (newBlock.shape[i][j] !== null)
+// 				newBlock.shape[i][j] = 'X';
+// 		}
+// 	}
+// 	return {
+// 		static: newGrid,
+// 		activeBlock: newBlock,
+// 	};
+// }
 
 const reducer = (state = {} , action) => {
   switch(action.type)
   {
+	/* STATE actions */
+	case GAME_OVER:
+	{
+		return {
+			...state,
+			gameover:true,
+		}
+	}
 	/* GRID actions */
 	case NEW_GRID:
 		return {
 			activeBlock: null,
 			static: newgrid(),
 		}
-	case TOSTATIC_BLOCK:
-		return {
-			...state,
-			activeBlock: null,
-			static: ts(state.activeBlock, state.static),
-		}
 	case NEW_BLOCK:
+	{
+		if (!action.payload.blockType)
+			return state;
+
 		const { blockType } = action.payload;
-		if (!blockType) return state;
 		return {
 			...state,
-			activeBlock: nb(blockType)
+			...nb(blockType, state.activeBlock, state.static),
 		}
+	}
 	case COLLAPSE_LINE:
-		const { line } = action.payload;
-		if (!line) return state;
 		return {
 			...state,
-			static: cl(state.static, line),
+			static: cl(state.static),
 		}
 	case PENALITY_LINE:
 		return {
@@ -70,6 +99,11 @@ const reducer = (state = {} , action) => {
 			...state,
 			activeBlock: rr(state.activeBlock),
 		}
+	case MEGA_FALL:
+		return {
+			...state,
+			activeBlock: mf(state.activeBlock, state.static),
+	}
 	default: 
 	  return state
   }

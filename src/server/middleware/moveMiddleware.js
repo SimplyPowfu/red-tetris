@@ -1,68 +1,165 @@
 import { SingleEntryPlugin } from 'webpack';
-import { MOVE_PIECE } from '../../client/actions/tetris';
-import { shiftdown, shiftleft, shiftright, rotate } from '../../tetris/actions/moves';
 
-import { sd, rr, sl, sr, isValidPosition } from '../../tetris/gridManip';
+// Server imports
+import { deletematch, seedNewBlock, START_MATCH } from '../actions/tetris';
+
+// Client imports
+import { MOVE_PIECE, gameover } from '../../client/actions/tetris';
+
+// Tetris imports
+import { shiftdown, shiftleft, shiftright, rotate, megafall } from '../../tetris/actions/moves';
+import { sd, rr, sl, sr, mf, isValidPosition, isValidSpawn, checkLines } from '../../tetris/gridManip';
+import { collapse, COLLAPSE_LINE, NEW_BLOCK, penality, PENALITY_LINE } from '../../tetris/actions/grid';
+import { produceBlock } from '../../tetris/blocks';
 
 // @move is the move ('Right', 'Left', 'Rotate', 'Down'),
 // @active is the active grid
 // @statik is the static grid
 // checks if the move is valid
-function isValidMove(move, activeBlock, statik)
+function isValidMove(move, activeBlock, statik, senderId)
 {
 	let newBlock;
-	let ret;
+	let action;
+
 	switch (move) {
 		case 'Down':
 			newBlock = sd(activeBlock);
-			ret = shiftdown;
+			action = shiftdown();
 			break ;
 		case 'Rotate':
 			newBlock = rr(activeBlock);
-			ret = rotate;
+			action = rotate();
 			break ;
 		case 'Left':
 			newBlock = sl(activeBlock);
-			ret = shiftleft;
+			action = shiftleft();
 			break ;
 		case 'Right':
 			newBlock = sr(activeBlock);
-			ret = shiftright;
+			action = shiftright();
+			break ;
+		case 'Mega':
+			newBlock = mf(activeBlock, statik);
+			action = [
+				{ ...megafall(), meta: { reply:true, senderId } },
+				seedNewBlock(senderId, { reply:true, senderId } ),
+				{ ...collapse(), meta: { reply:true, senderId } }
+			];
 			break ;
 		default:
-			newBlock = activeBlock
+			return { ok: false };
+	}
+	console.log('[Move] valid', move, newBlock.row);
+	const valid = isValidPosition(newBlock, statik);
+
+	// If the action was down and it's not valid, send tostatic
+	if (valid === false) {
+		if (move === 'Down') {
+			return {
+				ok: true,
+				action: [
+					seedNewBlock(senderId, { reply:true, senderId } ),
+					{ ...collapse(), meta: { reply:true, senderId } }
+				]
+			};
+		}
+		return { ok: false };
 	}
 
-	console.log(`Block '${move}'`, newBlock);
-
-	if (!isValidPosition(newBlock, statik))
-		return false;
-	return ret;
+	return { ok: true, action };
 }
 
 const moveMiddleware = store => next => action => {
-	if (action.type === MOVE_PIECE)
+	const state = store.getState();
+
+	// If gameover, block actions
+	if (action.type === NEW_BLOCK
+		|| action.type === MOVE_PIECE)
 	{
-		console.log('aaa');
-		// check if inside a lobby
 		const { senderId, lobbyId } = action.meta;
-		if (!lobbyId)
+		const match = state.tetris[lobbyId][senderId];
+		if (match.gameover)
 			return ;
+	}
+	
+	// before letting NEW_BLOCK trough, we check if the game ended
+	if (action.type === COLLAPSE_LINE)
+	{
+		// get all data
+		const { senderId, lobbyId } = action.meta;
+		const match = state.tetris[lobbyId][senderId];
 
-		console.log('bbb');
+		if (checkLines(match.static) > 1)
+			store.dispatch({
+				...penality(),
+				meta: { lobbyCast:true, lobbyId, senderId, avoid:senderId }
+			});
+	}
+	/* GAMEOVER check */
+	else if (action.type === PENALITY_LINE && !action.meta.avoid)
+	{
+		// get all data
+		const { senderId, lobbyId } = action.meta;
+		const match = state.tetris[lobbyId][senderId];
 
-		const state = store.getState();
+		if (!isValidPosition({ ...match.activeBlock, row: match.activeBlock.row + 1 }, match.static)) {
+			store.dispatch({
+				...gameover(),
+				meta: { reply:true, senderId }
+			});
+			return ;
+		}
+	}
+	/* GAMEOVER check */
+	else if (action.type === NEW_BLOCK)
+	{
+		// get all data
+		const { senderId, lobbyId } = action.meta;
+		const { blockType } = action.payload;
+		const match = state.tetris[lobbyId][senderId];
+
+		const newBlock = produceBlock(blockType);
+		if (!isValidSpawn(match.activeBlock, newBlock)
+			|| !isValidPosition(newBlock, match.static)) {
+			store.dispatch({
+				...gameover(),
+				meta: { reply:true, senderId }
+			});
+			return ;
+		}
+	}
+	else if (action.type === MOVE_PIECE)
+	{
+		// get all data
+		const { senderId, lobbyId } = action.meta;
 		const match = state.tetris[lobbyId][senderId];
 		const { move } = action.payload;
 
-		let ret = isValidMove(move, match.activeBlock, match.static);
-		if (ret === false)
-			return;
+		const result = isValidMove(move, match.activeBlock, match.static, senderId);
 		
-		console.log('move', ret);
-
+		if (result.ok === false) {
+			console.log('[Move] INVALID', move);
+			return ;
+		}
+		
 		// maps the move the the correspoindig '../../tetris/ations/moves' and dispatch it
-		store.dispatch({ ...ret(), meta: { reply:true, senderId } })
+		if (result.ok === true) {
+
+			console.log('[Move] VALID', result.action);
+		
+			if (Array.isArray(result.action)) {
+				// dispatch all action
+				result.action.forEach(action => {
+					store.dispatch(action);
+				});
+			} else {
+				store.dispatch({
+					...result.action,
+					meta: { reply: true, senderId }
+				});
+			}
+			return ;
+		}
 	}
 
 	return next(action);

@@ -18,7 +18,7 @@ export const startmatch = (lobbyId) => {
 	}
 }
 
-export const serverNewBlock = (userId) => {
+export const seedNewBlock = (userId, meta) => {
 	return (dispatch, getState) => {
 			
 		const state = getState();
@@ -30,7 +30,7 @@ export const serverNewBlock = (userId) => {
 
 		dispatch({
 			...newblock(seedBlockType(match.seed, match[userId].blockNum)),
-			meta: { reply:true, senderId:userId, lobbyId }
+			meta,
 		});
 	}
 }

@@ -1,3 +1,5 @@
+const START_COLUMN = 3
+
 export const BlockColor = {
   I: '#00E5FF', // azzurro
   L: '#2962FF', // blu
@@ -53,4 +55,16 @@ export function seedBlockType(seed, blockNum) {
 
 	// cicla i blocchi, per ora ok
 	return blocks[(seed * blockNum) % blocks.length];
+}
+
+export function produceBlock(blockType) {
+	if (!Tetriminos[blockType])
+		return null;
+
+	return {
+		shape: Tetriminos[blockType],
+		row: 0,
+		column: START_COLUMN,
+		type: blockType
+	}
 }

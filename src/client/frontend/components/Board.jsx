@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import './Board.css';
 import { BlockColor } from '../../../tetris/blocks';
+import { move } from '../../actions/tetris';
 
 export const Tetris = () => {
 	return (
@@ -41,33 +42,8 @@ function getGhostRow(statik, activeBlock) {
     return ghostRow;
   }
 
-function drawCell(i, j, cella, ghostRow, activeBlock)
+function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 {
-	// let finalBgColor = "white";
-	// const type = active[i][j] ? active[i][j] : statik[i][j];
-	// let isGhost = type === 'g' ? true : false;
-
-	// console.log('[drawCell] type', type);
-
-	// if (isGhost === false) {
-	// 	finalBgColor = BlockColor[type];
-	// } else {
-	// 	// Colore del blocco attivo ma molto sbiadito (33 è l'alpha in esadecimale)
-	// 	finalBgColor = (activeType) ? `${BlockColor[activeType]}90` : 'white';
-	// }
-
-	// return (
-	// 	<div
-	// 	key={`${i}-${j}`}
-	// 	className="cella"
-	// 	style={{
-	// 		backgroundColor: finalBgColor,
-	// 		boxShadow: isGhost
-	// 		? `inset 0 0 0 2px ${BlockColor[activeBlock.type]}`
-	// 		: 'inset 0 0 0 1px rgba(255,255,255,0.05)'
-	// 	}}
-	// 	/>
-	// );
 	let cellValue = cella;
 	let isGhost = false;
 
@@ -109,6 +85,9 @@ function drawCell(i, j, cella, ghostRow, activeBlock)
 		}
 	}
 
+	// X-Factor baby
+	if (cellValue && gameover) cellValue = 'X';
+
 	const finalBgColor = cellValue
 		? BlockColor[cellValue]
 		: "#050a20";
@@ -128,11 +107,11 @@ function drawCell(i, j, cella, ghostRow, activeBlock)
 }
 
 // renders the game board
-export const Board = ({ statik, activeBlock }) => {
+export const Board = ({ statik, activeBlock, gameover, move }) => {
 
 
 	console.log('[Board]', activeBlock, statik);
-	if (!activeBlock || !statik)
+	if (!statik)
 		return (
 			<p>Nothing yet to render</p>
 		);
@@ -141,22 +120,23 @@ export const Board = ({ statik, activeBlock }) => {
 	//tasti della tastiera (forse da mettere da un'altra parte)
 	useEffect(() => {
 		const handleKeyDown = (event) => {
+		  event.preventDefault();
 		  switch (event.key) {
 			case 'ArrowLeft':
-			  moveBlock('left');
-			  break;
+			  	move('Left');
+			  	break;
 			case 'ArrowRight':
-			  moveBlock('right');
-			  break;
+			  	move('Right');
+			  	break;
 			case 'ArrowDown':
-			  fallBlock();
-			  break;
+				move('Down');
+			  	break;
 			case 'ArrowUp':
-			  rotateBlock();
-			  break;
+				move('Rotate');
+			    break;
 			case ' ': // Barra spaziatrice
-			  megaFallBlock();
-			  break;
+				move('Mega');
+			  	break;
 			default:
 			  break;
 		  }
@@ -181,8 +161,14 @@ export const Board = ({ statik, activeBlock }) => {
         <button onClick={() => alert('saik')}>Aggiungi Blocco</button>
       </div>
       <div className="griglia">
+	  	{/* gameover && (
+          <div className="game-over-overlay">
+            <h2>YOU SUCK</h2>
+            <button onClick={alert('Saik')}>Riprova</button>
+          </div>
+        ) */}
         {statik.map((riga, i) =>
-          riga.map((cella, j) => drawCell(i, j, cella, ghostRow, activeBlock))
+          riga.map((cella, j) => drawCell(i, j, cella, ghostRow, activeBlock, gameover))
         )}
       </div>
       <div className='card'>
@@ -192,11 +178,14 @@ export const Board = ({ statik, activeBlock }) => {
   );
 }
 
+const mapDispatchToProps = { move };
+
 const mapStateToProps = (state) => {
 	return {
 		statik: state.tetris.static,
 		activeBlock: state.tetris.activeBlock,
+		gameover: state.tetris.gameover,
 	}
 }
 
-export default connect(mapStateToProps, null)(Board)
+export default connect(mapStateToProps, mapDispatchToProps)(Board)

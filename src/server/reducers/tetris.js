@@ -3,9 +3,13 @@ import {
 	DELETE_MATCH
 } from '../actions/tetris';
 
-import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr } from '../../tetris/gridManip';
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
-import { NEW_BLOCK } from '../../tetris/actions/grid';
+
+// Tetris imports
+import { newgrid, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
+import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK } from '../../tetris/actions/grid';
+import { SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT, ROTATE, MEGA_FALL } from '../../tetris/actions/moves';
+import { GAME_OVER } from '../../client/actions/tetris';
 
 const reducer = (state = {}, action) => {
 	switch(action.type)
@@ -23,6 +27,7 @@ const reducer = (state = {}, action) => {
 					...state,
 					[lobbyId]: {
 						seed,
+						players: [userId],
 						[userId]: {
 							blockNum: 0,
 							activeBlock: null,
@@ -37,6 +42,10 @@ const reducer = (state = {}, action) => {
 				...state,
 				[lobbyId]: {
 					...state[lobbyId],
+					players: [
+						...state[lobbyId].players,
+						userId,
+					],
 					[userId]: {
 						blockNum: 0,
 						activeBlock: null,
@@ -50,10 +59,14 @@ const reducer = (state = {}, action) => {
 			const { userId, lobbyId } = action.payload;
 
 			const { [userId]: removedUser, ...remainingUsers } = state[lobbyId];
+			const players = state[lobbyId].players.filter(player => player !== userId);
 
 			return {
 				...state,
-				[lobbyId]: remainingUsers
+				[lobbyId]: {
+					players,
+					...remainingUsers,
+				}
 			};
 		}
 		case DELETE_MATCH:
@@ -66,42 +79,155 @@ const reducer = (state = {}, action) => {
 				rest,
 			};
 		}
-		/* perform MOVES */
+		case GAME_OVER:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+			
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						gameover: true,
+					}
+				}
+			});
+		}
+
+		/* GRID actions */
 		case NEW_BLOCK:
 		{
 			const { blockType } = action.payload;
 			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
 
 			return ({
 				...state,
 				[lobbyId]: {
 					...state[lobbyId],
 					[senderId]: {
-						...state[lobbyId][senderId],
-						blockNum: state[lobbyId][senderId] + 1,
-						activeBlock: nb(blockType)
+						...userState,
+						blockNum: userState.blockNum + 1,
+						...nb(blockType, userState.activeBlock, userState.static)
 					}
 				}
 			});
 		}
-		// case TOSTATIC_BLOCK:
-		// 	return {
-		// 		...state,
-		// 		active: newgrid(),
-		// 		static: ts(state.active, state.static),
-		// 	}
-		// case COLLAPSE_LINE:
-		// 	const { line } = action.payload;
-		// 	if (!line) return state;
-		// 	return {
-		// 		...state,
-		// 		static: cl(state.static, line),
-		// 	}
-		// case PENALITY_LINE:
-		// 	return {
-		// 		...state,
-		// 		static: pn(state.static),
-		// 	}
+		case COLLAPSE_LINE:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						static: cl(userState.static)
+					}
+				}
+			});
+		}
+		case PENALITY_LINE:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						static: pn(userState.static)
+					}
+				}
+			});
+		}
+		/* MOVE actions */
+		case SHIFT_DOWN:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return {
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: sd(userState.activeBlock),
+					}
+				}
+			}
+		}
+		case SHIFT_LEFT:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return {
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: sl(userState.activeBlock),
+					}
+				}
+			}
+		}
+		case SHIFT_RIGHT:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return {
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: sr(userState.activeBlock),
+					}
+				}
+			}
+		}
+		case ROTATE:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return {
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: rr(userState.activeBlock),
+					}
+				}
+			}
+		}
+		case MEGA_FALL:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: mf(userState.activeBlock, userState.static)
+					}
+				}
+			});
+		}
 		default:
 			return state;
 	}

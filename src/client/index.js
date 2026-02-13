@@ -72,5 +72,6 @@ setTimeout(() => store.dispatch(ping()), 20);
 
 // dispatch server actions to Redux
 socket.on('action', (action) => {
-  store.dispatch({ ...action, meta:undefined });
+  const { meta, ...rest } = action;
+  store.dispatch(rest);
 });

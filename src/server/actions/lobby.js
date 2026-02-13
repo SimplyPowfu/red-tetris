@@ -1,32 +1,19 @@
 export const LOBBY_STATE = 'lobby/state';
-export const DELETE_LOBBY = 'lobby/deletelobby';
 
 export const lobbystate = (lobbyId, meta) => {
 	return (dispatch, getState) => {
 
 		const state = getState();
-		const lobby = state.lobby[lobbyId];
+		const lobby = state.tetris[lobbyId];
 
-		if (!lobby) return;
-		const players = lobby.players.map(p => state.users[p].username);
+		if (!lobby)
+			return ;
+		const players = lobby.players.map(userId => state.users[userId].username);
 
 		dispatch({
 			type: LOBBY_STATE,
 			payload: { lobbyId, players },
 			meta
 		})
-	}
-}
-
-export const deletelobby = (lobbyId) => {
-	return (dispatch, getState) => {
-		 const lobbyFound = getState().lobby[lobbyId];
-
-    	if (!lobbyFound) return ;
-
-		dispatch({
-			type: DELETE_LOBBY,
-			payload: { lobbyId }
-		});
 	}
 }

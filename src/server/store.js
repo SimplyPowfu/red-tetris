@@ -4,8 +4,10 @@ import thunk from 'redux-thunk';
 import reducer from './reducers';
 import loginMiddleware from './middleware/loginMiddleware';
 import appendLobbyId from './middleware/appendLobbyIdMiddleware';
-import postSocketMiddleware from './middleware/postSocketMiddleware';
+import updateLobbyMiddleware from './middleware/updateLobbyMiddleware';
 import moveMiddleware from './middleware/moveMiddleware';
+import startMatchMiddleware from './middleware/startMatchMiddleware';
+import blockNotAuth from './middleware/blockNotAuth';
 
 const initialState = {}
 const sockets = new Set();
@@ -20,6 +22,11 @@ const replyMiddleware = store => next => action => {
 	{
 		const socket = Array.from(sockets).find(s => s.id === action.meta.senderId);
 		if (socket) {
+			// if (action.type === 'ACTION_PACK') {
+			// 	socket.emit('action_pack', action.payload.actions);
+			// } else {
+			// 	socket.emit('action', action);
+			// }
 			socket.emit('action', action);
 		}
 	}
@@ -35,8 +42,14 @@ const lobbyBroadcastMiddleware = store => next => action => {
 	if (action.meta && action.meta.lobbyCast === true && action.meta.lobbyId)
 	{
 		sockets.forEach(socket => {
-			if (state.users[socket.id] && state.users[socket.id].lobbyId === action.meta.lobbyId)
+			console.log('socket', socket.id);
+			if (state.users[socket.id]
+				&& state.users[socket.id].lobbyId === action.meta.lobbyId
+				&& socket.id !== action.meta.avoid)
+			{
+				console.log('emitting action');
 				socket.emit('action', action);
+			}
 		});
 	}
 
@@ -65,16 +78,19 @@ const store = createStore(
 	createLogger(),
 	/* check validity */
 	loginMiddleware,
-	/* Append data */
+	/* Append action */
 	appendLobbyId,
-	/* check valid moves */
+	/* Block action */
+	blockNotAuth,
+	/* Validate action */
 	moveMiddleware,
 	/* Send to Clients */
 	replyMiddleware,
 	lobbyBroadcastMiddleware,
 	broadcastMiddleware,
-	/* Post Socket */
-	postSocketMiddleware,
+	/* Post State update */
+	updateLobbyMiddleware,
+	startMatchMiddleware,
   )
 )
 
