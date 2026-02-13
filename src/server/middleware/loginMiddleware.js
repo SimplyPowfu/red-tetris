@@ -1,10 +1,11 @@
-import { AUTH_LOGIN } from '../../client/actions/auth';
+import { LOGIN_REQUEST, LOGIN_REPLY } from '../../client/actions/auth';
 import { login } from '../actions/auth';
 
 export const USER_CONFLICT = 'user/conflict';
 
 const loginMiddleware = store => next => action => {
-	if (action.type === AUTH_LOGIN)
+	console.log('[LOGIN] got', action.type);
+	if (action.type === LOGIN_REQUEST)
 	{
 		// console.log('[middleware/login] got action');
 	
@@ -18,7 +19,7 @@ const loginMiddleware = store => next => action => {
 			return next({
 				type: USER_CONFLICT,
 				message: 'Username already exists',
-				meta: { reply: true, senderId }
+				meta: { reply: true, senderId, fromServer:true }
 			});
 		}
 		else
@@ -27,8 +28,8 @@ const loginMiddleware = store => next => action => {
 			store.dispatch(login(senderId, action.payload));
 			return next({
 				...action,
-				type: action.type + '/reply',
-				meta: { ...action.meta, reply: true }
+				type: LOGIN_REPLY,
+				meta: { ...action.meta, reply: true, fromServer:true }
 			});
 		}
 	}

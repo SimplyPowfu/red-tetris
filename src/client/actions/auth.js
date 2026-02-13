@@ -1,8 +1,9 @@
-export const AUTH_LOGIN = 'auth/login';
+export const LOGIN_REQUEST = 'login/request';
+export const LOGIN_REPLY = 'login/reply';
 
 export const login = (payload) => {
   return {
-	type: AUTH_LOGIN,
+	type: LOGIN_REQUEST,
 	payload,
 	meta: { sendToServer:true }
   }

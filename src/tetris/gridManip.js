@@ -11,33 +11,15 @@ export function newgrid() {
 	return Array.from({ length: ROWS_NUMBER }, () => Array(COLUMNS_NUMBER).fill(null));
 }
 
-// @grid is the static grid, adds the activeBlock to the grid
-// @active block, the current activeBlock
 // blockType the type of block to add next
 // 'I', 'O', 'T', 'L', 'J', 'S', 'Z'
 // RETURNS the whole state
-export function nb(blockType, activeBlock, grid)
+export function nb(blockType)
 {
-	const newGrid = grid.map(row => [...row]);
-
-	if (activeBlock) {
-		const { shape, row, column } = activeBlock;
-		for (let i = 0; i < shape.length; i++) {
-			for (let j = 0; j < shape[i].length; j++) {
-				if (shape[i][j] !== null) {
-					newGrid[row + i][column + j] = shape[i][j];
-				}
-			}
-		}
-	}
-
 	if (Object.keys(Tetriminos).find(k => k === blockType) === undefined)
 		return null;
 
-	return {
-		activeBlock: produceBlock(blockType),
-		static: newGrid
-	};
+	return produceBlock(blockType);
 }
 
 // @grid is the active grid, slides DOWN the block
@@ -123,28 +105,52 @@ export function mf(activeBlock, grid)
 export function cl(grid)
 {
 	const penaltyLines = grid.filter(row => row.includes('X'));
-    const playableLines = grid.filter(row => !row.includes('X'));
+  const playableLines = grid.filter(row => !row.includes('X'));
 
-    // quante righe sono rimase
-    const remainingPlayable = playableLines.filter(row => row.some(cell => cell === null));
-    //quante righe devono essere rimosse
-    const removedCount = playableLines.length - remainingPlayable.length;
-    
-    //if (removedCount > 1) chiamare addPenalty() (removedCount - 1) volte agli altri player
-    if (removedCount > 0) {
-      const newEmptyLines = Array.from({ length: removedCount }, () => 
-        Array(10).fill(null)
-      );
-		  return [...newEmptyLines, ...remainingPlayable, ...penaltyLines];
-    }
+  // quante righe sono rimase
+  const remainingPlayable = playableLines.filter(row => row.some(cell => cell === null));
+  //quante righe devono essere rimosse
+  const removedCount = playableLines.length - remainingPlayable.length;
+  
+  //if (removedCount > 1) chiamare addPenalty() (removedCount - 1) volte agli altri player
+  if (removedCount > 0) {
+    const newEmptyLines = Array.from({ length: removedCount }, () => 
+      Array(10).fill(null)
+    );
+    return [...newEmptyLines, ...remainingPlayable, ...penaltyLines];
+  }
 	return grid;
 }
 
-// @grid is the static grid, adds a penality layer
-export function pn(grid)
+// @activeBlock the current active block,
+// @grid: the current grid
+// moves the active block in the grid
+export function ts(activeBlock, grid)
 {
-  const newGrid = grid.slice(1);
-  const penaltyRow = Array(10).fill('X');
+  const newGrid = grid.map(row => [...row]);
+
+	if (activeBlock) {
+		const { shape, row, column } = activeBlock;
+		for (let i = 0; i < shape.length; i++) {
+			for (let j = 0; j < shape[i].length; j++) {
+				if (shape[i][j] !== null) {
+					newGrid[row + i][column + j] = shape[i][j];
+				}
+			}
+		}
+	}
+
+  return newGrid;
+}
+
+// @grid is the static grid, adds a penality layer
+export function pn(grid, lines)
+{
+  if (lines <= 0)
+    return grid;
+
+  const newGrid = grid.slice(lines);
+  const penaltyRow = Array(lines).fill(Array(10).fill('X'));
   return [...newGrid, penaltyRow];
 }
 

@@ -1,6 +1,7 @@
 export const NEW_GRID = 'tetris/newgrid';
 export const NEW_BLOCK = 'tetris/newblock';
 export const COLLAPSE_LINE = 'tetris/collapse';
+export const TOSTATIC_BLOCK = 'tetris/tostatic';
 export const PENALITY_LINE = 'tetris/penality';
 
 /* actions to modify the game-state */
@@ -24,8 +25,15 @@ export const collapse = () => {
 	}
 }
 
-export const penality = () => {
+export const tostatic = () => {
+	return {
+		type: TOSTATIC_BLOCK,
+	}
+}
+
+export const penality = (lines) => {
 	return {
 		type: PENALITY_LINE,
+		payload: { lines }
 	}
 }

@@ -1,10 +1,10 @@
-import { AUTH_LOGIN } from "../actions/auth"
+import { LOGIN_REPLY } from "../actions/auth"
 
 const reducer = (state = {} , action) => {
 	// console.log('[reducer/user] reducing action', action);
 	switch(action.type)
 	{
-	case AUTH_LOGIN + '/reply':
+	case LOGIN_REPLY:
 		return {
 			...state,
 			...action.payload

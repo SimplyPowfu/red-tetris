@@ -14,9 +14,9 @@ const reducer = (state = {}, action) => {
 		}
 		case USER_LOGOUT:
 		{
-			const { userId } = action.payload;
+			const { senderId } = action.meta;
 
-			const { [userId]: removed, ...rest } = state;
+			const { [senderId]: removed, ...rest } = state;
 
 			return rest;
 		}

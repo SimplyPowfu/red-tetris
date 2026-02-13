@@ -3,10 +3,11 @@ import createLogger from 'redux-logger';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
 import loginMiddleware from './middleware/loginMiddleware';
-import appendLobbyId from './middleware/appendLobbyIdMiddleware';
-import updateLobbyMiddleware from './middleware/updateLobbyMiddleware';
-import moveMiddleware from './middleware/moveMiddleware';
-import startMatchMiddleware from './middleware/startMatchMiddleware';
+import checkLobbyId from './middleware/checkLobbyId';
+import synchLobby from './middleware/synchLobby';
+import moveValidation from './middleware/moveValidation';
+import moveConseq from './middleware/moveConseq';
+import startMatch from './middleware/startMatch';
 import blockNotAuth from './middleware/blockNotAuth';
 
 const initialState = {}
@@ -22,11 +23,6 @@ const replyMiddleware = store => next => action => {
 	{
 		const socket = Array.from(sockets).find(s => s.id === action.meta.senderId);
 		if (socket) {
-			// if (action.type === 'ACTION_PACK') {
-			// 	socket.emit('action_pack', action.payload.actions);
-			// } else {
-			// 	socket.emit('action', action);
-			// }
 			socket.emit('action', action);
 		}
 	}
@@ -47,7 +43,6 @@ const lobbyBroadcastMiddleware = store => next => action => {
 				&& state.users[socket.id].lobbyId === action.meta.lobbyId
 				&& socket.id !== action.meta.avoid)
 			{
-				console.log('emitting action');
 				socket.emit('action', action);
 			}
 		});
@@ -79,18 +74,19 @@ const store = createStore(
 	/* check validity */
 	loginMiddleware,
 	/* Append action */
-	appendLobbyId,
+	checkLobbyId,
 	/* Block action */
 	blockNotAuth,
 	/* Validate action */
-	moveMiddleware,
+	moveValidation,
+	moveConseq,
 	/* Send to Clients */
 	replyMiddleware,
 	lobbyBroadcastMiddleware,
 	broadcastMiddleware,
 	/* Post State update */
-	updateLobbyMiddleware,
-	startMatchMiddleware,
+	synchLobby,
+	startMatch,
   )
 )
 

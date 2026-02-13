@@ -6,15 +6,17 @@ import {
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
 
 // Tetris imports
-import { newgrid, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
-import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK } from '../../tetris/actions/grid';
+import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
+import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
 import { SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT, ROTATE, MEGA_FALL } from '../../tetris/actions/moves';
-import { GAME_OVER } from '../../client/actions/tetris';
+import { GAME_OVER, gameover } from '../../client/actions/tetris';
+import { Randomizer } from '../../tetris/Randomizer';
 
 const reducer = (state = {}, action) => {
 	switch(action.type)
 	{
-		/* MATCH management operations */
+		/* REVIEW */
+		/* ===== MATCH management operations ===== */
 		case USER_LOGIN:
 		{
 			const { userId, lobbyId } = action.payload
@@ -22,15 +24,17 @@ const reducer = (state = {}, action) => {
 			// add the seed if the first user joined
 			if (!state[lobbyId]) {
 
-				const seed = 1;
+				const seed = Math.floor(Math.random() * 2147483648);
 				return ({
 					...state,
 					[lobbyId]: {
 						seed,
 						players: [userId],
 						[userId]: {
-							blockNum: 0,
+							gameover: false,
+							randomizer: new Randomizer(seed),
 							activeBlock: null,
+							nextBlock: null,
 							static: newgrid(),
 						}
 					}
@@ -47,8 +51,10 @@ const reducer = (state = {}, action) => {
 						userId,
 					],
 					[userId]: {
-						blockNum: 0,
+						gameover: false,
+						randomizer: new Randomizer(state[lobbyId].seed),
 						activeBlock: null,
+						nextBlock: null,
 						static: newgrid(),
 					}
 				}
@@ -56,15 +62,15 @@ const reducer = (state = {}, action) => {
 		}
 		case USER_LOGOUT:
 		{
-			const { userId, lobbyId } = action.payload;
+			const { senderId, lobbyId } = action.meta;
 
-			const { [userId]: removedUser, ...remainingUsers } = state[lobbyId];
-			const players = state[lobbyId].players.filter(player => player !== userId);
+			const { [senderId]: removedUser, ...remainingUsers } = state[lobbyId];
+			const players = state[lobbyId].players.filter(player => player !== senderId);
 
 			return {
 				...state,
 				[lobbyId]: {
-					players,
+					players: players,
 					...remainingUsers,
 				}
 			};
@@ -75,9 +81,7 @@ const reducer = (state = {}, action) => {
 
 			const { [lobbyId]: removed, ...rest } = state;
 
-			return {
-				rest,
-			};
+			return rest;
 		}
 		case GAME_OVER:
 		{
@@ -95,8 +99,26 @@ const reducer = (state = {}, action) => {
 				}
 			});
 		}
+		/* -------------------------- */
 
 		/* GRID actions */
+		case TOSTATIC_BLOCK:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const userState = state[lobbyId][senderId];
+
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					[senderId]: {
+						...userState,
+						activeBlock: null,
+						static: ts(userState.activeBlock, userState.static)
+					}
+				}
+			});
+		}
 		case NEW_BLOCK:
 		{
 			const { blockType } = action.payload;
@@ -109,8 +131,8 @@ const reducer = (state = {}, action) => {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
-						blockNum: userState.blockNum + 1,
-						...nb(blockType, userState.activeBlock, userState.static)
+						nextBlock: nb(blockType),
+						activeBlock: userState.nextBlock,
 					}
 				}
 			});
@@ -131,21 +153,61 @@ const reducer = (state = {}, action) => {
 				}
 			});
 		}
+		// case PENALITY_LINE:
+		// {
+		// 	const { senderId, lobbyId } = action.meta;
+		// 	const { line } = action.payload;
+		// 	const lobby = state[lobbyId];
+
+		// 	// build state
+		// 	const newState = lobby.players.map(playerId => {
+		// 		if (playerId !== senderId)
+		// 		{
+		// 			const userState = lobby[playerId];
+		// 			return {
+		// 				[playerId]: {
+		// 					...lobby[playerId],
+		// 					static: pn(userState.static, line),
+		// 				}
+		// 			}
+		// 		}
+		// 		return { [playerId]: lobby[playerId] };
+		// 	});
+
+		// 	return ({
+		// 		...state,
+		// 		[lobbyId]: {
+		// 			...state[lobbyId],
+		// 			...newState,
+		// 		}
+		// 	});
+		// }
 		case PENALITY_LINE:
 		{
 			const { senderId, lobbyId } = action.meta;
-			const userState = state[lobbyId][senderId];
+			const { lines } = action.payload;
+			const lobby = state[lobbyId];
 
-			return ({
+			// build updated players object
+			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
+				if (playerId !== senderId) {
+					acc[playerId] = {
+						...lobby[playerId],
+						static: pn(lobby[playerId].static, lines),
+					};
+				} else {
+					acc[playerId] = lobby[playerId];
+				}
+				return acc;
+			}, {});
+
+			return {
 				...state,
 				[lobbyId]: {
 					...state[lobbyId],
-					[senderId]: {
-						...userState,
-						static: pn(userState.static)
-					}
-				}
-			});
+					...updatedPlayers,
+				},
+			};
 		}
 		/* MOVE actions */
 		case SHIFT_DOWN:

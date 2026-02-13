@@ -1,0 +1,11 @@
+.players-boards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.player-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

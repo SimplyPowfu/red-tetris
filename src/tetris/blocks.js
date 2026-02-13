@@ -50,13 +50,6 @@ export const Tetriminos = {
 	[null,null,null]]
 }
 
-export function seedBlockType(seed, blockNum) {
-	const blocks = Object.keys(Tetriminos);
-
-	// cicla i blocchi, per ora ok
-	return blocks[(seed * blockNum) % blocks.length];
-}
-
 export function produceBlock(blockType) {
 	if (!Tetriminos[blockType])
 		return null;

@@ -1,9 +1,8 @@
-import React, { act, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import './Board.css';
 import { BlockColor } from '../../../tetris/blocks';
-import { move } from '../../actions/tetris';
 
 export const Tetris = () => {
 	return (
@@ -107,59 +106,18 @@ function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 }
 
 // renders the game board
-export const Board = ({ statik, activeBlock, gameover, move }) => {
+export const BoardDiv = ({ statik, activeBlock, gameover, move }) => {
 
-
-	console.log('[Board]', activeBlock, statik);
+	// console.log('[Board]', activeBlock, statik);
 	if (!statik)
 		return (
 			<p>Nothing yet to render</p>
 		);
 
-	/* -------- UNPUT -------- */
-	//tasti della tastiera (forse da mettere da un'altra parte)
-	useEffect(() => {
-		const handleKeyDown = (event) => {
-		  event.preventDefault();
-		  switch (event.key) {
-			case 'ArrowLeft':
-			  	move('Left');
-			  	break;
-			case 'ArrowRight':
-			  	move('Right');
-			  	break;
-			case 'ArrowDown':
-				move('Down');
-			  	break;
-			case 'ArrowUp':
-				move('Rotate');
-			    break;
-			case ' ': // Barra spaziatrice
-				move('Mega');
-			  	break;
-			default:
-			  break;
-		  }
-		};
-
-		// Aggiungiamo l'ascoltatore all'avvio del componente
-		window.addEventListener('keydown', handleKeyDown);
-
-		// IMPORTANTE: Pulizia dell'evento quando il componente viene smontato
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-    	};
-	}, [/* moveBlock, fallBlock, rotateBlock, megaFallBlock */]);
-	/* ---------------------- */
-
-	const ghostRow = getGhostRow(statik, activeBlock);
+	const ghostRow = activeBlock ? getGhostRow(statik, activeBlock) : null;
 
 	return (
     <div className="game-container">
-      <div className='card'>
-        <button onClick={() => alert('saik')}>Pulisci Griglia</button>
-        <button onClick={() => alert('saik')}>Aggiungi Blocco</button>
-      </div>
       <div className="griglia">
 	  	{/* gameover && (
           <div className="game-over-overlay">
@@ -171,14 +129,9 @@ export const Board = ({ statik, activeBlock, gameover, move }) => {
           riga.map((cella, j) => drawCell(i, j, cella, ghostRow, activeBlock, gameover))
         )}
       </div>
-      <div className='card'>
-        <button onClick={() => alert('saik')}>✖️</button>
-      </div>
     </div>
   );
 }
-
-const mapDispatchToProps = { move };
 
 const mapStateToProps = (state) => {
 	return {
@@ -188,4 +141,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Board)
+export default connect(mapStateToProps, null)(BoardDiv)

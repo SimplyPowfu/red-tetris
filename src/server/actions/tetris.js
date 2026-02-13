@@ -26,10 +26,10 @@ export const seedNewBlock = (userId, meta) => {
 			return ;
 
 		const { lobbyId } = state.users[userId];
-		const match = state.tetris[lobbyId];
+		const lobby = state.tetris[lobbyId];
 
 		dispatch({
-			...newblock(seedBlockType(match.seed, match[userId].blockNum)),
+			...newblock(lobby[userId].randomizer.next()),
 			meta,
 		});
 	}
@@ -43,7 +43,8 @@ export const deletematch = (lobbyId) => {
 
 		dispatch({
 			type: DELETE_MATCH,
-			payload: { lobbyId }
+			payload: { lobbyId },
+			meta: { fromServer:true }
 		});
 	}
 }

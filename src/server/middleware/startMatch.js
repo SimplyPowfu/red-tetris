@@ -2,7 +2,7 @@
 import { DELETE_MATCH, START_MATCH, seedNewBlock } from '../actions/tetris';
 
 // Client imports
-import { MOVE_PIECE } from '../../client/actions/tetris';
+import { GAME_OVER, MOVE_PIECE } from '../../client/actions/tetris';
 import { USER_LOGOUT } from '../actions/auth';
 
 // Tetris import
@@ -28,6 +28,7 @@ const startMatch = store => next => action => {
 
 				// spawn first block
 				store.dispatch(seedNewBlock(playerId, { reply:true, senderId:playerId }));
+				store.dispatch(seedNewBlock(playerId, { reply:true, senderId:playerId }));
 
 				// avoid creating duplicate intervals
 				// if (!intervals[playerId]) {
@@ -43,11 +44,13 @@ const startMatch = store => next => action => {
 
 			break ;
 		}
+		case GAME_OVER:
 		case USER_LOGOUT:
 		{
-			const { senderId } = action.payload;
+			const { senderId } = action.meta;
 			clearInterval(intervals[senderId]);
 			delete intervals[senderId];
+			break ;
 		}
 		case DELETE_MATCH:
 		{

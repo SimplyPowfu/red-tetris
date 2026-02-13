@@ -1,16 +1,13 @@
-import { SingleEntryPlugin } from 'webpack';
-
 // Server imports
-import { deletematch, seedNewBlock, START_MATCH } from '../actions/tetris';
+import { seedNewBlock } from '../actions/tetris';
 
 // Client imports
-import { MOVE_PIECE, gameover } from '../../client/actions/tetris';
+import { MOVE_PIECE } from '../../client/actions/tetris';
 
 // Tetris imports
 import { shiftdown, shiftleft, shiftright, rotate, megafall } from '../../tetris/actions/moves';
-import { sd, rr, sl, sr, mf, isValidPosition, isValidSpawn, checkLines } from '../../tetris/gridManip';
-import { collapse, COLLAPSE_LINE, NEW_BLOCK, penality, PENALITY_LINE } from '../../tetris/actions/grid';
-import { produceBlock } from '../../tetris/blocks';
+import { sd, rr, sl, sr, mf, isValidPosition } from '../../tetris/gridManip';
+import { collapse, tostatic } from '../../tetris/actions/grid';
 
 // @move is the move ('Right', 'Left', 'Rotate', 'Down'),
 // @active is the active grid
@@ -42,8 +39,9 @@ function isValidMove(move, activeBlock, statik, senderId)
 			newBlock = mf(activeBlock, statik);
 			action = [
 				{ ...megafall(), meta: { reply:true, senderId } },
+				{ ...tostatic(), meta: { reply:true, senderId } },
+				{ ...collapse(), meta: { reply:true, senderId } },
 				seedNewBlock(senderId, { reply:true, senderId } ),
-				{ ...collapse(), meta: { reply:true, senderId } }
 			];
 			break ;
 		default:
@@ -58,8 +56,9 @@ function isValidMove(move, activeBlock, statik, senderId)
 			return {
 				ok: true,
 				action: [
+					{ ...tostatic(), meta: { reply:true, senderId } },
+					{ ...collapse(), meta: { reply:true, senderId } },
 					seedNewBlock(senderId, { reply:true, senderId } ),
-					{ ...collapse(), meta: { reply:true, senderId } }
 				]
 			};
 		}
@@ -69,70 +68,21 @@ function isValidMove(move, activeBlock, statik, senderId)
 	return { ok: true, action };
 }
 
-const moveMiddleware = store => next => action => {
+const moveValidation = store => next => action => {
 	const state = store.getState();
-
-	// If gameover, block actions
-	if (action.type === NEW_BLOCK
-		|| action.type === MOVE_PIECE)
-	{
-		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId][senderId];
-		if (match.gameover)
-			return ;
-	}
 	
-	// before letting NEW_BLOCK trough, we check if the game ended
-	if (action.type === COLLAPSE_LINE)
+	if (action.type === MOVE_PIECE)
 	{
+
 		// get all data
 		const { senderId, lobbyId } = action.meta;
 		const match = state.tetris[lobbyId][senderId];
 
-		if (checkLines(match.static) > 1)
-			store.dispatch({
-				...penality(),
-				meta: { lobbyCast:true, lobbyId, senderId, avoid:senderId }
-			});
-	}
-	/* GAMEOVER check */
-	else if (action.type === PENALITY_LINE && !action.meta.avoid)
-	{
-		// get all data
-		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId][senderId];
-
-		if (!isValidPosition({ ...match.activeBlock, row: match.activeBlock.row + 1 }, match.static)) {
-			store.dispatch({
-				...gameover(),
-				meta: { reply:true, senderId }
-			});
+		// check if Gameover
+		if (match.gameover || !match.activeBlock)
 			return ;
-		}
-	}
-	/* GAMEOVER check */
-	else if (action.type === NEW_BLOCK)
-	{
-		// get all data
-		const { senderId, lobbyId } = action.meta;
-		const { blockType } = action.payload;
-		const match = state.tetris[lobbyId][senderId];
 
-		const newBlock = produceBlock(blockType);
-		if (!isValidSpawn(match.activeBlock, newBlock)
-			|| !isValidPosition(newBlock, match.static)) {
-			store.dispatch({
-				...gameover(),
-				meta: { reply:true, senderId }
-			});
-			return ;
-		}
-	}
-	else if (action.type === MOVE_PIECE)
-	{
-		// get all data
-		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId][senderId];
+		// Get the move
 		const { move } = action.payload;
 
 		const result = isValidMove(move, match.activeBlock, match.static, senderId);
@@ -165,4 +115,4 @@ const moveMiddleware = store => next => action => {
 	return next(action);
 }
 
-export default moveMiddleware;
+export default moveValidation;

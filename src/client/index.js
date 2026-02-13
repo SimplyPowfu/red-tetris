@@ -54,15 +54,6 @@ ReactDom.render((
 /* ----------------------------------------------------- */
 /* All client-server operation pass trough Redux's store */
 
-// store.dispatch(alert('Soon, will be here a fantastic Tetris ...'));
-
-// store.dispatch({
-//   type: 'MOVE_PIECE',
-//   payload: { x: 1, y: 0 },
-//   meta: { sendToServer: true }
-// });
-
-
 // dispath ping action to the Server
 socket.on('connect', () => {
   store.dispatch(connected());

@@ -11,34 +11,12 @@ import {
 	NEW_BLOCK,
 	COLLAPSE_LINE,
 	PENALITY_LINE,
+	TOSTATIC_BLOCK,
 } from '../../tetris/actions/grid'
 
 import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip'
 import { GAME_OVER } from '../actions/tetris'
-
-// function allGray(grid, block)
-// {
-// 	const newGrid = grid.map(row => [...row]);
-
-// 	for (let i = 0; i < newGrid.length; ++i) {
-// 		for (let j = 0; j < newGrid[i].length; ++j) {
-// 			if (newGrid[i][j] !== null)
-// 				newGrid[i][j] = 'X';
-// 		}
-// 	}
-
-// 	const newBlock = block;
-// 	for (let i = 0; i < newBlock.shape.length; ++i) {
-// 		for (let j = 0; j < newBlock.shape[i].length; ++j) {
-// 			if (newBlock.shape[i][j] !== null)
-// 				newBlock.shape[i][j] = 'X';
-// 		}
-// 	}
-// 	return {
-// 		static: newGrid,
-// 		activeBlock: newBlock,
-// 	};
-// }
+import { LOGIN_REPLY } from '../actions/auth'
 
 const reducer = (state = {} , action) => {
   switch(action.type)
@@ -53,7 +31,9 @@ const reducer = (state = {} , action) => {
 	}
 	/* GRID actions */
 	case NEW_GRID:
+	case LOGIN_REPLY:
 		return {
+			nextBlock: null,
 			activeBlock: null,
 			static: newgrid(),
 		}
@@ -65,13 +45,20 @@ const reducer = (state = {} , action) => {
 		const { blockType } = action.payload;
 		return {
 			...state,
-			...nb(blockType, state.activeBlock, state.static),
+			nextBlock: nb(blockType),
+			activeBlock: state.nextBlock,
 		}
 	}
 	case COLLAPSE_LINE:
 		return {
 			...state,
 			static: cl(state.static),
+		}
+	case TOSTATIC_BLOCK:
+		return {
+			...state,
+			activeBlock: null,
+			static: ts(state.activeBlock, state.static),
 		}
 	case PENALITY_LINE:
 		return {
