@@ -12,10 +12,22 @@ export const lobbystate = (lobbyId, meta) => {
 		const players = lobby.players.map(userId => {
 			
 			if (state.users[userId])
-				return {
-					username: state.users[userId].username,
-					grid: lobby[userId].static,
-				};
+			{
+				if (lobby.ingame)
+				{
+					return ({
+						username: state.users[userId].username,
+						grid: lobby[userId].static,
+						gameover: lobby[userId].gameover,
+					});
+				}
+				else
+				{
+					return ({
+						username: state.users[userId].username,
+					});
+				}
+			}
 			return null
 		}).filter(p => p !== null);
 

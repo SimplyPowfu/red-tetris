@@ -23,20 +23,10 @@ const reducer = (state = {}, action) => {
 			
 			// add the seed if the first user joined
 			if (!state[lobbyId]) {
-
-				const seed = Math.floor(Math.random() * 2147483648);
 				return ({
 					...state,
 					[lobbyId]: {
-						seed,
 						players: [userId],
-						[userId]: {
-							gameover: false,
-							randomizer: new Randomizer(seed),
-							activeBlock: null,
-							nextBlock: null,
-							static: newgrid(),
-						}
 					}
 				});
 			}
@@ -50,13 +40,6 @@ const reducer = (state = {}, action) => {
 						...state[lobbyId].players,
 						userId,
 					],
-					[userId]: {
-						gameover: false,
-						randomizer: new Randomizer(state[lobbyId].seed),
-						activeBlock: null,
-						nextBlock: null,
-						static: newgrid(),
-					}
 				}
 			});
 		}
@@ -73,6 +56,36 @@ const reducer = (state = {}, action) => {
 					players: players,
 					...remainingUsers,
 				}
+			};
+		}
+		case START_MATCH:
+		{
+			const { lobbyId } = action.payload;
+			const lobby = state[lobbyId];
+			const seed = Math.floor(Math.random() * 2147483648);
+
+			// build updated players object
+			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
+				acc[playerId] = {
+					gameover: false,
+					randomizer: new Randomizer(seed),
+					activeBlock: null,
+					nextBlock: null,
+					static: newgrid(),
+				};
+				return acc;
+			}, {});
+
+			console.log('[TETRIS] start', updatedPlayers);
+
+			return {
+				...state,
+				[lobbyId]: {
+					seed,
+					ingame:true,
+					...state[lobbyId],
+					...updatedPlayers,
+				},
 			};
 		}
 		case DELETE_MATCH:
@@ -153,35 +166,6 @@ const reducer = (state = {}, action) => {
 				}
 			});
 		}
-		// case PENALITY_LINE:
-		// {
-		// 	const { senderId, lobbyId } = action.meta;
-		// 	const { line } = action.payload;
-		// 	const lobby = state[lobbyId];
-
-		// 	// build state
-		// 	const newState = lobby.players.map(playerId => {
-		// 		if (playerId !== senderId)
-		// 		{
-		// 			const userState = lobby[playerId];
-		// 			return {
-		// 				[playerId]: {
-		// 					...lobby[playerId],
-		// 					static: pn(userState.static, line),
-		// 				}
-		// 			}
-		// 		}
-		// 		return { [playerId]: lobby[playerId] };
-		// 	});
-
-		// 	return ({
-		// 		...state,
-		// 		[lobbyId]: {
-		// 			...state[lobbyId],
-		// 			...newState,
-		// 		}
-		// 	});
-		// }
 		case PENALITY_LINE:
 		{
 			const { senderId, lobbyId } = action.meta;

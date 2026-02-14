@@ -39,7 +39,7 @@ const reducer = (state = {} , action) => {
 		}
 	case NEW_BLOCK:
 	{
-		if (!action.payload.blockType)
+		if (!action.payload || !action.payload.blockType)
 			return state;
 
 		const { blockType } = action.payload;
@@ -61,10 +61,16 @@ const reducer = (state = {} , action) => {
 			static: ts(state.activeBlock, state.static),
 		}
 	case PENALITY_LINE:
+	{
+		if (!action.payload || !action.payload.lines)
+			return state;
+
+		const { lines } = action.payload;
 		return {
 			...state,
-			static: pn(state.static),
+			static: pn(state.static, lines),
 		}
+	}
 	/* MOVE actions */
 	case SHIFT_DOWN:
 		return {

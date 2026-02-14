@@ -8,7 +8,9 @@ import synchLobby from './middleware/synchLobby';
 import moveValidation from './middleware/moveValidation';
 import moveConseq from './middleware/moveConseq';
 import startMatch from './middleware/startMatch';
+import endMatch from './middleware/endMatch';
 import blockNotAuth from './middleware/blockNotAuth';
+import blockReduce from './middleware/blockReduce';
 
 const initialState = {}
 const sockets = new Set();
@@ -87,6 +89,9 @@ const store = createStore(
 	/* Post State update */
 	synchLobby,
 	startMatch,
+	endMatch,
+	/* Don't Reduce */
+	blockReduce,
   )
 )
 

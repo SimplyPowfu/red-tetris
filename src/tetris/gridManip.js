@@ -117,6 +117,9 @@ export function cl(grid)
     const newEmptyLines = Array.from({ length: removedCount }, () => 
       Array(10).fill(null)
     );
+
+    console.log('[COLLAPSE] penality', penaltyLines);
+
     return [...newEmptyLines, ...remainingPlayable, ...penaltyLines];
   }
 	return grid;
@@ -151,7 +154,7 @@ export function pn(grid, lines)
 
   const newGrid = grid.slice(lines);
   const penaltyRow = Array(lines).fill(Array(10).fill('X'));
-  return [...newGrid, penaltyRow];
+  return [...newGrid, ...penaltyRow];
 }
 
 

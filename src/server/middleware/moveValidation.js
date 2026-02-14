@@ -76,7 +76,12 @@ const moveValidation = store => next => action => {
 
 		// get all data
 		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId][senderId];
+		const lobby = state.tetris[lobbyId];
+		if (!lobby)
+			return ;
+		const match = lobby[senderId];
+		if (!match)
+			return ;
 
 		// check if Gameover
 		if (match.gameover || !match.activeBlock)

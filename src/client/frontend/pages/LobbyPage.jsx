@@ -72,7 +72,7 @@ const LobbyPage = ({ lobby, user, startmatch, move }) => {
       <NextBlock/>
       <PlayerBoard/>
       <div className="players-boards">
-      {lobby.players.map(player => (
+      {lobby.players && lobby.players.map(player => (
         <SpectatorBoard
           key={player.username}
           player={player}

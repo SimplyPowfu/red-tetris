@@ -106,7 +106,7 @@ function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 }
 
 // renders the game board
-export const BoardDiv = ({ statik, activeBlock, gameover, move }) => {
+export const BoardDiv = ({ statik, activeBlock, gameover }) => {
 
 	// console.log('[Board]', activeBlock, statik);
 	if (!statik)

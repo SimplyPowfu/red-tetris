@@ -4,11 +4,14 @@ import { lobbystate } from '../actions/lobby';
 
 // Tetris import
 import { COLLAPSE_LINE, NEW_GRID, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
-import { deletematch } from '../actions/tetris';
+import { deletematch, START_MATCH, WIN_MATCH } from '../actions/tetris';
+import { GAME_OVER } from '../../client/actions/tetris';
 
 const synchLobby = store => next => action => {
 	const result = next(action); // reducer runs here
 	const state = store.getState();
+
+	console.log('[SYNCH] got', action.type);
 
 	// dispatch a lobby update when the user logs in
 	switch (action.type)
@@ -21,19 +24,12 @@ const synchLobby = store => next => action => {
 			break ;
 		}
 		case USER_LOGOUT:
-		{
-			const { lobbyId } = action.meta;
-			console.dir(state.tetris[lobbyId], { depth: null });
-			if (state.tetris[lobbyId].players.length === 1) {
-				store.dispatch(deletematch(lobbyId));
-			} else {
-				store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
-			}
-			break ;
-		}
+		case START_MATCH:
 		case TOSTATIC_BLOCK:
 		case COLLAPSE_LINE:
 		case PENALITY_LINE:
+		case GAME_OVER:
+		case WIN_MATCH:
 		{
 			if (!action.meta || !action.meta.lobbyId)
 			{

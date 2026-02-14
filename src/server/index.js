@@ -2,7 +2,10 @@ import fs  from 'fs'
 import debug from 'debug'
 import { store, sockets } from './store'
 import { act } from 'react'
-import { logout } from './actions/auth'
+import { logout, USER_LOGOUT } from './actions/auth'
+import { MOVE_PIECE } from '../client/actions/tetris'
+import { START_MATCH } from './actions/tetris'
+import { LOGIN_REQUEST } from '../client/actions/auth'
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
@@ -37,11 +40,22 @@ const initEngine = io => {
 
 		socket.on('action', (action) => {
 			loginfo(`action from ${socket.id}`, action);
+
 			// ping-pong doesn't go trough store
 			if(action.type === 'server/ping') {
 				socket.emit('action', { type: 'pong' });
 				return ;
 			}
+			// only MOVE_PIECE and START_MATCH sent to store
+			if (action.type !== MOVE_PIECE
+				&& action.type !== START_MATCH
+				&& action.type !== LOGIN_REQUEST
+				&& action.type !== USER_LOGOUT)	// #todo change to LOGOUT_REQUEST and let the loginMiddleware forward USER_LOGOUT if user found
+			{
+				socket.emit('action', { type: 'server/not-allowed' });
+				return ;
+			}
+
 
 			// new addon
 			store.dispatch({

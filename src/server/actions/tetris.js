@@ -1,9 +1,8 @@
 export const START_MATCH = 'tetris/startmatch';
 export const DELETE_MATCH = 'tetris/deletematch';
+export const WIN_MATCH = 'tetris/winmatch';
 
 import { newblock } from "../../tetris/actions/grid";
-
-import { seedBlockType } from "../../tetris/blocks";
 
 export const startmatch = (lobbyId) => {
 	return (dispatch, getState) => {
@@ -35,11 +34,30 @@ export const seedNewBlock = (userId, meta) => {
 	}
 }
 
+export const winmatch = (lobbyId, userId) => {
+	return (dispatch, getState) => {
+		const state = getState();
+
+		const lobbyFound = state.tetris[lobbyId];
+    	if (!lobbyFound) return ;
+
+		const user = state.users[userId];
+		if (!user)
+			return ;
+
+		dispatch({
+			type: WIN_MATCH,
+			payload: { lobbyId, username:user.username },
+			meta: { lobbyCast:true, lobbyId, fromServer:true }
+		});
+	}
+}
+
 export const deletematch = (lobbyId) => {
 	return (dispatch, getState) => {
-		 const matchFound = getState().tetris[lobbyId];
+		 const lobbyFound = getState().tetris[lobbyId];
 
-    	if (!matchFound) return ;
+    	if (!lobbyFound) return ;
 
 		dispatch({
 			type: DELETE_MATCH,

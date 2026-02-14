@@ -14,13 +14,12 @@ const blockNotAuth = store => next => action => {
 		if (!action.meta || !action.meta.senderId || !action.meta.lobbyId)
 			return ;
 		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId];
-		if (!match)
-			return ;
-		const grid = match[senderId];
-		if (!grid)
+		const lobby = state.tetris[lobbyId];
+		if (!lobby)
 			return ;
 	}
+
+	console.log('[BLOCK] ok', action.type);
 
 	return next(action);
 

@@ -3,9 +3,8 @@
 import { gameover } from '../../client/actions/tetris';
 
 // Tetris imports
-import { isValidPosition, isValidSpawn, checkLines } from '../../tetris/gridManip';
+import { isValidPosition, checkLines } from '../../tetris/gridManip';
 import { COLLAPSE_LINE, NEW_BLOCK, penality, PENALITY_LINE } from '../../tetris/actions/grid';
-import { produceBlock } from '../../tetris/blocks';
 
 const moveConseq = store => next => action => {
 	const state = store.getState();
@@ -15,11 +14,17 @@ const moveConseq = store => next => action => {
 		|| action.type === COLLAPSE_LINE)
 	{
 		const { senderId, lobbyId } = action.meta;
-		const match = state.tetris[lobbyId][senderId];
-		if (match.gameover)
+		const lobby = state.tetris[lobbyId];
+		if (!lobby)
+			return ;
+		const match = lobby[senderId];
+		if (!match || match.gameover)
 			return ;
 	}
 	
+	// Go forward in line
+	const result = next(action);
+
 	// before letting NEW_BLOCK trough, we check if the game ended
 	if (action.type === COLLAPSE_LINE)
 	{
@@ -71,7 +76,7 @@ const moveConseq = store => next => action => {
 		}
 	}
 
-	return next(action);
+	return result;
 }
 
 export default moveConseq;
