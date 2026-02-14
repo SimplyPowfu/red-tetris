@@ -2,8 +2,7 @@ import { createStore, applyMiddleware } from 'redux';
 import createLogger from 'redux-logger';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
-import loginMiddleware from './middleware/loginMiddleware';
-import checkLobbyId from './middleware/checkLobbyId';
+import authMiddleware from './middleware/authMiddleware';
 import synchLobby from './middleware/synchLobby';
 import moveValidation from './middleware/moveValidation';
 import moveConseq from './middleware/moveConseq';
@@ -40,11 +39,11 @@ const lobbyBroadcastMiddleware = store => next => action => {
 	if (action.meta && action.meta.lobbyCast === true && action.meta.lobbyId)
 	{
 		sockets.forEach(socket => {
-			console.log('socket', socket.id);
 			if (state.users[socket.id]
 				&& state.users[socket.id].lobbyId === action.meta.lobbyId
 				&& socket.id !== action.meta.avoid)
-			{
+				{
+				console.log('[REPLY]', `${action.type},`, 'socket', socket.id);
 				socket.emit('action', action);
 			}
 		});
@@ -74,22 +73,21 @@ const store = createStore(
 	thunk,
 	createLogger(),
 	/* check validity */
-	loginMiddleware,
-	/* Append action */
-	checkLobbyId,
+	authMiddleware,
 	/* Block action */
 	blockNotAuth,
 	/* Validate action */
 	moveValidation,
 	moveConseq,
+	/* Check match status */
+	startMatch,
+	endMatch,
+	/* Post State update */
+	synchLobby,
 	/* Send to Clients */
 	replyMiddleware,
 	lobbyBroadcastMiddleware,
 	broadcastMiddleware,
-	/* Post State update */
-	synchLobby,
-	startMatch,
-	endMatch,
 	/* Don't Reduce */
 	blockReduce,
   )

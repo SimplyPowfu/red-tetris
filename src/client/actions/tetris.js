@@ -1,5 +1,4 @@
-import { START_MATCH } from '../../server/actions/tetris';
-
+export const START_REQUEST = 'tetris/startrequest';
 export const MOVE_PIECE = 'tetris/move';
 export const GAME_OVER = 'tetris/gameover';
 
@@ -26,8 +25,8 @@ export const startmatch = () => {
 			return ;
 
 		dispatch({
-			type: START_MATCH,
-			payload: state.lobby,
+			type: START_REQUEST,
+			payload: { lobbyId: state.lobby.lobbyId },
 			meta: { sendToServer: true }
 		})
 	}

@@ -13,7 +13,7 @@ export const lobbystate = (lobbyId, meta) => {
 			
 			if (state.users[userId])
 			{
-				if (lobby.ingame)
+				if (lobby[userId])
 				{
 					return ({
 						username: state.users[userId].username,
@@ -34,7 +34,7 @@ export const lobbystate = (lobbyId, meta) => {
 		dispatch({
 			type: LOBBY_STATE,
 			payload: { lobbyId, players },
-			meta: { ...meta, fromServer:true }
+			meta: { fromServer:true, ...meta }
 		})
 	}
 }

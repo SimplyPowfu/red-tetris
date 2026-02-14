@@ -5,7 +5,7 @@ import { act } from 'react'
 import { logout, USER_LOGOUT } from './actions/auth'
 import { MOVE_PIECE } from '../client/actions/tetris'
 import { START_MATCH } from './actions/tetris'
-import { LOGIN_REQUEST } from '../client/actions/auth'
+import { LOGIN_REQUEST, LOGOUT_REQUEST } from '../client/actions/auth'
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
@@ -46,27 +46,20 @@ const initEngine = io => {
 				socket.emit('action', { type: 'pong' });
 				return ;
 			}
-			// only MOVE_PIECE and START_MATCH sent to store
-			if (action.type !== MOVE_PIECE
-				&& action.type !== START_MATCH
-				&& action.type !== LOGIN_REQUEST
-				&& action.type !== USER_LOGOUT)	// #todo change to LOGOUT_REQUEST and let the loginMiddleware forward USER_LOGOUT if user found
-			{
-				socket.emit('action', { type: 'server/not-allowed' });
-				return ;
-			}
-
 
 			// new addon
 			store.dispatch({
 				...action,
-				meta: { senderId: socket.id }
+				meta: { fromClient:true, senderId: socket.id }
 			});
 		})
 
 		socket.on('disconnect', () => {
 			loginfo("Socket disconnected:", socket.id);
-			store.dispatch(logout(socket.id));
+			store.dispatch({
+				type: LOGOUT_REQUEST,
+				meta: { fromClient:true, senderId:socket.id }
+			});
 			sockets.delete(socket);
 		})
 	})

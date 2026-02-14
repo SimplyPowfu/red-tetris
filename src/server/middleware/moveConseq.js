@@ -22,6 +22,8 @@ const moveConseq = store => next => action => {
 			return ;
 	}
 	
+	console.log('[CONSEQ] ok', action.type);
+
 	// Go forward in line
 	const result = next(action);
 
@@ -36,7 +38,7 @@ const moveConseq = store => next => action => {
 		if (ret > 0) {
 			store.dispatch({
 				...penality(ret),
-				meta: { lobbyCast:true, lobbyId, senderId, avoid:senderId }
+				meta: { fromServer:true, lobbyCast:true, lobbyId, senderId, avoid:senderId }
 			});
 		}
 	}
@@ -55,7 +57,7 @@ const moveConseq = store => next => action => {
 			if (!isValidPosition({ ...match.activeBlock, row: match.activeBlock.row + lines }, match.static)) {
 				store.dispatch({
 					...gameover(),
-					meta: { reply:true, senderId:playerId }
+					meta: { fromServer:true, reply:true, senderId:playerId }
 				});
 			}
 		}
@@ -71,7 +73,7 @@ const moveConseq = store => next => action => {
 		if (newBlock && !isValidPosition(newBlock, match.static)) {
 			store.dispatch({
 				...gameover(),
-				meta: { reply:true, senderId }
+				meta: { fromServer:true, reply:true, senderId }
 			});
 		}
 	}

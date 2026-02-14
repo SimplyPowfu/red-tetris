@@ -1,6 +1,7 @@
 import {
 	START_MATCH,
-	DELETE_MATCH
+	DELETE_MATCH,
+	WIN_MATCH
 } from '../actions/tetris';
 
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
@@ -46,6 +47,9 @@ const reducer = (state = {}, action) => {
 		case USER_LOGOUT:
 		{
 			const { senderId, lobbyId } = action.meta;
+
+			if (state[lobbyId][senderId] === undefined)
+				return state;
 
 			const { [senderId]: removedUser, ...remainingUsers } = state[lobbyId];
 			const players = state[lobbyId].players.filter(player => player !== senderId);
@@ -111,6 +115,18 @@ const reducer = (state = {}, action) => {
 					}
 				}
 			});
+		}
+		case WIN_MATCH:
+		{
+			const { lobbyId } = action.payload;
+			
+			return ({
+				...state,
+				[lobbyId]: {
+					...state[lobbyId],
+					ingame:false,
+				}
+			})
 		}
 		/* -------------------------- */
 
@@ -260,6 +276,7 @@ const reducer = (state = {}, action) => {
 		}
 		case MEGA_FALL:
 		{
+			console.log('[TETRIS]', action);
 			const { senderId, lobbyId } = action.meta;
 			const userState = state[lobbyId][senderId];
 

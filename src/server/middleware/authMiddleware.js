@@ -1,0 +1,51 @@
+import { LOGIN_REQUEST, LOGIN_REPLY, LOGOUT_REQUEST } from '../../client/actions/auth';
+import { login, logout } from '../actions/auth';
+
+export const USER_CONFLICT = 'user/conflict';
+
+// Checks login requests
+const authMiddleware = store => next => action => {
+	console.log('[LOGIN] got', action.type);
+	if (action.type === LOGIN_REQUEST)
+	{
+		const state = store.getState();
+		const { username } = action.payload;
+		const { senderId } = action.meta;
+
+		// Check if user ID or username already exists
+		if (Object.values(state.users).some(u => u.username === username)) {
+			// Dispatch conflict action to sender
+			return next({
+				type: USER_CONFLICT,
+				message: 'Username already exists',
+				meta: { reply: true, senderId, fromServer:true }
+			});
+		}
+		/* #todo controllo se la lobby E` in game */
+		else
+		{
+			// return with updated meta
+			const result = next({
+				type: LOGIN_REPLY,
+				payload: { ...action.payload },
+				meta: { reply: true, senderId, fromServer:true }
+			});
+			store.dispatch(login(senderId, action.payload));
+			return result;
+		}
+	}
+	else if (action.type === LOGOUT_REQUEST)
+	{
+		const state = store.getState();
+		const { senderId } = action.meta;
+		const user = state.users[senderId];
+		if (user !== undefined)
+			store.dispatch(logout(senderId));
+		return ;
+
+	}
+
+	return next(action);
+}
+
+export default authMiddleware;

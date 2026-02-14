@@ -3,8 +3,8 @@ import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
 import { lobbystate } from '../actions/lobby';
 
 // Tetris import
-import { COLLAPSE_LINE, NEW_GRID, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
-import { deletematch, START_MATCH, WIN_MATCH } from '../actions/tetris';
+import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
+import { START_MATCH, WIN_MATCH } from '../actions/tetris';
 import { GAME_OVER } from '../../client/actions/tetris';
 
 const synchLobby = store => next => action => {
@@ -17,6 +17,7 @@ const synchLobby = store => next => action => {
 	switch (action.type)
 	{
 		case USER_LOGIN:
+		case START_MATCH:
 		{
 			const { lobbyId } = action.payload;
 			// updates the lobby for all user
@@ -24,7 +25,6 @@ const synchLobby = store => next => action => {
 			break ;
 		}
 		case USER_LOGOUT:
-		case START_MATCH:
 		case TOSTATIC_BLOCK:
 		case COLLAPSE_LINE:
 		case PENALITY_LINE:

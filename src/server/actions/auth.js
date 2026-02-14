@@ -6,7 +6,7 @@ export const login = (senderId, payload) => {
 	return {
 		type: USER_LOGIN,
 		payload: { ...payload, userId: senderId },
-		meta: { senderId, fromServer:true }
+		meta: { fromServer:true, senderId }
 	}
 }
 
@@ -19,7 +19,7 @@ export const logout = (senderId) => {
 
 		dispatch({
 			type: USER_LOGOUT,
-			meta: { senderId }
+			meta: { fromServer:true, senderId }
 		});
 	}
 }

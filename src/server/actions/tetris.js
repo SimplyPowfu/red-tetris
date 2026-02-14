@@ -6,13 +6,14 @@ import { newblock } from "../../tetris/actions/grid";
 
 export const startmatch = (lobbyId) => {
 	return (dispatch, getState) => {
-		 const matchFound = getState().tetris[lobbyId];
+		 const lobbyFound = getState().tetris[lobbyId];
 
-    	if (!matchFound) return ;
+    	if (!lobbyFound) return ;
 
 		dispatch({
 			type: START_MATCH,
-			payload: { lobbyId, players: lobbyFound.players }
+			payload: { lobbyId, players: lobbyFound.players },
+			meta: { fromServer:true }
 		});
 	}
 }
@@ -29,7 +30,7 @@ export const seedNewBlock = (userId, meta) => {
 
 		dispatch({
 			...newblock(lobby[userId].randomizer.next()),
-			meta,
+			meta: { ...meta, lobbyId, fromServer:true }
 		});
 	}
 }
@@ -48,7 +49,7 @@ export const winmatch = (lobbyId, userId) => {
 		dispatch({
 			type: WIN_MATCH,
 			payload: { lobbyId, username:user.username },
-			meta: { lobbyCast:true, lobbyId, fromServer:true }
+			meta: { fromServer:true, lobbyCast:true, lobbyId }
 		});
 	}
 }

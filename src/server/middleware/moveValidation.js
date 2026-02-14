@@ -38,27 +38,30 @@ function isValidMove(move, activeBlock, statik, senderId)
 		case 'Mega':
 			newBlock = mf(activeBlock, statik);
 			action = [
-				{ ...megafall(), meta: { reply:true, senderId } },
-				{ ...tostatic(), meta: { reply:true, senderId } },
-				{ ...collapse(), meta: { reply:true, senderId } },
-				seedNewBlock(senderId, { reply:true, senderId } ),
+				{ ...megafall(), meta: { fromServer:true, reply:true, senderId } },
+				{ ...tostatic(), meta: { fromServer:true, reply:true, senderId } },
+				{ ...collapse(), meta: { fromServer:true, reply:true, senderId } },
+				seedNewBlock(senderId, { fromServer:true, reply:true, senderId } ),
 			];
 			break ;
 		default:
 			return { ok: false };
 	}
-	console.log('[Move] valid', move, newBlock.row);
+
+	// check action validity
 	const valid = isValidPosition(newBlock, statik);
 
 	// If the action was down and it's not valid, send tostatic
-	if (valid === false) {
-		if (move === 'Down') {
+	if (valid === false)
+	{
+		if (move === 'Down')
+		{
 			return {
 				ok: true,
 				action: [
-					{ ...tostatic(), meta: { reply:true, senderId } },
-					{ ...collapse(), meta: { reply:true, senderId } },
-					seedNewBlock(senderId, { reply:true, senderId } ),
+					{ ...tostatic(), meta: { fromServer:true, reply:true, senderId } },
+					{ ...collapse(), meta: { fromServer:true, reply:true, senderId } },
+					seedNewBlock(senderId, { fromServer:true, reply:true, senderId } ),
 				]
 			};
 		}
@@ -96,7 +99,7 @@ const moveValidation = store => next => action => {
 			console.log('[Move] INVALID', move);
 			return ;
 		}
-		
+
 		// maps the move the the correspoindig '../../tetris/ations/moves' and dispatch it
 		if (result.ok === true) {
 
@@ -110,7 +113,7 @@ const moveValidation = store => next => action => {
 			} else {
 				store.dispatch({
 					...result.action,
-					meta: { reply: true, senderId }
+					meta: { fromServer:true, reply: true, senderId, lobbyId }
 				});
 			}
 			return ;
