@@ -1,11 +1,217 @@
-.players-boards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+/* --- GLOBAL --- */
+body {
+    background-color: #000000;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
-.player-board {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* --- CONTAINER PRINCIPALE --- */
+.lobby-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+    background-color: #000;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    gap: 80px;
+}
+
+/* --- COLONNE --- */
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- SINISTRA --- */
+.left-column { /* Standard */ }
+
+.player-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    align-self: flex-start;
+    padding-left: 5px;
+}
+
+.star-icon { color: red; }
+
+.board-wrapper {
+    border: 2px solid #333;
+    padding: 10px;
+    background-color: #050a20;
+    display: inline-block;
+}
+
+/* --- CENTRO (CONTROLLI) --- */
+.center-column {
+    margin-top: 50px; /* Ridotto un po' il margine per far stare tutto */
+    gap: 20px;        /* Ridotto gap tra i box per compattezza */
+}
+
+/* STILE RETRO BOX GENERALE */
+.retro-box {
+    width: 140px;          /* Larghezza fissa per allinearli tutti */
+    min-height: 100px;     /* Altezza minima */
+    border: 2px solid #333;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000;
+    padding: 10px;
+}
+
+.retro-box-title {
+    margin-bottom: 10px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.retro-box-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Override specifico per NEXT BLOCK (ridimensionamento) */
+.retro-box-content > .next-block {
+    transform: scale(0.8);
+    transform-origin: center;
+}
+
+/* --- NUOVI STILI PER SCORE E MAP --- */
+
+/* Score */
+.score-val {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Map Selector */
+.map-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 5px;
+}
+
+.map-name {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* Finti bottoni rossi */
+.arrow-btn {
+    width: 25px;
+    height: 25px;
+    background-color: #d32f2f; /* Rosso */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: not-allowed; /* Cursore di divieto visto che è solo visuale */
+    border-radius: 2px;
+    user-select: none;
+}
+
+/* --- START BUTTON --- */
+.start-btn {
+    background-color: #721c24;
+    color: #ccaeb1;
+    border: none;
+    padding: 12px 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+    text-transform: lowercase;
+    transition: all 0.2s;
+    font-weight: bold;
+    margin-top: 10px;
+    box-shadow: 0 4px 0 #4a1217;
+}
+
+.start-btn:hover {
+    background-color: #a71d2a;
+    color: white;
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #4a1217;
+}
+
+.start-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* --- DESTRA (AVVERSARI - MINI BOARDS) --- */
+.right-column {
+    flex: 1; 
+    max-width: 500px; 
+    min-width: 200px; /* Larghezza minima per contenere almeno una board */
+    justify-content: flex-start;
+}
+
+.opponents-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;       /* FONDAMENTALE: Se non c'è spazio laterale, va a capo (uno sotto l'altro) */
+    justify-content: center; /* Se c'è spazio, li centra. Se sono in riga, li centra. */
+    gap: 30px;             /* Spazio tra le board */
+    width: 100%;
+}
+
+.mini-board-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Opzionale: assicura che il wrapper non si schiacci troppo */
+    min-width: 160px; 
+}
+
+.mini-board-wrapper p {
+    font-size: 0.9rem;
+    margin: 0 0 5px 0;
+    color: #aaa;
+    text-align: left;
+    width: 100%;
+}
+
+/* --- FIX GRIGLIA (Invariato ma incluso per completezza) --- */
+.right-column .griglia {
+    display: grid !important;
+    grid-template-columns: repeat(10, 15px) !important; 
+    grid-gap: 1px !important;
+    background-color: transparent !important;
+    border: none !important;
+    width: fit-content !important;
+}
+
+.right-column .cella {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    min-height: 15px !important;
+    border-radius: 0 !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1) !important; 
+}
+
+.right-column .player-board {
+    border: 1px solid #555;
+    padding: 2px;
+    background-color: #000;
+    display: inline-block;
 }

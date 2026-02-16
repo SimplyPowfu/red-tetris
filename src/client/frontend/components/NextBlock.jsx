@@ -47,15 +47,9 @@ function normalizeTo4x4(shape, type)
 // renders the game board
 export const NextBlock = ({ nextBlock }) => {
 
-	if (nextBlock === null) {
-		return (
-			<div className='next-block'>
-				Next there will be a block here.
-	  		</div>
-		);
-	}
-	const { shape, type } = nextBlock;
-	const normalizedShape = normalizeTo4x4(shape, type);
+	const gridToRender = nextBlock 
+        ? normalizeTo4x4(nextBlock.shape, nextBlock.type)
+        : Array.from({ length: 4 }, () => Array(4).fill(null));
 
 	return (
 		<div
@@ -66,7 +60,7 @@ export const NextBlock = ({ nextBlock }) => {
 			gap: "2px"
 		}}
 		>
-		{normalizedShape.map((row, i) =>
+		{gridToRender.map((row, i) =>
 			row.map((cell, j) => drawCell(i, j, cell))
 		)}
 		</div>
