@@ -43,7 +43,9 @@ body {
 .star-icon { color: red; }
 
 .board-wrapper {
+    position: relative;
     border: 2px solid #333;
+    border-radius: 2px;
     padding: 10px;
     background-color: #050a20;
     display: inline-block;
@@ -206,12 +208,56 @@ body {
     min-width: 15px !important;
     min-height: 15px !important;
     border-radius: 0 !important;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1) !important; 
+    box-shadow: inset 0 0 0 1px #ffffff1a !important; 
 }
 
 .right-column .player-board {
     border: 1px solid #555;
-    padding: 2px;
-    background-color: #000;
+    border-radius: 10px;
+    padding: 3px;
     display: inline-block;
+}
+
+/* Stile base (quello che avevi già, con aggiunte) */
+.game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+    transition: all 0.5s ease;
+}
+
+.label {
+    font-weight: bold;
+    margin-right: 10px;
+    font-family: 'Courier New', Courier, monospace; /* Per un look da terminale */
+}
+
+/* Overlay Vittoria */
+.game-over-overlay.win .label{
+    color: #00ff41; /* Verde retro/neon */
+    text-shadow: 0 0 5px #00ff41;
+}
+
+.winner-box {
+    margin-top: 20px;
+    padding: 10px;
+    /* background: #00000080; */
+    border-radius: 4px;
+    text-align: center;
+}
+
+.winner-name {
+    display: block;
+    font-size: 1.5rem;
+    color: #ffd700; /* Oro per il nome del vincitore */
+    text-transform: uppercase;
+    font-weight: bold;
 }

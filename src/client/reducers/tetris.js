@@ -15,7 +15,7 @@ import {
 } from '../../tetris/actions/grid'
 
 import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip'
-import { GAME_OVER } from '../actions/tetris'
+import { GAME_OVER, WIN_MATCH } from '../actions/tetris'
 import { LOGIN_REPLY } from '../actions/auth'
 
 const reducer = (state = {} , action) => {
@@ -27,6 +27,15 @@ const reducer = (state = {} , action) => {
 		return {
 			...state,
 			gameover:true,
+		}
+	}
+	case WIN_MATCH:
+	{
+		if (!action.payload || !action.payload.username)
+			return state;
+		return {
+			...state,
+			winner:action.payload.username,
 		}
 	}
 	/* GRID actions */

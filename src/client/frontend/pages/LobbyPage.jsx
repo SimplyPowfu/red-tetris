@@ -9,11 +9,27 @@ import NextBlock from '../components/NextBlock';
 
 import './Pages.css';
 
-const LobbyPage = ({ lobby, user, startmatch, move }) => {
+const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
     
+    const gameOver = () => {
+        if (!winner) return null;
+
+        const isMe = winner === user.username;
+        return (
+            <div className={`game-over-overlay win`}>
+                <h2>{'GAME OVER'}</h2>
+                <div className="winner-box">
+                    <span className="label">WINNER</span>
+                    <span className="winner-name">{winner}🏆</span>
+                </div>
+            </div>
+        );
+    };
     // --- INPUT (Invariato) ---
     useEffect(() => {
         const handleKeyDown = (event) => {
+            if (winner)
+                return; 
             switch (event.key) {
                 case 'ArrowLeft': event.preventDefault(); move('Left'); break;
                 case 'ArrowRight': event.preventDefault(); move('Right'); break;
@@ -25,7 +41,7 @@ const LobbyPage = ({ lobby, user, startmatch, move }) => {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => { window.removeEventListener('keydown', handleKeyDown); };
-    }, [move]);
+    }, [move, winner]);
 
     if (!user || !lobby) return <div className="lobby-loading">Loading...</div>;
 
@@ -41,6 +57,7 @@ const LobbyPage = ({ lobby, user, startmatch, move }) => {
                     <span className="player-name">{user.username}</span>
                 </div>
                 <div className="board-wrapper">
+                    {gameOver()}
                     <PlayerBoard />
                 </div>
             </div>
@@ -101,6 +118,7 @@ const mapDispatchToProps = { startmatch, move };
 const mapStateToProps = (state) => ({
     user: state.user,
     lobby: state.lobby,
+    winner: state.tetris.winner,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LobbyPage);
