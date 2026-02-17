@@ -46,6 +46,8 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
     if (!user || !lobby) return <div className="lobby-loading">Loading...</div>;
 
     const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
+    const isHost = lobby.players && lobby.players.length && lobby.players[0].username === user.username;
+
 
     return (
         <div className="lobby-container">
@@ -53,7 +55,7 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
             {/* SINISTRA: TU */}
             <div className="column left-column">
                 <div className="player-header">
-                    <span className="star-icon">★</span> 
+                    <span className="star-icon">{isHost && '★'}</span> 
                     <span className="player-name">{user.username}</span>
                 </div>
                 <div className="board-wrapper">
@@ -82,7 +84,7 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
                 </div>
 
                 {/* 3. MAP (Template Visivo) */}
-                <div className="retro-box map-box">
+                {isHost && (<div className="retro-box map-box">
                     <div className="retro-box-title">MAP</div>
                     <div className="retro-box-content">
                         <div className="map-selector">
@@ -91,12 +93,14 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
                             <div className="arrow-btn">►</div>
                         </div>
                     </div>
-                </div>
+                </div>)}
 
                 {/* BUTTON START */}
-                <button className="start-btn" onClick={() => startmatch()}>
+                {isHost ? (<button className="start-btn" onClick={() => startmatch()}>
                     start
-                </button>
+                </button>) : (<button className="start-btn" onClick={() => startmatch()}>
+                    ready
+                </button>)}
             </div>
 
             {/* DESTRA: AVVERSARI */}
