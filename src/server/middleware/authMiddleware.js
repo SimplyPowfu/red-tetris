@@ -9,7 +9,7 @@ const authMiddleware = store => next => action => {
 	if (action.type === LOGIN_REQUEST)
 	{
 		const state = store.getState();
-		const { username } = action.payload;
+		const { username, lobbyId } = action.payload;
 		const { senderId } = action.meta;
 
 		// Check if user ID or username already exists
@@ -21,18 +21,23 @@ const authMiddleware = store => next => action => {
 				meta: { reply: true, senderId, fromServer:true }
 			});
 		}
-		/* #todo controllo se la lobby E` in game */
-		else
-		{
-			// return with updated meta
-			const result = next({
-				type: LOGIN_REPLY,
-				payload: { ...action.payload },
+		const match = state.tetris[lobbyId];
+		if (match && match.ingame === true) {
+			return next({
+				type: USER_CONFLICT,
+				message: 'Match already started',
 				meta: { reply: true, senderId, fromServer:true }
 			});
-			store.dispatch(login(senderId, action.payload));
-			return result;
 		}
+
+		// return with updated meta
+		const result = next({
+			type: LOGIN_REPLY,
+			payload: { ...action.payload },
+			meta: { reply: true, senderId, fromServer:true }
+		});
+		store.dispatch(login(senderId, action.payload));
+		return result;
 	}
 	else if (action.type === LOGOUT_REQUEST)
 	{
