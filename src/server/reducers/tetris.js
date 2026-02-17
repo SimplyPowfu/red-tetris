@@ -72,7 +72,7 @@ const reducer = (state = {}, action) => {
 			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
 				acc[playerId] = {
 					gameover: false,
-					randomizer: new Randomizer(seed),
+					randomizer: Randomizer(seed),
 					activeBlock: null,
 					nextBlock: null,
 					static: newgrid(),

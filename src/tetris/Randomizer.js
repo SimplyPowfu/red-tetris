@@ -9,25 +9,27 @@ function mulberry32(seed) {
 }
 
 
-export class Randomizer {
-    constructor(seed) {
-        this.rng = mulberry32(seed);
-        this.pieces = ['I','J','L','O','S','T','Z'];
-        this.bag = [];
-    }
+export function Randomizer(seed) {
+    const rng = mulberry32(seed);
+    const pieces = ['I','J','L','O','S','T','Z'];
+    let bag = [];
 
-    shuffle(array) {
+    function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(this.rng() * (i + 1));
+            const j = Math.floor(rng() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
 
-    next() {
-        if (this.bag.length === 0) {
-            this.bag = [...this.pieces];
-            this.shuffle(this.bag);
+    function next() {
+        if (bag.length === 0) {
+            bag = [...pieces];
+            shuffle(bag);
         }
-        return this.bag.pop();
+        return bag.pop();
     }
+
+    return {
+        next
+    };
 }
