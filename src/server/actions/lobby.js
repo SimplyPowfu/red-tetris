@@ -25,6 +25,7 @@ export const lobbystate = (lobbyId, meta) => {
 				{
 					return ({
 						username: state.users[userId].username,
+						ready: state.users[userId].ready,
 					});
 				}
 			}

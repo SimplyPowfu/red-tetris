@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { startmatch, move } from '../../actions/tetris';
+import { startmatch, readyrequest, move } from '../../actions/tetris';
 
 // Components
 import { SpectatorBoard } from '../components/SpectatorBoard';
@@ -98,7 +98,7 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
                 {/* BUTTON START */}
                 {isHost ? (<button className="start-btn" onClick={() => startmatch()}>
                     start
-                </button>) : (<button className="start-btn" onClick={() => startmatch()}>
+                </button>) : (<button className="start-btn" onClick={() => readyrequest()}>
                     ready
                 </button>)}
             </div>
@@ -118,7 +118,7 @@ const LobbyPage = ({ lobby, user, startmatch, move, winner }) => {
     );
 }
 
-const mapDispatchToProps = { startmatch, move };
+const mapDispatchToProps = { startmatch, readyrequest, move };
 const mapStateToProps = (state) => ({
     user: state.user,
     lobby: state.lobby,

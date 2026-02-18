@@ -30,13 +30,18 @@ const authMiddleware = store => next => action => {
 			});
 		}
 
+		const updatedPayload = { 
+			...action.payload, 
+			ready: false 
+		};
+
 		// return with updated meta
 		const result = next({
 			type: LOGIN_REPLY,
-			payload: { ...action.payload },
+			payload: updatedPayload,
 			meta: { reply: true, senderId, fromServer:true }
 		});
-		store.dispatch(login(senderId, action.payload));
+		store.dispatch(login(senderId, updatedPayload));
 		return result;
 	}
 	else if (action.type === LOGOUT_REQUEST)
