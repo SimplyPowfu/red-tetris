@@ -24,7 +24,7 @@ import App from './frontend/containers/App.jsx';
 
 
 const initialState = {}
-const socket = socketIO.default('http://localhost:3004');
+const socket = socketIO.default(`http://${window.location.hostname}:3004`);
 
 /* This build the Redux store object.
 @reducer: The reducers that will be called after the middleware pipeline.

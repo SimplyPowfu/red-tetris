@@ -1,6 +1,13 @@
 var path = require('path');
 
+
 module.exports = {
+
+	
+  devServer: {
+	disableHostCheck: true,
+  },
+
   entry: './src/client/index.js',
 
   output: {
