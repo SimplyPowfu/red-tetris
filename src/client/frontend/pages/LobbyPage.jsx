@@ -99,7 +99,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                 {isHost ? (<button className="start-btn" onClick={() => startmatch()}>
                     start
                 </button>) : (<button className="start-btn" onClick={() => readystate()}>
-                    ready
+                    {user.ready ? 'ready' : 'unready'}
                 </button>)}
             </div>
 

@@ -10,7 +10,7 @@ import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
 import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
 import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
 import { SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT, ROTATE, MEGA_FALL } from '../../tetris/actions/moves';
-import { GAME_OVER, gameover } from '../../client/actions/tetris';
+import { GAME_OVER, READY_STATE, gameover } from '../../client/actions/tetris';
 import { Randomizer } from '../../tetris/Randomizer';
 
 const reducer = (state = {}, action) => {
@@ -61,6 +61,10 @@ const reducer = (state = {}, action) => {
 					...remainingUsers,
 				}
 			};
+		}
+		case READY_STATE:
+		{
+			//cambiare il ready al player
 		}
 		case START_MATCH:
 		{
