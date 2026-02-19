@@ -111,9 +111,10 @@ const moveValidation = store => next => action => {
 					store.dispatch(action);
 				});
 			} else {
+				const manual = action.meta.fromClient ? true : false;
 				store.dispatch({
 					...result.action,
-					meta: { fromServer:true, reply: true, senderId, lobbyId }
+					meta: { fromServer:true, manual, reply: true, senderId, lobbyId }
 				});
 			}
 			return ;

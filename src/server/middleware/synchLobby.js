@@ -6,6 +6,7 @@ import { lobbystate } from '../actions/lobby';
 import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
 import { END_MATCH, START_MATCH, WIN_MATCH } from '../actions/tetris';
 import { GAME_OVER, READY_STATE } from '../../client/actions/tetris';
+import { MEGA_FALL, SHIFT_DOWN } from '../../tetris/actions/moves';
 
 const synchLobby = store => next => action => {
 	const result = next(action); // reducer runs here
@@ -26,6 +27,7 @@ const synchLobby = store => next => action => {
 		}
 		case READY_STATE:
 		case USER_LOGOUT:
+		case SHIFT_DOWN:
 		case TOSTATIC_BLOCK:
 		case COLLAPSE_LINE:
 		case PENALITY_LINE:

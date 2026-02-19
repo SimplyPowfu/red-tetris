@@ -266,17 +266,20 @@ const reducer = (state = {}, action) => {
 		{
 			const { senderId, lobbyId } = action.meta;
 			const userState = state[lobbyId][senderId];
+			const newScore = action.meta.manual ? userState.score + 1 : userState.score;
+			console.log('actionSSSzzz', action.meta.manual, newScore);
 
-			return {
+			return ({
 				...state,
 				[lobbyId]: {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
 						activeBlock: sd(userState.activeBlock),
+						score: newScore,
 					}
 				}
-			}
+			});
 		}
 		case SHIFT_LEFT:
 		{
@@ -338,7 +341,8 @@ const reducer = (state = {}, action) => {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
-						activeBlock: mf(userState.activeBlock, userState.static)
+						activeBlock: mf(userState.activeBlock, userState.static),
+						score: userState.score + 10,
 					}
 				}
 			});
