@@ -8,9 +8,12 @@ import { newgrid } from '../../tetris/actions/grid';
 
 // Tetris import
 
-const intervals = {}; // store active intervals per player
+// Utils import
+import * as intervals from '../collector';
 
-const startMatch = store => next => action => {
+// const intervals = {}; // store active intervals per player
+
+const matchStart = store => next => action => {
 	const state = store.getState();
 
 	// dispatch a lobby update when the user logs in
@@ -21,6 +24,9 @@ const startMatch = store => next => action => {
 			const { lobbyId } = action.meta;
 			const match = state.tetris[lobbyId];
 			
+			console.log('[START] with players', match.players);
+			console.log('[START] with ready', match.ready);
+
 			if (match && !match.ingame && match.ready.length === match.players.length - 1)
 				store.dispatch(startmatch(lobbyId));
 			
@@ -37,8 +43,6 @@ const startMatch = store => next => action => {
 			// execute reducers so seedNewBlock() can access each user randomizer
 			const result = next(action);
 
-			// initialize lobby
-			intervals[lobbyId] = {};
 
 			match.players.forEach(playerId => {
 
@@ -52,39 +56,23 @@ const startMatch = store => next => action => {
 				store.dispatch(seedNewBlock(playerId, { reply:true, senderId:playerId }));
 				store.dispatch(seedNewBlock(playerId, { reply:true, senderId:playerId }));
 
-				// avoid creating duplicate intervals
-				if (!intervals[lobbyId][playerId]) {
-					intervals[lobbyId][playerId] = setInterval(() => {
-						store.dispatch({
-							type: MOVE_PIECE,
-							payload: { move: 'Down' },
-							meta: { fromServer:true, senderId: playerId, lobbyId, auto: true }
-						});
-					}, 1000);
-				}
+				// setInterval is lazy but I can handle it
+				const interval = setInterval(() => {
+					store.dispatch({
+						type: MOVE_PIECE,
+						payload: { move: 'Down' },
+						meta: { fromServer:true, senderId: playerId, lobbyId, auto: true }
+					});
+				}, 1000);
+
+				intervals.set(playerId, interval);
+				intervals.subscribe(playerId, lobbyId);
 			});
 
 			return result;
-		}
-		case GAME_OVER:
-		case USER_LOGOUT:
-		{
-			const { senderId } = action.meta;
-			clearInterval(intervals[senderId]);
-			delete intervals[senderId];
-			break ;
-		}
-		case WIN_MATCH:
-		case DELETE_MATCH:
-		{
-			const { lobbyId } = action.payload;
-		
-			Object.values(intervals[lobbyId]).forEach(clearInterval);
-			Object.keys(intervals[lobbyId]).forEach(key => delete intervals[lobbyId][key]);
-			break;
 		}
 	}
 	return next(action);
 }
 
-export default startMatch;
+export default matchStart;
