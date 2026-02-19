@@ -72,16 +72,19 @@ export function sr(activeBlock)
 export function rr(activeBlock)
 {
 	const { shape } = activeBlock;
-    const rows = shape.length;
-    const cols = shape[0].length;
-    const rotated = Array.from({ length: cols }, () => Array(rows).fill(null));
+  if (shape === 'o')
+    return activeBlock;
+  
+  const rows = shape.length;
+  const cols = shape[0].length;
+  const rotated = Array.from({ length: cols }, () => Array(rows).fill(null));
 
-    for (let x = 0; x < rows; x++) {
-      for (let y = 0; y < cols; y++) {
-        rotated[y][rows - 1 - x] = shape[x][y];
-      }
+  for (let x = 0; x < rows; x++) {
+    for (let y = 0; y < cols; y++) {
+      rotated[y][rows - 1 - x] = shape[x][y];
     }
-    return { ...activeBlock, shape: rotated };
+  }
+  return { ...activeBlock, shape: rotated };
 }
 
 // pushes the active block as low as possible

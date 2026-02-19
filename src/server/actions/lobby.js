@@ -19,13 +19,15 @@ export const lobbystate = (lobbyId, meta) => {
 						username: state.users[userId].username,
 						grid: lobby[userId].static,
 						gameover: lobby[userId].gameover,
+						score: lobby[userId].score,
+						ready: lobby.ready.includes(userId) ? true : false,
 					});
 				}
 				else
 				{
 					return ({
 						username: state.users[userId].username,
-						ready: state.users[userId].ready,
+						ready: lobby.ready.includes(userId) ? true : false,
 					});
 				}
 			}
@@ -34,7 +36,7 @@ export const lobbystate = (lobbyId, meta) => {
 
 		dispatch({
 			type: LOBBY_STATE,
-			payload: { lobbyId, players },
+			payload: { lobbyId, players, ingame: lobby.ingame },
 			meta: { fromServer:true, ...meta }
 		})
 	}

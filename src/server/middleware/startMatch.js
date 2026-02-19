@@ -21,7 +21,7 @@ const startMatch = store => next => action => {
 			const { lobbyId } = action.meta;
 			const match = state.tetris[lobbyId];
 			
-			if (match && !match.ingame)
+			if (match && !match.ingame && match.ready.length === match.players.length - 1)
 				store.dispatch(startmatch(lobbyId));
 			
 			return ;

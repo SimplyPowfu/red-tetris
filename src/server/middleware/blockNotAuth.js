@@ -1,5 +1,5 @@
 import { LOGIN_REPLY, LOGIN_REQUEST, LOGOUT_REQUEST } from "../../client/actions/auth";
-import { GAME_OVER, MOVE_PIECE, START_REQUEST } from "../../client/actions/tetris";
+import { GAME_OVER, MOVE_PIECE, READY_STATE, START_REQUEST } from "../../client/actions/tetris";
 import { COLLAPSE_LINE, NEW_BLOCK, NEW_GRID, PENALITY_LINE } from "../../tetris/actions/grid";
 import { ROTATE, SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT } from "../../tetris/actions/moves";
 import { USER_LOGIN, USER_LOGOUT } from "../actions/auth";
@@ -16,7 +16,8 @@ const blockNotAuth = store => next => action => {
 		if (action.type !== LOGIN_REQUEST
 			&& action.type !== LOGOUT_REQUEST
 			&& action.type !== START_REQUEST
-			&& action.type !== MOVE_PIECE)
+			&& action.type !== MOVE_PIECE
+			&& action.type !== READY_STATE)
 			return ;
 
 		// check for Id

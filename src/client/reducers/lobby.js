@@ -6,10 +6,8 @@ const reducer = (state = {} , action) => {
 	{
 	case LOBBY_STATE:
 	{
-		const { lobbyId, players } = action.payload;
 		return {
-			lobbyId,
-			players,
+			...action.payload
 		}
 	}
 	default: 

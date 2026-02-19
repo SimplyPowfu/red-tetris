@@ -48,7 +48,6 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
     const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
     const isHost = lobby.players && lobby.players.length && lobby.players[0].username === user.username;
 
-
     return (
         <div className="lobby-container">
             
@@ -79,7 +78,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                 <div className="retro-box score-box">
                     <div className="retro-box-title">SCORE</div>
                     <div className="retro-box-content">
-                        <span className="score-val">0</span>
+                        <span className="score-val">{user.score ? user.score : '0'}</span>
                     </div>
                 </div>
 
@@ -96,10 +95,10 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                 </div>)}
 
                 {/* BUTTON START */}
-                {isHost ? (<button className="start-btn" onClick={() => startmatch()}>
+                {lobby.ingame ? '' : isHost ? (<button className="start-btn" onClick={() => startmatch()}>
                     start
                 </button>) : (<button className="start-btn" onClick={() => readystate()}>
-                    {user.ready ? 'ready' : 'unready'}
+                    {user.ready ? 'unready' : 'ready'}
                 </button>)}
             </div>
 

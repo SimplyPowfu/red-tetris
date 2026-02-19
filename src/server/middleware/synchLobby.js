@@ -5,7 +5,7 @@ import { lobbystate } from '../actions/lobby';
 // Tetris import
 import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
 import { START_MATCH, WIN_MATCH } from '../actions/tetris';
-import { GAME_OVER } from '../../client/actions/tetris';
+import { GAME_OVER, READY_STATE } from '../../client/actions/tetris';
 
 const synchLobby = store => next => action => {
 	const result = next(action); // reducer runs here
@@ -24,6 +24,7 @@ const synchLobby = store => next => action => {
 			store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
 			break ;
 		}
+		case READY_STATE:
 		case USER_LOGOUT:
 		case TOSTATIC_BLOCK:
 		case COLLAPSE_LINE:

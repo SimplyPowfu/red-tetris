@@ -138,6 +138,7 @@ const mapStateToProps = (state) => {
 		statik: state.tetris.static,
 		activeBlock: state.tetris.activeBlock,
 		gameover: state.tetris.gameover,
+		score: state.tetris.score
 	}
 }
 

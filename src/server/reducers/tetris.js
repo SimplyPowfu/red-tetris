@@ -6,6 +6,8 @@ import {
 
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
 
+const TOSTATIC_SCORE = 100;
+
 // Tetris imports
 import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
 import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
@@ -27,7 +29,9 @@ const reducer = (state = {}, action) => {
 				return ({
 					...state,
 					[lobbyId]: {
+						ingame:false,
 						players: [userId],
+						ready: [],
 					}
 				});
 			}
@@ -64,7 +68,40 @@ const reducer = (state = {}, action) => {
 		}
 		case READY_STATE:
 		{
-			//cambiare il ready al player
+			const { senderId, lobbyId } = action.meta;
+			if (!state[lobbyId])
+				return state;
+
+			console.log('[TETRIS]', action.payload.ready);
+
+			// add the player to ready
+			if (action.payload.ready === true)
+			{
+				return {
+					...state,
+					[lobbyId]: {
+						...state[lobbyId],
+						ready: [
+							...state[lobbyId].ready,
+							senderId,
+						],
+					}
+				};
+			}
+			// remove the player from ready
+			else
+			{
+
+				const ready = state[lobbyId].ready.filter(player => player !== senderId);
+
+				return {
+					...state,
+					[lobbyId]: {
+						...state[lobbyId],
+						ready,
+					}
+				};
+			}
 		}
 		case START_MATCH:
 		{
@@ -76,6 +113,7 @@ const reducer = (state = {}, action) => {
 			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
 				acc[playerId] = {
 					gameover: false,
+					score: 0,
 					randomizer: Randomizer(seed),
 					activeBlock: null,
 					nextBlock: null,
@@ -89,9 +127,9 @@ const reducer = (state = {}, action) => {
 			return {
 				...state,
 				[lobbyId]: {
+					...state[lobbyId],
 					seed,
 					ingame:true,
-					...state[lobbyId],
 					...updatedPlayers,
 				},
 			};
@@ -129,6 +167,7 @@ const reducer = (state = {}, action) => {
 				[lobbyId]: {
 					...state[lobbyId],
 					ingame:false,
+					ready: [],
 				}
 			})
 		}
@@ -146,6 +185,7 @@ const reducer = (state = {}, action) => {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
+						score: userState.score + TOSTATIC_SCORE,
 						activeBlock: null,
 						static: ts(userState.activeBlock, userState.static)
 					}
