@@ -14,6 +14,7 @@ import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../te
 import { SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT, ROTATE, MEGA_FALL } from '../../tetris/actions/moves';
 import { GAME_OVER, READY_STATE, gameover } from '../../client/actions/tetris';
 import { Randomizer } from '../../tetris/Randomizer';
+import { checkLines, calculateScore } from '../../tetris/gridManip';
 
 const reducer = (state = {}, action) => {
 	switch(action.type)
@@ -185,9 +186,8 @@ const reducer = (state = {}, action) => {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
-						score: userState.score + TOSTATIC_SCORE,
 						activeBlock: null,
-						static: ts(userState.activeBlock, userState.static)
+						static: ts(userState.activeBlock, userState.static),
 					}
 				}
 			});
@@ -215,13 +215,16 @@ const reducer = (state = {}, action) => {
 			const { senderId, lobbyId } = action.meta;
 			const userState = state[lobbyId][senderId];
 
+			console.log('[TETRIS] new score', calculateScore(checkLines(userState.static), 0));
+
 			return ({
 				...state,
 				[lobbyId]: {
 					...state[lobbyId],
 					[senderId]: {
 						...userState,
-						static: cl(userState.static)
+						static: cl(userState.static),
+						score: userState.score + calculateScore(checkLines(userState.static), 0),
 					}
 				}
 			});
@@ -234,7 +237,7 @@ const reducer = (state = {}, action) => {
 
 			// build updated players object
 			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
-				if (playerId !== senderId) {
+				if (playerId !== senderId && !lobby[playerId].gameover) {
 					acc[playerId] = {
 						...lobby[playerId],
 						static: pn(lobby[playerId].static, lines),

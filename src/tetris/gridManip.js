@@ -71,10 +71,10 @@ export function sr(activeBlock)
 // @grid is the active grid, ROTATES the block
 export function rr(activeBlock)
 {
-	const { shape } = activeBlock;
-  if (shape === 'o')
+  if (activeBlock.type === 'O')
     return activeBlock;
-  
+
+  const { shape, column } = activeBlock;
   const rows = shape.length;
   const cols = shape[0].length;
   const rotated = Array.from({ length: cols }, () => Array(rows).fill(null));
@@ -84,7 +84,25 @@ export function rr(activeBlock)
       rotated[y][rows - 1 - x] = shape[x][y];
     }
   }
-  return { ...activeBlock, shape: rotated };
+
+  const kicks = [
+    { r: 0, c: 0 },  // Test standard (nessun movimento)
+    { r: 0, c: 1 },  // Prova a spostare a destra di 1
+    { r: 0, c: -1 }, // Prova a spostare a sinistra di 1
+    { r: -1, c: 0 }, // Prova a spostare in su di 1 (utile se ruoti sul fondo)
+    { r: 0, c: 2 },  // Prova a destra di 2 (spesso necessario per il pezzo 'I')
+    { r: 0, c: -2 }  // Prova a sinistra di 2
+  ];
+
+  for (const kick of kicks) {
+    const newCol = activeBlock.column + kick.c;
+    const newRow = activeBlock.row + kick.r;
+    const newBlock = {...activeBlock, shape: rotated, row: newRow, column: newCol}
+    if (isValidBlock(newBlock)) {
+      return newBlock;
+    }
+  }
+  return activeBlock;
 }
 
 // pushes the active block as low as possible
@@ -183,6 +201,26 @@ export function isValidPosition(block, grid) {
     return true;
 }
 
+export function isValidBlock(block) {
+	const { shape, row, column } = block;
+    for (let i = 0; i < shape.length; i++) {
+      for (let j = 0; j < shape[i].length; j++) {
+        if (shape[i][j] !== null) {
+          const newRow = row + i;
+          const newCol = column + j;
+          if (
+            newCol < 0 ||
+            newCol >= COLUMNS_NUMBER ||
+            newRow >= ROWS_NUMBER
+          ) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+}
+
 export function isValidSpawn(oldBlock, newBlock)
 {
   if (oldBlock === null)
@@ -228,4 +266,16 @@ export function checkLines(grid)
     const removedCount = playableLines.length - remainingPlayable.length;
 
 	return removedCount;
+}
+
+const scores = {
+  0: 0,
+  1: 40,
+  2: 100,
+  3: 300,
+  4: 1200,
+}
+
+export function calculateScore(lines, level){
+  return (scores[lines] * (level + 1));
 }
