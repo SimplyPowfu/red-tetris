@@ -4,7 +4,7 @@ import { lobbystate } from '../actions/lobby';
 
 // Tetris import
 import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
-import { START_MATCH, WIN_MATCH } from '../actions/tetris';
+import { END_MATCH, START_MATCH, WIN_MATCH } from '../actions/tetris';
 import { GAME_OVER, READY_STATE } from '../../client/actions/tetris';
 
 const synchLobby = store => next => action => {
@@ -31,6 +31,7 @@ const synchLobby = store => next => action => {
 		case PENALITY_LINE:
 		case GAME_OVER:
 		case WIN_MATCH:
+		case END_MATCH:
 		{
 			if (!action.meta || !action.meta.lobbyId)
 			{

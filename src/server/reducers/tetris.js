@@ -1,7 +1,8 @@
 import {
 	START_MATCH,
 	DELETE_MATCH,
-	WIN_MATCH
+	WIN_MATCH,
+	END_MATCH
 } from '../actions/tetris';
 
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
@@ -55,14 +56,18 @@ const reducer = (state = {}, action) => {
 			if (state[lobbyId][senderId] === undefined)
 				return state;
 
-			const { [senderId]: removedUser, ...remainingUsers } = state[lobbyId];
+			const { [senderId]: removedUser, ...remainingLobby } = state[lobbyId];
 			const players = state[lobbyId].players.filter(player => player !== senderId);
+			const ready = state[lobbyId].ready.filter(player => player !== senderId);
+
+			console.log(`[TETRIS] after logout of ${senderId}, players: ${players}`);
 
 			return {
 				...state,
 				[lobbyId]: {
+					...remainingLobby,
 					players: players,
-					...remainingUsers,
+					ready: ready,
 				}
 			};
 		}
@@ -158,7 +163,7 @@ const reducer = (state = {}, action) => {
 				}
 			});
 		}
-		case WIN_MATCH:
+		case END_MATCH:
 		{
 			const { lobbyId } = action.payload;
 			

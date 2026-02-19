@@ -6,8 +6,9 @@ import authMiddleware from './middleware/authMiddleware';
 import synchLobby from './middleware/synchLobby';
 import moveValidation from './middleware/moveValidation';
 import moveConseq from './middleware/moveConseq';
-import startMatch from './middleware/startMatch';
-import endMatch from './middleware/endMatch';
+import matchStart from './middleware/matchStart';
+import matchFinish from './middleware/matchFinish';
+import matchCleanup from './middleware/matchCleanup';
 import blockNotAuth from './middleware/blockNotAuth';
 import blockReduce from './middleware/blockReduce';
 
@@ -80,8 +81,9 @@ const store = createStore(
 	moveValidation,
 	moveConseq,
 	/* Check match status */
-	startMatch,
-	endMatch,
+	matchStart,
+	matchFinish,
+	matchCleanup,
 	/* Post State update */
 	synchLobby,
 	/* Send to Clients */
