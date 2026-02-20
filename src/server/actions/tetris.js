@@ -5,15 +5,15 @@ export const END_MATCH = 'tetris/endmatch';
 
 import { newblock } from "../../tetris/actions/grid";
 
-export const startmatch = (lobbyId) => {
+export const startmatch = (lobbyId, map) => {
 	return (dispatch, getState) => {
-		 const lobbyFound = getState().tetris[lobbyId];
+		const lobbyFound = getState().tetris[lobbyId];
 
     	if (!lobbyFound) return ;
 
 		dispatch({
 			type: START_MATCH,
-			payload: { lobbyId, players: lobbyFound.players },
+			payload: { lobbyId, players: lobbyFound.players, map: map },
 			meta: { fromServer:true }
 		});
 	}

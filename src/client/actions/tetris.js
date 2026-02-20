@@ -25,7 +25,7 @@ export const winmatch = () => {
 	}
 }
 
-export const startmatch = () => {
+export const startmatch = (map) => {
 	return (dispatch, getState) => {
 		const state = getState();
 
@@ -34,7 +34,7 @@ export const startmatch = () => {
 
 		dispatch({
 			type: START_REQUEST,
-			payload: { lobbyId: state.lobby.lobbyId },
+			payload: { lobbyId: state.lobby.lobbyId, map: map },
 			meta: { sendToServer: true }
 		})
 	}

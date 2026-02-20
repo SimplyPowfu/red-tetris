@@ -21,20 +21,22 @@ const matchStart = store => next => action => {
 	{
 		case START_REQUEST:
 		{
-			const { lobbyId } = action.meta;
+			const { lobbyId} = action.meta;
+			const { map } = action.payload
+			console.log('map middleware', map);
 			const match = state.tetris[lobbyId];
 			
 			console.log('[START] with players', match.players);
 			console.log('[START] with ready', match.ready);
 
 			if (match && !match.ingame && match.ready.length === match.players.length - 1)
-				store.dispatch(startmatch(lobbyId));
+				store.dispatch(startmatch(lobbyId, map));
 			
 			return ;
 		}
 		case START_MATCH:
 		{
-			const { lobbyId } = action.payload;
+			const { lobbyId, map } = action.payload;
 			const match = state.tetris[lobbyId];
 			
 			if (match === undefined)
@@ -48,8 +50,9 @@ const matchStart = store => next => action => {
 
 				// produve new grid
 				store.dispatch({
-					...newgrid(),
-					meta: { fromServer:true, reply:true, senderId:playerId }
+					...newgrid(map),
+					meta: { fromServer:true, reply:true, senderId:playerId, map: map },
+					payload: {map: map}
 				});
 
 				// spawn first block
