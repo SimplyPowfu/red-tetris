@@ -9,7 +9,8 @@ export const BlockColor = {
   Z: '#D50000', // rosso
   T: '#AA00FF', // viola
   X: '#535353', // grigio 
-  W: '#ffffff', //white
+  W: '#ffffff', // bianco
+  H: '#887777', // grigio(shot)
 };
 
 // 'I', 'O', 'T', 'L', 'J', 'S', 'Z'

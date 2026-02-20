@@ -368,3 +368,61 @@ function App() {
 }
 
 export default App
+
+
+/* export function st(activeBlock, grid)
+{
+  console.log('activeBlockk', activeBlock);
+  console.log('gridd', grid);
+  const shot = grid.some(row => row.includes('H'));
+  if (shot) {
+    //shift dei i blocchi H(proiettili) verso su, verranno gestiti singolarmente
+    const shotPositions = [];
+    for (let r = 0; r < ROWS_NUMBER; r++) {
+      for (let c = 0; c < COLUMNS_NUMBER; c++) {
+        if (grid[r][c] === 'H') {
+          shotPositions.push({ r, c });
+        }
+      }
+    }
+    shotPositions.forEach(({ r, c }) => {
+      grid[r][c] = null;
+      const nextR = r - 1;
+      if (nextR >= 0) {
+        let collided = false;
+
+        if (activeBlock) {
+          const { shape, row, column } = activeBlock;
+          const localR = nextR - row;
+          const localC = c - column;
+          if (localR >= 0 && localR < shape.length && 
+              localC >= 0 && localC < shape[0].length) {
+            if (shape[localR][localC] !== null) {
+              collided = true;
+            }
+          }
+        }
+        if (!collided && grid[nextR][c] !== null) {
+          collided = true;
+        }
+        if (!collided) {
+          // Se non c'è stata alcuna collisione, il proiettile si sposta sopra
+          grid[nextR][c] = 'H';
+        } else {
+          // In caso di collisione, activeBlock andra' a static (spero)
+          console.log("Collisione rilevata a riga:", nextR, "colonna:", c);
+        }
+      }
+    });
+  }
+  else {
+    //aggiunghi il blocco H(proiettile) in posizione row: 15, column: 2 e in posizione row: 15, column: 7)
+    const spawnPoints = [[14, 2], [14, 7]];
+    spawnPoints.forEach(([r, c]) => {
+      if (grid[r]) {
+        grid[r][c] = 'H';
+      }
+    });
+  }
+  return grid;
+} */

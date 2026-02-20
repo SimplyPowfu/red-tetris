@@ -26,7 +26,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
         );
     };
 
-    const maps = ["basic", "ghost"/*, "forest", "dungeon" */];
+    const maps = ["basic", "ghost", "invaders"];
     const [mapIndex, setMapIndex] = useState(0);
 
     const changeMap = (direction) => {

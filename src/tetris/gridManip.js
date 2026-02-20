@@ -30,7 +30,28 @@ const mapBlock = {
       [null, 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', null],
       [null, 'Z', 'Z', null, 'Z', 'Z', null, 'Z', 'Z', null]
     ],
-  // 'snake': [null],
+  invaders:[
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, 'W', 'W', null, null, null, null],
+      [null, null, null, null, 'L', 'L', null, null, null, null],
+      [null, null, null, null, 'W', 'W', null, null, null, null],
+      [null, null, 'Z', null, 'W', 'W', null, 'Z', null, null],
+      [null, 'W', 'L', 'W', 'W', 'W', 'W', 'L', 'W', null],
+      [null, 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', null],
+      [null, 'W', 'W', null, 'J', 'J', null, 'W', 'W', null],
+      [null, 'W', null, null, 'Z', 'Z', null, null, 'W', null]
+    ],
 }
 
 // returns a new grid
