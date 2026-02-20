@@ -7,8 +7,6 @@ import {
 
 import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
 
-const TOSTATIC_SCORE = 100;
-
 // Tetris imports
 import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
 import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
@@ -111,7 +109,7 @@ const reducer = (state = {}, action) => {
 		}
 		case START_MATCH:
 		{
-			const { lobbyId } = action.payload;
+			const { lobbyId, map } = action.payload;
 			const lobby = state[lobbyId];
 			const seed = Math.floor(Math.random() * 2147483648);
 
@@ -123,7 +121,7 @@ const reducer = (state = {}, action) => {
 					randomizer: Randomizer(seed),
 					activeBlock: null,
 					nextBlock: null,
-					static: newgrid(),
+					static: newgrid(map),
 				};
 				return acc;
 			}, {});

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { startmatch, readystate, move } from '../../actions/tetris';
 
@@ -25,7 +25,19 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
             </div>
         );
     };
-    // --- INPUT (Invariato) ---
+
+    const maps = ["basic", "ghost"/*, "forest", "dungeon" */];
+    const [mapIndex, setMapIndex] = useState(0);
+
+    const changeMap = (direction) => {
+        setMapIndex((prevIndex) => {
+            const nextIndex = prevIndex + direction;
+            if (nextIndex < 0) return maps.length - 1;
+            if (nextIndex >= maps.length) return 0;
+            return nextIndex;
+        });
+    };
+
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (winner)
@@ -87,15 +99,15 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                     <div className="retro-box-title">MAP</div>
                     <div className="retro-box-content">
                         <div className="map-selector">
-                            <div className="arrow-btn">◄</div>
-                            <span className="map-name">basic</span>
-                            <div className="arrow-btn">►</div>
+                            <div className="arrow-btn" onClick={() => changeMap(-1)}>◄</div>
+                            <span className="map-name">{maps[mapIndex].toUpperCase()}</span>
+                            <div className="arrow-btn"onClick={() => changeMap(1)}>►</div>
                         </div>
                     </div>
                 </div>)}
 
                 {/* BUTTON START */}
-                {lobby.ingame ? '' : isHost ? (<button className="start-btn" onClick={() => startmatch()}>
+                {lobby.ingame ? '' : isHost ? (<button className="start-btn" onClick={() => startmatch(maps[mapIndex])}>
                     start
                 </button>) : (<button className="start-btn" onClick={() => readystate()}>
                     {user.ready ? 'unready' : 'ready'}

@@ -44,7 +44,7 @@ const reducer = (state = {} , action) => {
 		return {
 			nextBlock: null,
 			activeBlock: null,
-			static: newgrid(),
+			static: newgrid(action.payload.map),
 		}
 	case NEW_BLOCK:
 	{

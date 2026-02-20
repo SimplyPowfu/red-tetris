@@ -6,9 +6,39 @@ import { START_COLUMN, Tetriminos, produceBlock } from "./blocks";
 const COLUMNS_NUMBER = 10
 const ROWS_NUMBER = 20
 
+// type of custom blocks for Map mode
+const mapBlock = {
+  ghost:[
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, 'Z', 'Z', 'Z', 'Z', null, null, null],
+      [null, null, 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', null, null],
+      [null, null, 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', null],
+      [null, 'Z', 'Z', 'W', 'W', 'Z', 'W', 'W', 'Z', null],
+      [null, 'Z', 'Z', 'W', 'L', 'Z', 'W', 'L', 'Z', null],
+      [null, 'Z', 'Z', 'Z', 'Z', null, 'Z', 'Z', 'Z', null],
+      [null, 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', null],
+      [null, 'Z', 'Z', null, 'Z', 'Z', null, 'Z', 'Z', null]
+    ],
+  // 'snake': [null],
+}
+
 // returns a new grid
-export function newgrid() {
-	return Array.from({ length: ROWS_NUMBER }, () => Array(COLUMNS_NUMBER).fill(null));
+export function newgrid(map) {
+	const grid = Array.from({ length: ROWS_NUMBER }, () => Array(COLUMNS_NUMBER).fill(null))
+  if (map && map !== "basic")
+    return mapBlock[map];
+  return grid;
 }
 
 // blockType the type of block to add next

@@ -113,7 +113,7 @@ body {
 
 .map-name {
     font-size: 0.9rem;
-    color: #888;
+    color: #a8a8a8;
 }
 
 /* Finti bottoni rossi */
@@ -126,7 +126,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
-    cursor: not-allowed; /* Cursore di divieto visto che è solo visuale */
+    cursor: pointer; /* Cursore di divieto visto che è solo visuale */
     border-radius: 2px;
     user-select: none;
 }
