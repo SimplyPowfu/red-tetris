@@ -1,10 +1,10 @@
 
 // Actions imports
 import { shiftdown, shiftleft, shiftright, rotate, megafall } from '../../tetris/actions/moves';
-import { collapse, tostatic, newblock } from '../../tetris/actions/grid';
+import { collapse, tostatic, shot, newblock, NEW_GRID } from '../../tetris/actions/grid';
 
 // Tetris imports
-import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
+import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gridManip';
 import { calculateScore, checkLines, isValidPosition } from '../../tetris/gridManip';
 
 // Class import
@@ -35,11 +35,19 @@ export class Player
 
 	constructor(__randomizer, __grid, __schedule, __complain) {
 		this._randomizer = __randomizer;
-		this._static = __grid ? __grid : newgrid();
+		this._static = __grid ? newgrid(__grid) : __grid;
 		this._schedule = __schedule;
 		this._complain = __complain;
 
 		/* spawn the first 2 blocks */
+		this._complain({
+			type: DISPATCH,
+			payload: {
+				type: NEW_GRID,
+				payload: { gridtype: __grid },
+				meta: { reply:true }
+			}
+		});
 		this.newblock();
 		this.newblock();
 
@@ -48,6 +56,12 @@ export class Player
 
 	get static() {
 		return this._static;
+	}
+	get gameover() {
+		return this._gameover;
+	}
+	get score() {
+		return this._score;
 	}	
 
 	/* Scheduled forwards */
@@ -97,7 +111,9 @@ export class Player
 
 		console.log('[PLAYER] moving', move);
 
-		let newBlock, action;
+		let newBlock = this._activeBlock,
+			newStatic = this._static,
+			action;
 		switch (move) {
 			case 'Down':
 				newBlock = sd(this._activeBlock);
@@ -124,13 +140,18 @@ export class Player
 					this.newblock();
 				}
 				break ;
+			case 'Shot':
+				newStatic = st(this._static);
+				action = () => this.shot();
+				break ;
 			default:
 				console.ward('[PLAYER] invalid move', move);
 		}
 
 		/* validate move */
-		if (!isValidPosition(newBlock, this._static))
+		if (!isValidPosition(newBlock, newStatic))
 		{
+			console.log('invalid move??', move);
 			if (move === 'Down') {
 				this.tostatic();
 				this.collapse();
@@ -149,19 +170,9 @@ export class Player
 	newblock() {
 		const blockType = this._randomizer.next();
 
-		/* ! ! ! VALIDITY CHECK ! ! ! */
-		const newBlock = nb(blockType);
-		if (!isValidPosition(newBlock, this._static)) {
-			this.gameover();
-			return ;
-		}
-
 		this._activeBlock = this._nextBlock;
 		this._nextBlock = nb(blockType);
-
-		/* loop stuff */
-		this.execShedule();
-
+		
 		// send to client
 		this._complain({
 			type: DISPATCH,
@@ -170,6 +181,13 @@ export class Player
 				meta: { reply:true }
 			}
 		});
+		/* ! ! ! VALIDITY CHECK ! ! ! */
+		if (this._activeBlock && !isValidPosition(this._activeBlock, this._static)) {
+			this.endgame();
+			return ;
+		}
+		/* loop stuff */
+		this.execShedule();
 	}
 
 	penality(lines) {
@@ -177,7 +195,7 @@ export class Player
 		/* ! ! ! VALIDITY CHECK ! ! ! */
 		const newStatic = pn(this._static, lines);
 		if (!isValidPosition(this._activeBlock, newStatic)) {
-			this.gameover();
+			this.endgame();
 			return ;
 		}
 
@@ -223,6 +241,16 @@ export class Player
 		});
 	}
 
+	shot() {
+		this._static = st(this._static);
+		this._complain({
+			type: DISPATCH,
+			payload: {
+				...shot(),
+				meta: { reply:true }
+			}
+		});
+	}
 
 	shiftdown(auto) {
 		if (!this._activeBlock) return ;
@@ -303,7 +331,7 @@ export class Player
 
 	/* STATUS METHODS */
 
-	gameover() {
+	endgame() {
 		// set player to gameover
 		this._gameover = true;
 		this.clearSchedule();

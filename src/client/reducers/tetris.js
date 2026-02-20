@@ -12,9 +12,10 @@ import {
 	COLLAPSE_LINE,
 	PENALITY_LINE,
 	TOSTATIC_BLOCK,
+	SHOT,
 } from '../../tetris/actions/grid'
 
-import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip'
+import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gridManip'
 import { GAME_OVER, WIN_MATCH } from '../actions/tetris'
 import { LOGIN_REPLY } from '../actions/auth'
 
@@ -44,7 +45,7 @@ const reducer = (state = {} , action) => {
 		return {
 			nextBlock: null,
 			activeBlock: null,
-			static: newgrid(action.payload.map),
+			static: newgrid(action.payload.gridtype),
 		}
 	case NEW_BLOCK:
 	{
@@ -69,6 +70,13 @@ const reducer = (state = {} , action) => {
 			activeBlock: null,
 			static: ts(state.activeBlock, state.static),
 		}
+	case SHOT:
+	{
+		return {
+			...state,
+			static: st(state.static),
+		}
+	}
 	case PENALITY_LINE:
 	{
 		if (!action.payload || !action.payload.lines)

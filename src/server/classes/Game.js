@@ -103,7 +103,7 @@ export default class Game
 					const alive = [...this._register.entries()]
 					.filter(([id, p]) => !p.gameover)
 					.map(([id]) => id);
-
+					console.log('alivee', alive, alive.length);
 					if (alive.length === 1)
 						this.winmatch(alive[0]);
 					else if (alive.length === 0)

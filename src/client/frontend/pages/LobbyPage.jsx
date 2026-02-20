@@ -95,7 +95,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                 </div>
 
                 {/* 3. MAP (Template Visivo) */}
-                {isHost && (<div className="retro-box map-box">
+                {isHost && lobby.ingame ? '' : (<div className="retro-box map-box">
                     <div className="retro-box-title">MAP</div>
                     <div className="retro-box-content">
                         <div className="map-selector">

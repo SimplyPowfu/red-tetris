@@ -88,9 +88,9 @@ const reducer = (state = {}, action) => {
 		}
 		case START_REQUEST:
 		{
-			const { lobbyId } = action.payload;
+			const { lobbyId, map } = action.payload;
 			const lobby = state[lobbyId];
-			lobby.startmatch();
+			lobby.startmatch(map);
 			
 			return state;
 			// return ({
@@ -112,12 +112,12 @@ const reducer = (state = {}, action) => {
 		{
 			const { senderId, lobbyId } = action.meta;
 			const { move } = action.payload;
-			if (!state[lobbyId])
+			if (!state[lobbyId] || !state[lobbyId].ingame)
 				return state;
 			const match = state[lobbyId].game[senderId];
 			if (!match)
 				return state;
-			match.move(move, true);
+			match.move(move);
 
 			return state;
 		}

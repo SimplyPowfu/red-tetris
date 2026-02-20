@@ -62,6 +62,46 @@ export function newgrid(map) {
   return grid;
 }
 
+export function st(grid)
+{
+
+  const newGrid = grid.map(row => [...row]);
+
+  const shot = newGrid.some(row => row.includes('H'));
+  if (shot) {
+    //shift dei i blocchi H(proiettili) verso su, verranno gestiti singolarmente
+    const shotPositions = [];
+    for (let r = 0; r < ROWS_NUMBER; r++) {
+      for (let c = 0; c < COLUMNS_NUMBER; c++) {
+        if (newGrid[r][c] === 'H') {
+          shotPositions.push({ r, c });
+        }
+      }
+    }
+    shotPositions.forEach(({ r, c }) => {
+      newGrid[r][c] = null;
+      const nextR = r - 1;
+      if (nextR >= 0) {
+        if (newGrid[nextR][c] === null)
+          newGrid[nextR][c] = 'H';
+        else
+          newGrid[nextR][c] = null;
+      }
+    });
+  }
+  else {
+    //aggiunghi il blocco H(proiettile) in posizione row: 15, column: 2 e in posizione row: 15, column: 7)
+    const spawnPoints = [[14, 2], [14, 7]];
+    spawnPoints.forEach(([r, c]) => {
+      while (r >= 0 && newGrid[r][c] !== null)
+        r--;
+      if (r >= 7)
+        newGrid[r][c] = 'H';
+    });
+  }
+  return newGrid;
+}
+
 // blockType the type of block to add next
 // 'I', 'O', 'T', 'L', 'J', 'S', 'Z'
 // RETURNS the whole state
@@ -245,6 +285,7 @@ export function isValidPosition(block, grid) {
             newRow >= ROWS_NUMBER ||
             (newRow >= 0 && grid[newRow][newCol] !== null)
           ) {
+            console.log('[COLLIDE]', newRow, newCol, block.type);
             return false;
           }
         }

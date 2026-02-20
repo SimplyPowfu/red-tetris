@@ -9,22 +9,29 @@ import { newgrid } from '../../tetris/gridManip';
 /* @loopSchedule programs 10 game ticks to be played on repeat, from 0 to 9
    @startGrdi is the grid that will be loaded at the beginning of the match */
 const GameModes = {
-	standard: {
+	basic: {
 		loopSchedule: {
 			tickMs: 100,
 			9: 'Down'
 		},
-		startGrid:newgrid(),
+		startGrid:"basic",
 	},
-	/* rotateGhost: {
+	ghost: {
 		loopSchedule: {
 			tickMs: 100,
-			4: 'Rotate',
 			8: 'Rotate',
 			9: 'Down'
 		},
-		startGrid:ghost(),
-	}, */
+		startGrid:"ghost",
+	},
+	invaders: {
+		loopSchedule: {
+			tickMs: 100,
+			4: 'Shot',
+			9: 'Down'
+		},
+		startGrid:"invaders",
+	},
 }
 
 export default class Lobby
@@ -33,7 +40,7 @@ export default class Lobby
 	_ingame = false;
 	_players = new Set();
 	_ready = new Set();
-	_gameMode = GameModes['standard'];
+	_gameMode = GameModes["basic"];
 	_game = null;
 	
 	constructor(__ID, __gameMode) {
@@ -97,8 +104,12 @@ export default class Lobby
 	}
 
 	/* Match management actions */
-	startmatch() {
+	startmatch(mode) {
 		console.log('[LOBBY] starting match...', this._ready.size, this._players.size);
+		if (mode) {
+			if (GameModes[mode])
+				this._gameMode = GameModes[mode];
+		} 
 		if (this._ready.size >= this._players.size - 1) {
 			this._ingame = true;
 			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
@@ -108,7 +119,7 @@ export default class Lobby
 
 	winmatch(winner) {
 		// Dispatch winmatch
-		DispatchQueue.push(winmatch(_ID, winner), `lobby:${this._ID}`);
+		DispatchQueue.push(winmatch(this._ID, winner), `lobby:${this._ID}`);
 
 		// endmatch
 		this.endmatch();
