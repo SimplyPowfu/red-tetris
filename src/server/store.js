@@ -12,6 +12,8 @@ import matchCleanup from './middleware/matchCleanup';
 import blockNotAuth from './middleware/blockNotAuth';
 import blockReduce from './middleware/blockReduce';
 
+import dispatchFromQ from './middleware/dispathFromQueue';
+
 const initialState = {}
 const sockets = new Set();
 
@@ -54,7 +56,7 @@ const lobbyBroadcastMiddleware = store => next => action => {
 }
 
 // Middleware to broadcast actions to all sockets
-const broadcastMiddleware = store => next => action => {
+/* const broadcastMiddleware = store => next => action => {
 	const result = next(action);
 
 	if (action.meta && action.meta.broadcast === true)
@@ -65,7 +67,7 @@ const broadcastMiddleware = store => next => action => {
 	}
 
 	return result
-}
+} */
 
 const store = createStore(
   reducer,
@@ -78,20 +80,22 @@ const store = createStore(
 	/* Block action */
 	blockNotAuth,
 	/* Validate action */
-	moveValidation,
-	moveConseq,
+	// moveValidation,
+	// moveConseq,
 	/* Check match status */
-	matchStart,
-	matchFinish,
-	matchCleanup,
+	// matchStart,
+	// matchFinish,
+	// matchCleanup,
 	/* Post State update */
 	synchLobby,
 	/* Send to Clients */
 	replyMiddleware,
 	lobbyBroadcastMiddleware,
-	broadcastMiddleware,
+	// broadcastMiddleware,
 	/* Don't Reduce */
-	blockReduce,
+	// blockReduce,
+	/* Centralized class dispatch */
+	dispatchFromQ,
   )
 )
 

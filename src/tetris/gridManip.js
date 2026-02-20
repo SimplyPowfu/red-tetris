@@ -181,6 +181,7 @@ export function pn(grid, lines)
 
 /* VALIDATE MOVE */
 export function isValidPosition(block, grid) {
+  console.log('[MANIP] valid', grid ? 'defined' : 'undefined');
 	const { shape, row, column } = block;
     for (let i = 0; i < shape.length; i++) {
       for (let j = 0; j < shape[i].length; j++) {

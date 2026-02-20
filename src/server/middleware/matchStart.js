@@ -1,5 +1,5 @@
 // Server imports
-import { DELETE_MATCH, START_MATCH, WIN_MATCH, seedNewBlock, startmatch } from '../actions/tetris';
+import { DELETE_LOBBY, START_MATCH, WIN_MATCH, seedNewBlock, startmatch } from '../actions/tetris';
 
 // Client imports
 import { GAME_OVER, MOVE_PIECE, START_REQUEST } from '../../client/actions/tetris';
@@ -32,7 +32,7 @@ const matchStart = store => next => action => {
 			
 			return ;
 		}
-		case START_MATCH:
+		/* case START_MATCH:
 		{
 			const { lobbyId } = action.payload;
 			const match = state.tetris[lobbyId];
@@ -70,7 +70,7 @@ const matchStart = store => next => action => {
 			});
 
 			return result;
-		}
+		} */
 	}
 	return next(action);
 }

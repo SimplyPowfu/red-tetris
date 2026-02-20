@@ -13,9 +13,13 @@ const TOSTATIC_SCORE = 100;
 import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf } from '../../tetris/gridManip';
 import { COLLAPSE_LINE,PENALITY_LINE, NEW_BLOCK, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
 import { SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT, ROTATE, MEGA_FALL } from '../../tetris/actions/moves';
-import { GAME_OVER, READY_STATE, gameover } from '../../client/actions/tetris';
+import { GAME_OVER, MOVE_PIECE, READY_STATE, START_REQUEST, gameover } from '../../client/actions/tetris';
 import { Randomizer } from '../../tetris/Randomizer';
 import { checkLines, calculateScore } from '../../tetris/gridManip';
+
+// Class imports
+import Game from '../classes/Game';
+import Lobby from '../classes/Lobby';
 
 const reducer = (state = {}, action) => {
 	switch(action.type)
@@ -27,50 +31,43 @@ const reducer = (state = {}, action) => {
 			const { userId, lobbyId } = action.payload
 			
 			// add the seed if the first user joined
-			if (!state[lobbyId]) {
+			if (!state[lobbyId])
+				{
+
+				const lobby = new Lobby(lobbyId);
+				lobby.join(userId);
+
 				return ({
 					...state,
-					[lobbyId]: {
-						ingame:false,
-						players: [userId],
-						ready: [],
-					}
+					[lobbyId]: lobby
 				});
 			}
 
 			// add the new user
-			return ({
-				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					players: [
-						...state[lobbyId].players,
-						userId,
-					],
-				}
-			});
+			const lobby = state[lobbyId];
+			lobby.join(userId);
+
+			return state;
+			// return ({
+			// 	...state,
+			// 	[lobbyId]: lobby,
+			// });
 		}
 		case USER_LOGOUT:
 		{
 			const { senderId, lobbyId } = action.meta;
 
-			if (state[lobbyId][senderId] === undefined)
+			if (!state[lobbyId])
 				return state;
 
-			const { [senderId]: removedUser, ...remainingLobby } = state[lobbyId];
-			const players = state[lobbyId].players.filter(player => player !== senderId);
-			const ready = state[lobbyId].ready.filter(player => player !== senderId);
+			const lobby = state[lobbyId];
+			lobby.leave(senderId);
 
-			console.log(`[TETRIS] after logout of ${senderId}, players: ${players}`);
-
-			return {
-				...state,
-				[lobbyId]: {
-					...remainingLobby,
-					players: players,
-					ready: ready,
-				}
-			};
+			return state;
+			// return ({
+			// 	...state,
+			// 	[lobbyId]: lobby,
+			// });
 		}
 		case READY_STATE:
 		{
@@ -80,65 +77,27 @@ const reducer = (state = {}, action) => {
 
 			console.log('[TETRIS]', action.payload.ready);
 
-			// add the player to ready
-			if (action.payload.ready === true)
-			{
-				return {
-					...state,
-					[lobbyId]: {
-						...state[lobbyId],
-						ready: [
-							...state[lobbyId].ready,
-							senderId,
-						],
-					}
-				};
-			}
-			// remove the player from ready
-			else
-			{
+			const lobby = state[lobbyId];
+			lobby.setready(senderId);
 
-				const ready = state[lobbyId].ready.filter(player => player !== senderId);
-
-				return {
-					...state,
-					[lobbyId]: {
-						...state[lobbyId],
-						ready,
-					}
-				};
-			}
+			return state;
+			// return ({
+			// 	...state,
+			// 	[lobbyId]: lobby,
+			// });
 		}
-		case START_MATCH:
+		case START_REQUEST:
 		{
 			const { lobbyId } = action.payload;
 			const lobby = state[lobbyId];
-			const seed = Math.floor(Math.random() * 2147483648);
-
-			// build updated players object
-			const updatedPlayers = lobby.players.reduce((acc, playerId) => {
-				acc[playerId] = {
-					gameover: false,
-					score: 0,
-					randomizer: Randomizer(seed),
-					activeBlock: null,
-					nextBlock: null,
-					static: newgrid(),
-				};
-				return acc;
-			}, {});
-
-			console.log('[TETRIS] start', updatedPlayers);
-
-			return {
-				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					seed,
-					ingame:true,
-					...updatedPlayers,
-				},
-			};
+			lobby.startmatch();
+			
+			return state;
+			// return ({
+			// 	...state,
+			// 	[lobbyId]: lobby,
+			// });
+			
 		}
 		case DELETE_LOBBY:
 		{
@@ -148,93 +107,83 @@ const reducer = (state = {}, action) => {
 
 			return rest;
 		}
-		case GAME_OVER:
+		/* ingame inputs */
+		case MOVE_PIECE:
 		{
 			const { senderId, lobbyId } = action.meta;
-			const userState = state[lobbyId][senderId];
+			const { move } = action.payload;
+			if (!state[lobbyId])
+				return state;
+			const match = state[lobbyId].game[senderId];
+			if (!match)
+				return state;
+			match.move(move, true);
+
+			return state;
+		}
+		/* case GAME_OVER:
+		{
+			const { senderId, lobbyId } = action.meta;
+			const lobby = state[lobbyId];
+			lobby.gameover(senderId);
 			
 			return ({
 				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					[senderId]: {
-						...userState,
-						gameover: true,
-					}
-				}
+				[lobbyId]: lobby,
 			});
-		}
-		case END_MATCH:
+		} */
+		/* case END_MATCH:
 		{
 			const { lobbyId } = action.payload;
+			const lobby = state[lobbyId];
+			lobby.endmatch();
 			
 			return ({
 				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					ingame:false,
-					ready: [],
-				}
-			})
-		}
+				[lobbyId]: lobby,
+			});
+		} */
 		/* -------------------------- */
 
 		/* GRID actions */
-		case TOSTATIC_BLOCK:
+		/* case TOSTATIC_BLOCK:
 		{
 			const { senderId, lobbyId } = action.meta;
-			const userState = state[lobbyId][senderId];
+			const lobby = state[lobbyId];
+			const player = lobby[senderId];
+			player.tostatic();
 
 			return ({
 				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					[senderId]: {
-						...userState,
-						activeBlock: null,
-						static: ts(userState.activeBlock, userState.static),
-					}
-				}
+				[lobbyId]: lobby,
 			});
 		}
 		case NEW_BLOCK:
 		{
 			const { blockType } = action.payload;
 			const { senderId, lobbyId } = action.meta;
-			const userState = state[lobbyId][senderId];
+			const lobby = state[lobbyId];
+			const player = lobby[senderId];
+			player.newblock(blockType);
 
 			return ({
 				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					[senderId]: {
-						...userState,
-						nextBlock: nb(blockType),
-						activeBlock: userState.nextBlock,
-					}
-				}
+				[lobbyId]: lobby,
 			});
 		}
 		case COLLAPSE_LINE:
 		{
 			const { senderId, lobbyId } = action.meta;
-			const userState = state[lobbyId][senderId];
-
-			console.log('[TETRIS] new score', calculateScore(checkLines(userState.static), 0));
+			const lobby = state[lobbyId];
+			const player = lobby[senderId];
+			player.collapse();
 
 			return ({
 				...state,
-				[lobbyId]: {
-					...state[lobbyId],
-					[senderId]: {
-						...userState,
-						static: cl(userState.static),
-						score: userState.score + calculateScore(checkLines(userState.static), 0),
-					}
-				}
+				[lobbyId]: lobby,
 			});
-		}
-		case PENALITY_LINE:
+		} */
+		/* case PENALITY_LINE:
 		{
 			const { senderId, lobbyId } = action.meta;
 			const { lines } = action.payload;
@@ -261,7 +210,7 @@ const reducer = (state = {}, action) => {
 				},
 			};
 		}
-		/* MOVE actions */
+		// MOVE actions
 		case SHIFT_DOWN:
 		{
 			const { senderId, lobbyId } = action.meta;
@@ -346,7 +295,7 @@ const reducer = (state = {}, action) => {
 					}
 				}
 			});
-		}
+		} */
 		default:
 			return state;
 	}

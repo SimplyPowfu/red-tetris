@@ -1,5 +1,5 @@
 // Server imports
-import { DELETE_MATCH, END_MATCH, deletematch } from '../actions/tetris';
+import { DELETE_LOBBY, END_MATCH, deletelobby } from '../actions/tetris';
 
 // Client imports
 import { GAME_OVER, } from '../../client/actions/tetris';
@@ -24,7 +24,7 @@ const matchCleanup = store => next => action => {
 				break ;
 
 			if (lobby.players.length === 1)
-				store.dispatch(deletematch(lobbyId));
+				store.dispatch(deletelobby(lobbyId));
 		}
 		case GAME_OVER:
 		{
@@ -36,7 +36,7 @@ const matchCleanup = store => next => action => {
 			break ;
 		}
 		case END_MATCH:
-		case DELETE_MATCH:
+		case DELETE_LOBBY:
 		{
 			const { lobbyId } = action.payload;
 			intervals.delSub(lobbyId, clearInterval);
