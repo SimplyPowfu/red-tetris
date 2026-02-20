@@ -13,13 +13,13 @@ export const lobbystate = (lobbyId, meta) => {
 			
 			if (state.users[userId])
 			{
-				if (lobby[userId])
+				if (lobby.ingame)
 				{
 					return ({
 						username: state.users[userId].username,
-						grid: lobby[userId].static,
-						gameover: lobby[userId].gameover,
-						score: lobby[userId].score,
+						grid: lobby.game[userId].static,
+						gameover: lobby.game[userId].gameover,
+						score: lobby.game[userId].score,
 						ready: lobby.ready.includes(userId) ? true : false,
 					});
 				}

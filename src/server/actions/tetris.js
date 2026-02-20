@@ -1,5 +1,5 @@
 export const START_MATCH = 'tetris/startmatch';
-export const DELETE_MATCH = 'tetris/deletematch';
+export const DELETE_LOBBY = 'tetris/deletelobby';
 export const WIN_MATCH = 'tetris/winmatch';
 export const END_MATCH = 'tetris/endmatch';
 
@@ -70,14 +70,14 @@ export const endmatch = (lobbyId) => {
 	}
 }
 
-export const deletematch = (lobbyId) => {
+export const deletelobby = (lobbyId) => {
 	return (dispatch, getState) => {
 		 const lobbyFound = getState().tetris[lobbyId];
 
     	if (!lobbyFound) return ;
 
 		dispatch({
-			type: DELETE_MATCH,
+			type: DELETE_LOBBY,
 			payload: { lobbyId },
 			meta: { fromServer:true }
 		});

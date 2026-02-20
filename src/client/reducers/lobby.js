@@ -7,6 +7,7 @@ const reducer = (state = {} , action) => {
 	case LOBBY_STATE:
 	{
 		return {
+			...state,
 			...action.payload
 		}
 	}
