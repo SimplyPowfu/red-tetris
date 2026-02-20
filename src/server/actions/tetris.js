@@ -5,7 +5,7 @@ export const END_MATCH = 'tetris/endmatch';
 
 import { newblock } from "../../tetris/actions/grid";
 
-export const startmatch = (lobbyId, map) => {
+export const startmatch = (lobbyId) => {
 	return (dispatch, getState) => {
 		const lobbyFound = getState().tetris[lobbyId];
 
@@ -13,7 +13,7 @@ export const startmatch = (lobbyId, map) => {
 
 		dispatch({
 			type: START_MATCH,
-			payload: { lobbyId, players: lobbyFound.players, map: map },
+			payload: { lobbyId, players: lobbyFound.players },
 			meta: { fromServer:true }
 		});
 	}

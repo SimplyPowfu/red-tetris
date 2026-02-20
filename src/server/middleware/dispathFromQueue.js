@@ -4,17 +4,17 @@ import DispatchQueue from '../classes/Queue';
 const dispatchFromQ = store => next => action => {
 	const result = next(action);
 
-	let actionQ = undefined;
+	let queued = undefined;
 
 	do
 	{
-		actionQ = DispatchQueue.pop();
-		if (actionQ) {
-			console.log(`[DISPATCHER] dispatching ${actionQ.payload.type} from ${action.origin}`)
-			store.dispatch(actionQ.payload);
+		queued = DispatchQueue.pop();
+		if (queued) {
+			console.log(`[DISPATCHER] dispatching ${queued.payload.type} from ${queued.origin}`)
+			store.dispatch(queued.payload);
 		}
 	}
-	while (actionQ !== undefined)
+	while (queued !== undefined)
 
 	return result;
 }

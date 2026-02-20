@@ -1,10 +1,8 @@
 import Game, { ENDMATCH, WINMATCH } from './Game';
 import DispatchQueue from './Queue';
 
-import { endmatch, winmatch, deletelobby } from '../actions/tetris';
+import { endmatch, winmatch, deletelobby, startmatch } from '../actions/tetris';
 
-// Tetris import
-import { newgrid } from '../../tetris/gridManip';
 
 /* @loopSchedule programs 10 game ticks to be played on repeat, from 0 to 9
    @startGrdi is the grid that will be loaded at the beginning of the match */
@@ -113,6 +111,10 @@ export default class Lobby
 		if (this._ready.size >= this._players.size - 1) {
 			this._ingame = true;
 			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
+			
+			// Send to client
+			DispatchQueue.push(startmatch(this._ID), `lobby:${this._ID}`);
+	
 			this.game.startmatch();
 		}
 	}
@@ -129,6 +131,7 @@ export default class Lobby
 		this._game = null;
 		this._ingame = false;
 		this._seed = 0;
+		this._ready = new Set();
 
 		// Dispatch endmatch
 		DispatchQueue.push(endmatch(this._ID), `lobby:${this._ID}`);
