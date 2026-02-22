@@ -1,5 +1,5 @@
 // Server imports
-import { store } from '../store';
+import { store } from './store';
 import { queuecheck } from '../actions/monitor';
 
 class Queue
@@ -17,7 +17,21 @@ class Queue
 		if (this._timeout === null)
 		{
 			this._timeout = setTimeout(() => {
-				store.dispatch(queuecheck());
+				
+				// Dispatch all queued actions
+				let queued = undefined;
+
+				do
+				{
+					queued = this.pop();
+					if (queued) {
+						console.log(`[DISPATCHER] dispatching ${queued.payload.type} from ${queued.origin}`)
+						store.dispatch(queued.payload);
+					}
+				}
+				while (queued !== undefined)
+
+				// reset timeout
 				this._timeout = null;
 			}, 0);
 		}

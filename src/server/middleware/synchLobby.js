@@ -8,6 +8,9 @@ import { END_MATCH, START_MATCH, WIN_MATCH } from '../actions/tetris';
 import { GAME_OVER, READY_STATE } from '../../client/actions/tetris';
 import { MEGA_FALL, SHIFT_DOWN } from '../../tetris/actions/moves';
 
+// Services
+import SHub from '../services/SocketHub';
+
 const synchLobby = store => next => action => {
 	const result = next(action); // reducer runs here
 	const state = store.getState();
@@ -22,7 +25,15 @@ const synchLobby = store => next => action => {
 		{
 			const { lobbyId } = action.payload;
 			// updates the lobby for all user
-			store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
+			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
+			SHub.emitTo(
+				(auth) => {
+					console.log('[SYNCH] SHub check', auth, lobbyId);
+					return auth && auth.lobbyId === lobbyId
+				},
+				'action',
+				lobbystate(state, lobbyId)
+			);
 			break ;
 		}
 		case READY_STATE:
@@ -42,7 +53,12 @@ const synchLobby = store => next => action => {
 			}
 
 			const { lobbyId } = action.meta;
-			store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
+			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
+			SHub.emitTo(
+				(auth) => auth && auth.lobbyId === lobbyId,
+				'action',
+				lobbystate(state, lobbyId)
+			);
 			break ;
 		}
 	}

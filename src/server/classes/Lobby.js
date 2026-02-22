@@ -1,5 +1,8 @@
 import Game, { ENDMATCH, WINMATCH } from './Game';
-import DispatchQueue from './Queue';
+
+// Services
+import DispatchQueue from '../services/Queue';
+import SHub from '../services/SocketHub';
 
 import { endmatch, winmatch, deletelobby, startmatch } from '../actions/tetris';
 
@@ -113,7 +116,7 @@ export default class Lobby
 			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
 			
 			// Send to client
-			DispatchQueue.push(startmatch(this._ID), `lobby:${this._ID}`);
+			// DispatchQueue.push(startmatch(this._ID), `lobby:${this._ID}`);
 	
 			this.game.startmatch();
 		}

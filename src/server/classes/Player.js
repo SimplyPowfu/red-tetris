@@ -8,7 +8,10 @@ import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gr
 import { calculateScore, checkLines, isValidPosition } from '../../tetris/gridManip';
 
 // Class import
-import { DISPATCH, GAMEOVER, PENALITY } from './Game';
+import { SOKREPLY, /* DISPATCH, */ GAMEOVER, PENALITY } from './Game';
+
+// Services
+// import SHub from '../services/SocketHub';
 
 const SHIFT_DOWN_SCORE = 1;
 const MEGA_FALL_SCORE = 10;
@@ -41,7 +44,7 @@ export class Player
 
 		/* spawn the first 2 blocks */
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				type: NEW_GRID,
 				payload: { gridtype: __grid },
@@ -175,10 +178,9 @@ export class Player
 		
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...newblock(blockType),
-				meta: { reply:true }
 			}
 		});
 		/* ! ! ! VALIDITY CHECK ! ! ! */
@@ -219,10 +221,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...collapse(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -233,10 +234,9 @@ export class Player
 		
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...tostatic(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -244,10 +244,9 @@ export class Player
 	shot() {
 		this._static = st(this._static);
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...shot(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -260,10 +259,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...shiftdown(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -275,10 +273,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...shiftleft(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -290,10 +287,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...shiftright(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -305,10 +301,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...rotate(),
-				meta: { reply:true }
 			}
 		});
 	}
@@ -321,10 +316,9 @@ export class Player
 
 		// send to client
 		this._complain({
-			type: DISPATCH,
+			type: SOKREPLY,
 			payload: {
 				...megafall(),
-				meta: { reply:true }
 			}
 		});
 	}

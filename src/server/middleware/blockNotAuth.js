@@ -1,8 +1,5 @@
-import { LOGIN_REPLY, LOGIN_REQUEST, LOGOUT_REQUEST } from "../../client/actions/auth";
-import { GAME_OVER, MOVE_PIECE, READY_STATE, START_REQUEST } from "../../client/actions/tetris";
-import { COLLAPSE_LINE, NEW_BLOCK, NEW_GRID, PENALITY_LINE } from "../../tetris/actions/grid";
-import { ROTATE, SHIFT_DOWN, SHIFT_LEFT, SHIFT_RIGHT } from "../../tetris/actions/moves";
-import { USER_LOGIN, USER_LOGOUT } from "../actions/auth";
+import { LOGIN_REQUEST, LOGOUT_REQUEST } from "../../client/actions/auth";
+import { MOVE_PIECE, READY_STATE, START_REQUEST } from "../../client/actions/tetris";
 
 // Checks if the action was dispatched by the socket.io (meta.fromClient)
 // If so checks if the ID is authenticated. IF so appends the lobbyId

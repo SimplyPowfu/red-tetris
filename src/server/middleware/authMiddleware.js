@@ -3,6 +3,8 @@ import { login, logout } from '../actions/auth';
 
 export const USER_CONFLICT = 'user/conflict';
 
+import SHub from '../services/SocketHub';
+
 // Checks login requests
 const authMiddleware = store => next => action => {
 	console.log('[LOGIN] got', action.type);
@@ -15,29 +17,49 @@ const authMiddleware = store => next => action => {
 		// Check if user ID or username already exists
 		if (Object.values(state.users).some(u => u.username === username)) {
 			// Dispatch conflict action to sender
-			return next({
+			SHub.emit(senderId, 'action', {
 				type: USER_CONFLICT,
-				message: 'Username already exists',
-				meta: { reply: true, senderId, fromServer:true }
+				message: 'Match already started',
 			});
+			return ;
+			// return next({
+			// 	type: USER_CONFLICT,
+			// 	message: 'Username already exists',
+			// 	meta: { reply: true, senderId, fromServer:true }
+			// });
 		}
 		const match = state.tetris[lobbyId];
 		if (match && match.ingame === true) {
-			return next({
+			SHub.emit(senderId, 'action', {
 				type: USER_CONFLICT,
 				message: 'Match already started',
-				meta: { reply: true, senderId, fromServer:true }
 			});
+			// return next({
+			// 	type: USER_CONFLICT,
+			// 	message: 'Match already started',
+			// 	meta: { reply: true, senderId, fromServer:true }
+			// });
+			return ;
 		}
 
 		// return with updated meta
-		const result = next({
+		SHub.auth(senderId, action.payload);
+		SHub.emit(senderId, 'action', {
 			type: LOGIN_REPLY,
 			payload: action.payload,
-			meta: { reply: true, senderId, fromServer:true }
 		});
+		const err = SHub.error();
+		if (err)
+			console.error('Error on auth', err);
+
+		// const result = next({
+		// 	type: LOGIN_REPLY,
+		// 	payload: action.payload,
+		// 	meta: { reply: true, senderId, fromServer:true }
+		// });
+
 		store.dispatch(login(senderId, action.payload));
-		return result;
+		return ;
 	}
 	else if (action.type === LOGOUT_REQUEST)
 	{

@@ -1,11 +1,10 @@
-import fs  from 'fs'
-import debug from 'debug'
-import { store, sockets } from './store'
-import { act } from 'react'
-import { logout, USER_LOGOUT } from './actions/auth'
-import { MOVE_PIECE } from '../client/actions/tetris'
-import { START_MATCH } from './actions/tetris'
-import { LOGIN_REQUEST, LOGOUT_REQUEST } from '../client/actions/auth'
+import fs  from 'fs';
+import debug from 'debug';
+import { LOGOUT_REQUEST } from '../client/actions/auth';
+
+// Services
+import { store } from './services/store';
+import SHub from './services/SocketHub';
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
@@ -36,7 +35,9 @@ const initApp = (app, params, cb) => {
 const initEngine = io => {
 	io.on('connection', function(socket) {
 		loginfo("Socket connected: " + socket.id);
-		sockets.add(socket);
+		
+		// store socket in socket hub
+		SHub.set(socket.id, socket);
 
 		socket.on('action', (action) => {
 			loginfo(`action from ${socket.id}`, action);
@@ -60,7 +61,7 @@ const initEngine = io => {
 				type: LOGOUT_REQUEST,
 				meta: { fromClient:true, senderId:socket.id }
 			});
-			sockets.delete(socket);
+			SHub.delete(socket.id);
 		})
 	})
 }
