@@ -2,16 +2,18 @@
 // Actions imports
 import { shiftdown, shiftleft, shiftright, rotate, megafall } from '../../tetris/actions/moves';
 import { collapse, tostatic, shot, newblock, NEW_GRID } from '../../tetris/actions/grid';
+import { requpdate } from '../actions/lobby';
+import { score } from '../../client/actions/tetris';
 
 // Tetris imports
 import { newgrid, nb, cl, ts, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gridManip';
 import { calculateScore, checkLines, isValidPosition } from '../../tetris/gridManip';
 
 // Class import
-import { SOKREPLY, /* DISPATCH, */ GAMEOVER, PENALITY } from './Game';
+import { SOKREPLY, DISPATCH, GAMEOVER, PENALITY } from './Game';
 
 // Services
-// import SHub from '../services/SocketHub';
+// import Leaderboard from '../services/Leaderboard';
 
 const SHIFT_DOWN_SCORE = 1;
 const MEGA_FALL_SCORE = 10;
@@ -226,6 +228,14 @@ export class Player
 				...collapse(),
 			}
 		});
+
+		// update whole lobby
+		this._complain({
+			type: DISPATCH,
+			payload: {
+				...requpdate(),
+			}
+		});
 	}
 
 	tostatic() {
@@ -264,6 +274,16 @@ export class Player
 				...shiftdown(),
 			}
 		});
+
+		if (!auto) {
+			// Send the score update to the client
+			this._complain({
+				type: SOKREPLY,
+				payload: {
+					...score(this._score),
+				}
+			});
+		}
 	}
 
 	shiftleft() {
@@ -321,6 +341,14 @@ export class Player
 				...megafall(),
 			}
 		});
+
+		// Send the score update to the client
+		this._complain({
+			type: SOKREPLY,
+			payload: {
+				...score(this._score),
+			}
+		});
 	}
 
 	/* STATUS METHODS */
@@ -334,6 +362,9 @@ export class Player
 		if (this._complain) {
 			this._complain({
 				type: GAMEOVER,
+				payload: {
+					score: this._score,
+				}
 			});
 		}
 	}

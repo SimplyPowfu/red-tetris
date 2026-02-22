@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import alert from './alert';
-import server from './server';
-import user from './user';
-import lobby from './lobby';
-import tetris from './tetris';
+import alert from './alert.js';
+import server from './server.js';
+import user from './user.js';
+import lobby from './lobby.js';
+import tetris from './tetris.js';
 
 export default combineReducers({
 	alert,

@@ -1,7 +1,7 @@
 {
-  "name": "red_tetrisboilerplate",
+  "name": "red-tetris",
   "version": "0.0.1",
-  "author": "redpelicans",
+  "author": "ecarbona, topiana-",
   "license": "MIT",
   "scripts": {
     "eslint": "eslint src",
@@ -23,6 +23,9 @@
     "socket.io": "^1.4.6"
   },
   "devDependencies": {
+    "@babel/cli": "^7.28.6",
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
     "babel-cli": "^6.7.7",
     "babel-core": "^6.7.7",
     "babel-eslint": "^6.1.0",

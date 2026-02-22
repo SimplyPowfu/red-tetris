@@ -1,5 +1,5 @@
 export const LOBBY_STATE = 'lobby/state';
-
+export const REQUEST_UPDATE = 'lobby/requpdate';
 
 
 // export const lobbystate = (lobbyId, meta) => {
@@ -43,6 +43,14 @@ export const LOBBY_STATE = 'lobby/state';
 // 		});
 // 	}
 // }
+
+export const requpdate = (lobbyId) => {
+	return ({
+		type: REQUEST_UPDATE,
+		payload: { lobbyId },
+		meta: { fromServer:true }
+	});
+}
 
 
 export const lobbystate = (state, lobbyId) => {

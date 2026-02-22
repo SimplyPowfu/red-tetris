@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import './Board.css';
-import { BlockColor } from '../../../tetris/blocks';
+import { BlockColor } from '../../../tetris/blocks.js';
 
 export const Tetris = () => {
 	return (

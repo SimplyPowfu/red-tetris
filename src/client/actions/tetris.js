@@ -3,6 +3,7 @@ export const READY_STATE = 'tetris/readystate';
 export const MOVE_PIECE = 'tetris/move';
 export const GAME_OVER = 'tetris/gameover';
 export const WIN_MATCH = 'tetris/winmatch';
+export const TETRIS_SCORE = 'tetris/score';
 
 // Execute game moves
 export const move = (move) => {
@@ -10,6 +11,13 @@ export const move = (move) => {
 		type: MOVE_PIECE,
 		payload: { move },
 		meta: { sendToServer:true }
+	}
+}
+
+export const score = (score) => {
+	return {
+		type: TETRIS_SCORE,
+		payload: { score },
 	}
 }
 

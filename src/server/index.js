@@ -1,34 +1,51 @@
 import fs  from 'fs';
 import debug from 'debug';
-import { LOGOUT_REQUEST } from '../client/actions/auth';
+import { LOGOUT_REQUEST } from '../client/actions/auth.js';
 
 // Services
-import { store } from './services/store';
-import SHub from './services/SocketHub';
+import store from './services/Store.js';
+import SHub from './services/SocketHub.js';
+import Leaderboard from './services/Leaderboard.js';
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
 
 const initApp = (app, params, cb) => {
-	const {host, port} = params
+	const { host, port } = params
+
 	const handler = (req, res) => {
-		const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'
-		fs.readFile(__dirname + file, (err, data) => {
-			if (err) {
-				logerror(err)
-				res.writeHead(500)
-				return res.end('Error loading index.html')
-			}
-			res.writeHead(200)
-			res.end(data)
-		})
+		if (req.url === '/bundle.js' || req.url === '/')
+		{
+			const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'
+			fs.readFile(__dirname + file, (err, data) => {
+				if (err) {
+					logerror(err);
+					res.writeHead(500);
+					return res.end('Error loading index.html');
+				}
+				res.writeHead(200);
+				res.end(data);
+			});
+		}
+		else if (req.url === '/leaderboard')
+		{
+			const data = JSON.stringify(Leaderboard.sorted());
+			
+			// Add CORS headers
+			res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
+			res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+			res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+			
+			res.writeHead(200);
+			res.end(data);
+		}
 	}
 
-	app.on('request', handler)
+	app.on('request', handler);
 
 	app.listen({host, port}, () =>{
-		loginfo(`tetris listen on ${params.url}`)
-		cb()
+		loginfo(`tetris listen on ${params.url}`);
+		cb();
 	})
 }
 

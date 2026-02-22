@@ -1,5 +1,5 @@
-import { USER_CONFLICT } from '../../server/middleware/authMiddleware';
-import { alert } from '../actions/alert';
+import { USER_CONFLICT } from '../../server/middleware/authMiddleware.js';
+import { alert } from '../actions/alert.js';
 
 // 'store', 'next' and 'action' all supplied by Redux on call
 const alertMiddleware = store => next => action => {

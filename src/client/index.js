@@ -8,16 +8,16 @@ import { Provider } from 'react-redux'
 import * as socketIO from 'socket.io-client'
 
 // Actions
-import { alert } from './actions/alert'
+import { alert } from './actions/alert.js'
 import { ping, connected } from './actions/server.js'
 
 // Middlewares
-import storeStateMiddleware from './middleware/storeStateMiddleware';
+import storeStateMiddleware from './middleware/storeStateMiddleware.js';
 import socketMiddleware from './middleware/socketMiddleware.js';
 import alertMiddleware from './middleware/alertMiddleware.js';
 
 // Reducer
-import reducer from './reducers'
+import reducer from './reducers/index.js'
 
 // Frontend
 import App from './frontend/containers/App.jsx';

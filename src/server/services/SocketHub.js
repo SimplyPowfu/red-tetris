@@ -91,7 +91,7 @@ export class SocketHub
 	/* Send to payloadcheck */
 	emitTo(check, __eventName, __event)
 	{
-		const target = [...this._sockets.values()].filter(socket => check(socket.auth));
+		const target = [...this._sockets.values()].filter(socket => socket.auth && check(socket.auth));
 		console.log('[SocketHub] emitTo', target);
 		target.forEach(t => t.socket.emit(__eventName, __event))
 	}

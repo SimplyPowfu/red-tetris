@@ -1,10 +1,10 @@
-import Game, { ENDMATCH, WINMATCH } from './Game';
+import Game, { ENDMATCH, HIGHSCORE, WINMATCH } from './Game';
 
 // Services
 import DispatchQueue from '../services/Queue';
 import SHub from '../services/SocketHub';
 
-import { endmatch, winmatch, deletelobby, startmatch } from '../actions/tetris';
+import { endmatch, winmatch, deletelobby, startmatch, highscore } from '../actions/tetris';
 
 
 /* @loopSchedule programs 10 game ticks to be played on repeat, from 0 to 9
@@ -97,6 +97,9 @@ export default class Lobby
 					break ;
 				case ENDMATCH:
 					this.endmatch();
+					break ;
+				case HIGHSCORE:
+					DispatchQueue.push(highscore(issue.payload.senderId, issue.payload.score), `lobby:${this._ID}`);
 					break ;
 				default:
 					console.warn('[LOBBY] invalid complaint of type', issue.type);

@@ -1,5 +1,5 @@
 // Utils import
-import SHub from "../services/SocketHub";
+import SHub from "../services/SocketHub.js";
 
 const lobbyCast = store => next => action => {
 	const result = next(action);

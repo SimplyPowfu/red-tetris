@@ -1,12 +1,12 @@
 // Server imports
-import { USER_LOGIN, USER_LOGOUT } from '../actions/auth';
-import { lobbystate } from '../actions/lobby';
+import { USER_LOGIN, USER_LOGOUT } from '../actions/auth.js';
+import { lobbystate, REQUEST_UPDATE } from '../actions/lobby.js';
 
 // Tetris import
-import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid';
-import { END_MATCH, START_MATCH, WIN_MATCH } from '../actions/tetris';
-import { GAME_OVER, READY_STATE } from '../../client/actions/tetris';
-import { MEGA_FALL, SHIFT_DOWN } from '../../tetris/actions/moves';
+import { COLLAPSE_LINE, PENALITY_LINE, TOSTATIC_BLOCK } from '../../tetris/actions/grid.js';
+import { END_MATCH, START_MATCH, WIN_MATCH } from '../actions/tetris.js';
+import { GAME_OVER, READY_STATE } from '../../client/actions/tetris.js';
+import { MEGA_FALL, SHIFT_DOWN } from '../../tetris/actions/moves.js';
 
 // Services
 import SHub from '../services/SocketHub';
@@ -22,14 +22,15 @@ const synchLobby = store => next => action => {
 	{
 		case USER_LOGIN:
 		case START_MATCH:
+		case REQUEST_UPDATE:
 		{
-			const { lobbyId } = action.payload;
+			const lobbyId = action.payload.lobbyId ? action.payload.lobbyId : action.meta.lobbyId;
 			// updates the lobby for all user
 			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
 			SHub.emitTo(
 				(auth) => {
 					console.log('[SYNCH] SHub check', auth, lobbyId);
-					return auth && auth.lobbyId === lobbyId
+					return auth.lobbyId === lobbyId
 				},
 				'action',
 				lobbystate(state, lobbyId)
@@ -55,7 +56,7 @@ const synchLobby = store => next => action => {
 			const { lobbyId } = action.meta;
 			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
 			SHub.emitTo(
-				(auth) => auth && auth.lobbyId === lobbyId,
+				(auth) => auth.lobbyId === lobbyId,
 				'action',
 				lobbystate(state, lobbyId)
 			);

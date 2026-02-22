@@ -1,5 +1,5 @@
-import { LOGIN_REQUEST, LOGOUT_REQUEST } from "../../client/actions/auth";
-import { MOVE_PIECE, READY_STATE, START_REQUEST } from "../../client/actions/tetris";
+import { LOGIN_REQUEST, LOGOUT_REQUEST } from "../../client/actions/auth.js";
+import { MOVE_PIECE, READY_STATE, START_REQUEST } from "../../client/actions/tetris.js";
 
 // Checks if the action was dispatched by the socket.io (meta.fromClient)
 // If so checks if the ID is authenticated. IF so appends the lobbyId

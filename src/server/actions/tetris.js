@@ -2,6 +2,7 @@ export const START_MATCH = 'tetris/startmatch';
 export const DELETE_LOBBY = 'tetris/deletelobby';
 export const WIN_MATCH = 'tetris/winmatch';
 export const END_MATCH = 'tetris/endmatch';
+export const HIGH_SCORE = 'tetris/highscore';
 
 import { newblock } from "../../tetris/actions/grid";
 
@@ -36,14 +37,14 @@ export const seedNewBlock = (userId, meta) => {
 	}
 }
 
-export const winmatch = (lobbyId, userId) => {
+export const winmatch = (lobbyId, senderId) => {
 	return (dispatch, getState) => {
 		const state = getState();
 
 		const lobbyFound = state.tetris[lobbyId];
     	if (!lobbyFound) return ;
 
-		const user = state.users[userId];
+		const user = state.users[senderId];
 		if (!user)
 			return ;
 
@@ -51,6 +52,22 @@ export const winmatch = (lobbyId, userId) => {
 			type: WIN_MATCH,
 			payload: { lobbyId, username:user.username },
 			meta: { fromServer:true, lobbyCast:true, lobbyId }
+		});
+	}
+}
+
+export const highscore = (senderId, score) => {
+	return (dispatch, getState) => {
+		const state = getState();
+
+		const user = state.users[senderId];
+		if (!user)
+			return ;
+
+		dispatch({
+			type: HIGH_SCORE,
+			payload: { score, username:user.username },
+			meta: { fromServer:true }
 		});
 	}
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
-import AuthPage from '../pages/AuthPage'
-import LobbyPage from '../pages/LobbyPage'
+import AuthPage from '../pages/AuthPage.jsx'
+import LobbyPage from '../pages/LobbyPage.jsx'
 
 
 // const App = ({message}) => {

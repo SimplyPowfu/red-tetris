@@ -9,6 +9,7 @@ import { penality } from "../../tetris/actions/grid";
 // Services
 import DispatchQueue from '../services/Queue';
 import SHub from '../services/SocketHub';
+import Leaderboard from '../services/Leaderboard';
 
 
 // internal defines
@@ -16,8 +17,9 @@ export const GAMEOVER = 'priv/gamover';
 export const PENALITY = 'priv/penality';
 export const WINMATCH = 'priv/winmatch';
 export const ENDMATCH = 'priv/endmatch';
-// export const DISPATCH = 'priv/dispatch';
+export const DISPATCH = 'priv/dispatch';
 export const SOKREPLY = 'priv/socketreply';
+export const HIGHSCORE = 'priv/highscore';
 
 /* type GameMode = {
 	loopcall: () => void;
@@ -101,17 +103,23 @@ export default class Game
 					// Send gamover
 					SHub.emit(senderId, 'action', gameover());
 
-					// DispatchQueue.push({
-					// 	...gameover(),
-					// 	meta: { fromServer:true, reply:true, senderId }
-					// }, `game:${this._originId}`);
+					// Save to leaderboard
+					console.log('[GAME] Highscore check', Leaderboard.highscore, issue.payload.score)
+					if (Leaderboard.highscore <= issue.payload.score) {
+						this._complain({
+							type: HIGHSCORE,
+							payload: {
+								senderId,
+								score: issue.payload.score,
+							}
+						});
+					}
 
-					// check if only 1 player alive
+					// Check for Endmatch conditions
 					const alive = [...this._register.entries()]
 						.filter(([id, p]) => !p.gameover)
 						.map(([id]) => id);
 
-					console.log('alivee', alive, alive.length);
 					if (alive.length === 1)
 						this.winmatch(alive[0]);
 					else if (alive.length === 0)
@@ -142,15 +150,15 @@ export default class Game
 					
 					break ;
 				}
-				// case DISPATCH:
-				// {
-				// 	DispatchQueue.push({
-				// 		...issue.payload,
-				// 		meta: { ...issue.payload.meta, fromServer:true, senderId }
-				// 	}, `game:${this._originId}`);
+				case DISPATCH:
+				{
+					DispatchQueue.push({
+						...issue.payload,
+						meta: { ...issue.payload.meta, fromServer:true, senderId }
+					}, `game:${this._originId}`);
 
-				// 	break ;
-				// }
+					break ;
+				}
 				case SOKREPLY:
 				{
 					SHub.emit(senderId, 'action', issue.payload);

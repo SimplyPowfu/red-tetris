@@ -3,7 +3,7 @@ import { login, logout } from '../actions/auth';
 
 export const USER_CONFLICT = 'user/conflict';
 
-import SHub from '../services/SocketHub';
+import SHub from '../services/SocketHub.js';
 
 // Checks login requests
 const authMiddleware = store => next => action => {

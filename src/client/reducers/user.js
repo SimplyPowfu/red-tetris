@@ -1,5 +1,6 @@
 import { LOBBY_STATE } from "../../server/actions/lobby"
 import { LOGIN_REPLY } from "../actions/auth"
+import { TETRIS_SCORE } from "../actions/tetris";
 
 const reducer = (state = {} , action) => {
 	// console.log('[reducer/user] reducing action', action);
@@ -24,6 +25,13 @@ const reducer = (state = {} , action) => {
 		else
 		{
 			return state;
+		}
+	}
+	case TETRIS_SCORE:
+	{
+		return {
+			...state,
+			score: action.payload.score,
 		}
 	}
 	default: 

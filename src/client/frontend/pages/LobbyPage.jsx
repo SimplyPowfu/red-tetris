@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { login } from '../../actions/auth';
-import { startmatch, readystate, move } from '../../actions/tetris';
+import { login } from '../../actions/auth.js';
+import { startmatch, readystate, move } from '../../actions/tetris.js';
 
 // Components
-import { SpectatorBoard } from '../components/SpectatorBoard';
-import PlayerBoard from '../components/Board';
-import NextBlock from '../components/NextBlock';
+import { SpectatorBoard } from '../components/SpectatorBoard.jsx';
+import PlayerBoard from '../components/Board.jsx';
+import NextBlock from '../components/NextBlock.jsx';
 
 import './Pages.css';
 
