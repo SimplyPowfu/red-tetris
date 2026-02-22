@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { login } from '../../actions/auth';
 import { startmatch, readystate, move } from '../../actions/tetris';
 
 // Components
@@ -9,8 +11,25 @@ import NextBlock from '../components/NextBlock';
 
 import './Pages.css';
 
-const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
+const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
     
+    const { room, player } = useParams()
+    const history = useHistory()
+    
+    useEffect(() => {
+            if (message) {
+                alert(message);
+                history.push('/');
+            }
+        }, [message]);
+
+    useEffect(() => {
+        if (!user.username) {
+            login({ username: player, lobbyId: room });
+        }
+    }, [user.username, user.lobbyId]);
+
+
     const gameOver = () => {
         if (!winner) return null;
 
@@ -55,7 +74,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
         return () => { window.removeEventListener('keydown', handleKeyDown); };
     }, [move, winner]);
 
-    if (!user || !lobby) return <div className="lobby-loading">Loading...</div>;
+    if (!user.username || !lobby.players) return <div className="lobby-loading">Loading...</div>;
 
     const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
     const isHost = lobby.players && lobby.players.length && lobby.players[0].username === user.username;
@@ -95,7 +114,7 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
                 </div>
 
                 {/* 3. MAP (Template Visivo) */}
-                {isHost && lobby.ingame ? '' : (<div className="retro-box map-box">
+                {isHost && ( lobby.ingame ? '' : <div className="retro-box map-box">
                     <div className="retro-box-title">MAP</div>
                     <div className="retro-box-content">
                         <div className="map-selector">
@@ -129,8 +148,9 @@ const LobbyPage = ({ lobby, user, startmatch, readystate, move, winner }) => {
     );
 }
 
-const mapDispatchToProps = { startmatch, readystate, move };
+const mapDispatchToProps = { login, startmatch, readystate, move };
 const mapStateToProps = (state) => ({
+    message: state.alert.message,
     user: state.user,
     lobby: state.lobby,
     winner: state.tetris.winner,

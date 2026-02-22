@@ -1,11 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth';
+import { alertclear } from '../../actions/alert';
 import '../main.css';
 
-const AuthPage = ({ login, message }) => {
+const AuthPage = ({ login, alertclear, user, message }) => {
 	const [username, setUsername] = useState('');
+	const [error, setError] = useState('');
 	const [lobbyId, setLobbyId] = useState('');
+	const history = useHistory();
+
+	useEffect(() => {
+        if (user.username) {
+            history.push(`/${user.lobbyId}/${user.username}`);
+        }
+    }, [user.username, user.lobbyId, history]);
+
+	useEffect(() => {
+        if (message) {
+            setError(message);
+            alertclear(); 
+        }
+    }, [message]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -46,17 +63,18 @@ const AuthPage = ({ login, message }) => {
 				Join Lobby
 				</button>
 
-				{message && <div className="message">{message}</div>}
+				{error && <div className="message">{error}</div>}
 			</form>
-			</div>
+		</div>
 	);
 }
 
-const mapDispatchToProps = { login };
+const mapDispatchToProps = { login, alertclear };
 
 const mapStateToProps = (state) => {
   return {
     message: state.alert.message,
+	user: state.user,
   }
 }
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
 import AuthPage from '../pages/AuthPage'
 import LobbyPage from '../pages/LobbyPage'
@@ -19,7 +20,14 @@ import LobbyPage from '../pages/LobbyPage'
 
 const App = ({ user }) => {
   return (
-    user.username ? <LobbyPage /> : <AuthPage />
+    <Router>
+      <Switch>
+        <Route exact path="/" component={ AuthPage } />
+        <Route exact path="/:room/:player" component={ LobbyPage } />
+        <Route path="/404" component={ <div>ciao</div> } />
+        {/* user.username ? <LobbyPage /> : <AuthPage /> */}
+      </Switch>
+    </Router>
   )
 }
 

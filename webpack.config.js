@@ -6,13 +6,15 @@ module.exports = {
 	
   devServer: {
 	disableHostCheck: true,
+  historyApiFallback: true,
   },
 
   entry: './src/client/index.js',
 
   output: {
     path: path.join(__dirname, 'build'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
 
   resolve: {
