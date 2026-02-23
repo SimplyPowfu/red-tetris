@@ -55,10 +55,12 @@ export const NextBlock = ({ nextBlock }) => {
 		<div
 		className="next-block"
 		style={{
-			display: "grid",
-			gridTemplateColumns: `repeat(4, 30px)`,
-			gap: "2px"
-		}}
+            display: "grid",
+            /* USA LA VARIABILE CSS AL POSTO DI 30px */
+            gridTemplateColumns: `repeat(4, var(--tile-size))`,
+            gridAutoRows: `var(--tile-size)`, // Aggiungiamo questo per bloccare l'altezza
+            gap: "1px" // Ridotto gap per coerenza con la board principale
+        }}
 		>
 		{gridToRender.map((row, i) =>
 			row.map((cell, j) => drawCell(i, j, cell))

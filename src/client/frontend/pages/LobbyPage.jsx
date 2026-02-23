@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { login } from '../../actions/auth.js';
@@ -31,6 +31,62 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
     
     const { room, player } = useParams()
     const history = useHistory()
+
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            setIsMobile(hasTouch && window.innerWidth <= 1024);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const touchStart = useRef({ x: 0, y: 0, lastX: 0, time: 0 });
+    const cellSize = 30;
+
+    const handleTouchStart = (e) => {
+        const x = e.targetTouches[0].clientX;
+        const y = e.targetTouches[0].clientY;
+        touchStart.current = {
+            x: x,
+            y: y,
+            lastX: x,
+            time: Date.now()
+        };
+    };
+
+    const handleTouchMove = (e) => {
+        if (!touchStart.current.time) return;
+
+        const currentX = e.targetTouches[0].clientX;
+        const deltaX = currentX - touchStart.current.lastX;
+
+        // Se il movimento laterale supera la dimensione di una cella
+        if (Math.abs(deltaX) >= cellSize) {
+            move(deltaX > 0 ? 'Right' : 'Left');
+            // Aggiorniamo lastX per calcolare il prossimo scatto da qui
+            touchStart.current.lastX = currentX;
+        }
+    };
+
+    const handleTouchEnd = (e) => {
+        if (!touchStart.current.time) return;
+
+        const deltaX = e.changedTouches[0].clientX - touchStart.current.x;
+        const deltaY = e.changedTouches[0].clientY - touchStart.current.y;
+        const deltaTime = Date.now() - touchStart.current.time;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+
+        if (deltaTime < 200 && absX < 15 && absY < 15)
+            move('Rotate');
+        else if (deltaY > 60 && absY > absX && deltaTime < 250)
+            move('Mega');
+
+        touchStart.current = { x: 0, y: 0, lastX: 0, time: 0 };
+    };
     
     /* Lobby updates */
     useEffect(() => {
@@ -98,17 +154,59 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
 
     return (
         <div className="lobby-container">
-            
             {/* SINISTRA: TU */}
             <div className="column left-column">
                 <div className="player-header">
                     <span className="star-icon">{isHost && '★'}</span> 
                     <span className="player-name">{user.username}</span>
                 </div>
-                <div className="board-wrapper">
+                <div className="board-wrapper"
+                    onTouchStart={isMobile ? handleTouchStart : undefined}
+                    onTouchMove={isMobile ? handleTouchMove : undefined}
+                    onTouchEnd={isMobile ? handleTouchEnd : undefined}
+                    style={{ touchAction: 'none', userSelect: 'none' }}>
                     {gameOver(winner)}
                     <PlayerBoard />
                 </div>
+                {isMobile && (
+                    <div className="mobile-interactive-area">
+                        {lobby.ingame ? (
+                            /* MOSTRA I TASTI DI GIOCO */
+                            <div className="controls-container">
+                                <div className="controls-row">
+                                    <button className="btn-rotate" onTouchStart={(e) => { e.preventDefault(); move('Rotate'); }}>⟳</button>
+                                </div>
+                                <div className="controls-row">
+                                    <button className="btn-left" onTouchStart={(e) => { e.preventDefault(); move('Left'); }}>◀</button>
+                                    <button className="btn-down" onTouchStart={(e) => { e.preventDefault(); move('Down'); }}>▼</button>
+                                    <button className="btn-right" onTouchStart={(e) => { e.preventDefault(); move('Right'); }}>▶</button>
+                                </div>
+                                <div className="controls-row">
+                                    <button className="btn-mega" onTouchStart={(e) => { e.preventDefault(); move('Mega'); }}>DROP</button>
+                                </div>
+                            </div>
+                        ) : (
+                            /* MOSTRA MAPPA E START/READY */
+                            <div className="mobile-lobby-controls">
+                                {isHost && (
+                                    <div className="retro-box map-box">
+                                        <div className="retro-box-title">MAP</div>
+                                        <div className="retro-box-content">
+                                            <div className="map-selector">
+                                                <div className="arrow-btn" onClick={() => changeMap(-1)}>◄</div>
+                                                <span className="map-name">{maps[mapIndex].toUpperCase()}</span>
+                                                <div className="arrow-btn" onClick={() => changeMap(1)}>►</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                <button className="start-btn" onClick={() => isHost ? startmatch(maps[mapIndex]) : readystate()}>
+                                    {isHost ? 'START' : (user.ready ? 'UNREADY' : 'READY')}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* CENTRO: CONTROLLI */}
@@ -131,27 +229,27 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                 </div>
 
                 {/* 3. MAP (Template Visivo) */}
-                {isHost && ( lobby.ingame ? '' : <div className="retro-box map-box">
-                    <div className="retro-box-title">MAP</div>
-                    <div className="retro-box-content">
-                        <div className="map-selector">
-                            <div className="arrow-btn" onClick={() => changeMap(-1)}>◄</div>
-                            <span className="map-name">{maps[mapIndex].toUpperCase()}</span>
-                            <div className="arrow-btn"onClick={() => changeMap(1)}>►</div>
+                {!isMobile && isHost && !lobby.ingame && (
+                    <div className="retro-box map-box">
+                        <div className="retro-box-title">MAP</div>
+                        <div className="retro-box-content">
+                            <div className="map-selector">
+                                <div className="arrow-btn" onClick={() => changeMap(-1)}>◄</div>
+                                <span className="map-name">{maps[mapIndex].toUpperCase()}</span>
+                                <div className="arrow-btn" onClick={() => changeMap(1)}>►</div>
+                            </div>
                         </div>
                     </div>
-                </div>)}
-
-                {/* BUTTON START */}
-                {lobby.ingame ? '' : isHost ? (<button className="start-btn" onClick={() => startmatch(maps[mapIndex])}>
-                    start
-                </button>) : (<button className="start-btn" onClick={() => readystate()}>
-                    {user.ready ? 'unready' : 'ready'}
-                </button>)}
+                )}
+                {!isMobile && !lobby.ingame && (
+                    <button className="start-btn" onClick={() => isHost ? startmatch(maps[mapIndex]) : readystate()}>
+                        {isHost ? 'start' : (user.ready ? 'unready' : 'ready')}
+                    </button>
+                )}
             </div>
-
+            
             {/* DESTRA: AVVERSARI */}
-            <div className="column right-column">
+            {!isMobile && (<div className="column right-column">
                 <div className="opponents-layout">
                     {opponents.map(player => (
                         <div key={player.username} className="mini-board-wrapper">
@@ -162,8 +260,7 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                         </div>
                     ))}
                 </div>
-            </div>
-
+            </div>)}
         </div>
     );
 }
