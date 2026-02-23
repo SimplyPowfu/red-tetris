@@ -1,7 +1,6 @@
 import { LOBBY_STATE } from "../../server/actions/lobby"
 import { MEGA_FALL, SHIFT_DOWN } from "../../tetris/actions/moves";
 import { LOGIN_REPLY } from "../actions/auth"
-import { TETRIS_SCORE } from "../actions/tetris";
 
 const reducer = (state = {} , action) => {
 	// console.log('[reducer/user] reducing action', action);
