@@ -3,7 +3,7 @@ body {
     background-color: #000000;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* --- CONTAINER PRINCIPALE --- */
@@ -17,7 +17,83 @@ body {
     background-color: #000;
     font-family: 'Courier New', Courier, monospace;
     color: white;
-    gap: 80px;
+    gap: 20px;
+}
+
+@media (max-width: 959px) {
+    .lobby-container {
+        flex-direction: column; /* Su mobile, le colonne principali vanno una sotto l'altra */
+        align-items: center;
+        padding-top: 5px;
+        gap: 20px;
+        overflow-x: hidden; /* Evita lo scroll laterale */
+    }
+
+    /* Colonna sinistra (La tua area di gioco) */
+    .left-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* Spostiamo la colonna dei widget SOPRA la board */
+    .center-column {
+        order: -1; /* Questo la sposta in cima a tutto */
+        flex-direction: row !important; /* Mette widget affiancati per risparmiare altezza */
+        margin-top: 0 !important;
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .retro-box {
+        width: 90px; /* Più piccoli per starci affiancati */
+        min-height: 70px;
+        border-radius: 8px;
+    }
+
+    .retro-box-title {
+        font-size: 0.6rem;
+        margin-bottom: 5px;
+    }
+
+    .score-val {
+        font-size: 1rem;
+    }
+
+    /* Gestione Board e Controlli */
+    .board-wrapper {
+        margin-top: 0px;
+        margin-bottom: 10px;
+        /* Riduciamo leggermente il padding per risparmiare spazio */
+        padding: 5px; 
+    }
+
+    .controls-container {
+        margin-top: 15px;
+        transform: scale(0.85); /* Leggermente più piccoli per non uscire dal bordo */
+    }
+
+    .opponents-layout {
+        gap: 10px;
+    }
+}
+
+/* Per schermi molto piccoli (es. iPhone SE) */
+@media (max-height: 700px) {
+    .board-wrapper {
+        transform: scale(0.7);
+        margin-bottom: -80px;
+    }
+    .controls-container {
+        transform: scale(0.8);
+    }
+    .controls-container button {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.1rem !important;
+    }
 }
 
 /* --- COLONNE --- */
@@ -26,9 +102,6 @@ body {
     flex-direction: column;
     align-items: center;
 }
-
-/* --- SINISTRA --- */
-.left-column { /* Standard */ }
 
 .player-header {
     display: flex;
@@ -260,4 +333,115 @@ body {
     color: #ffd700; /* Oro per il nome del vincitore */
     text-transform: uppercase;
     font-weight: bold;
+}
+
+.controls-container {
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    /* Impedisce lo zoom fastidioso su mobile durante i tocchi rapidi */
+    touch-action: manipulation; 
+}
+
+.controls-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Bottone di base */
+.controls-container button {
+    width: 55px;
+    height: 55px;
+    background-color: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 8px; /* Leggermente squadrati per stile retro */
+    color: #eee;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.1s ease;
+    box-shadow: 0 4px 0 #000;
+    touch-action: manipulation; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Effetto pressione */
+.controls-container button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #000;
+    background-color: #333;
+    border-color: #555;
+}
+
+/* Bottone Rotazione (Up) - Colore distintivo */
+.btn-rotate {
+    border-color: #d32f2f !important; /* Richiama i dettagli rossi che hai già */
+    color: #ff4f4f !important;
+}
+
+/* Bottone Mega/Drop (Space) - Più largo */
+.btn-mega {
+    width: 130px !important; /* Più largo per simulare la barra spaziatrice */
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.board-wrapper {
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Ottimizzazione per Mobile: aumenta la dimensione dei tocchi */
+@media (max-width: 768px) {
+    .controls-container button {
+        width: 65px;
+        height: 65px;
+    }
+    .btn-mega {
+        width: 150px !important;
+    }
+}
+
+.mobile-interactive-area {
+    margin-top: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.mobile-lobby-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Assicuriamoci che i bottoni della mappa siano cliccabili comodamente su mobile */
+@media (max-width: 959px) {
+    .map-box {
+        width: 180px !important; /* Un po' più grande per comodità */
+        min-height: 80px !important;
+    }
+    
+    .arrow-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
 }
