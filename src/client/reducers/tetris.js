@@ -16,7 +16,7 @@ import {
 } from '../../tetris/actions/grid'
 
 import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gridManip'
-import { GAME_OVER, WIN_MATCH } from '../actions/tetris'
+import { GAME_OVER, gameover, WIN_MATCH } from '../actions/tetris'
 import { LOGIN_REPLY } from '../actions/auth'
 
 const reducer = (state = {} , action) => {
@@ -41,12 +41,12 @@ const reducer = (state = {} , action) => {
 	}
 	/* GRID actions */
 	case NEW_GRID:
-	case LOGIN_REPLY:
 		return {
-			nextBlock: null,
-			activeBlock: null,
-			static: newgrid(action.payload.gridtype),
-		}
+				nextBlock: action.payload.startBlocks[1],
+				activeBlock: action.payload.startBlocks[0],
+				static: newgrid(action.payload.gridtype),
+				gameover:false,
+			}
 	case NEW_BLOCK:
 	{
 		if (!action.payload || !action.payload.blockType)

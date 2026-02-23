@@ -24,7 +24,7 @@ class Queue
 				{
 					queued = this.pop();
 					if (queued) {
-						console.log(`[DISPATCHER] dispatching ${queued.payload.type} from ${queued.origin}`);
+						// console.log(`[DISPATCHER] dispatching ${queued.payload.type} from ${queued.origin}`);
 						store.dispatch(queued.payload);
 					}
 				}

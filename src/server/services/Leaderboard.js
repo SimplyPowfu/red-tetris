@@ -35,7 +35,7 @@ class Leaderboard
 		return fs.readFile("public/Leaderboard.json", "utf-8")
 			.then((data) => {
 				this._scores = new Map(JSON.parse(data));
-				console.log("Leaderboard loaded successfully!");
+				// console.log("Leaderboard loaded successfully!");
 			})
 			.catch((err) => {
 				if (err.code === "ENOENT") {
@@ -52,7 +52,7 @@ class Leaderboard
 			JSON.stringify(this.sorted())
 		)
 		.then(() => {
-			console.log("Leaderboard saved successfully!");
+			// console.log("Leaderboard saved successfully!");
 		})
 		.catch((err) => {
 			console.error('[LEADERBOARD] Error while writing Leaderboard:', err);

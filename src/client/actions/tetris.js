@@ -1,16 +1,16 @@
-export const START_REQUEST = 'tetris/startrequest';
-export const READY_STATE = 'tetris/readystate';
-export const MOVE_PIECE = 'tetris/move';
+export const START_REQUEST = 'server/startrequest';
+export const READY_STATE = 'server/readystate';
+export const MOVE_PIECE = 'server/move';
 export const GAME_OVER = 'tetris/gameover';
 export const WIN_MATCH = 'tetris/winmatch';
 // export const TETRIS_SCORE = 'tetris/score';
+export const TETRIS_CONFLICT = 'tetris/conflict';
 
 // Execute game moves
 export const move = (move) => {
 	return {
 		type: MOVE_PIECE,
 		payload: { move },
-		meta: { sendToServer:true }
 	}
 }
 
@@ -37,13 +37,16 @@ export const startmatch = (map) => {
 	return (dispatch, getState) => {
 		const state = getState();
 
-		if (!state.lobby || !state.lobby.lobbyId)
+		if (!state.lobby || !state.lobby.lobbyId) {
+			dispatch({
+				type: TETRIS_CONFLICT,
+			});
 			return ;
+		}
 
 		dispatch({
 			type: START_REQUEST,
 			payload: { lobbyId: state.lobby.lobbyId, map: map },
-			meta: { sendToServer: true }
 		})
 	}
 }
@@ -64,7 +67,6 @@ export const readystate = () => {
 				username: state.user.username,
                 ready: !currentReadyState
             },
-            meta: { sendToServer: true }
         });
     };
 };

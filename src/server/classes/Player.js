@@ -15,8 +15,7 @@ import { SOKREPLY, DISPATCH, GAMEOVER, PENALITY } from './Game';
 // Services
 // import Leaderboard from '../services/Leaderboard';
 
-const SHIFT_DOWN_SCORE = 1;
-const MEGA_FALL_SCORE = 10;
+import { MEGA_FALL_SCORE, SHIFT_DOWN_SCORE } from '../../tetris/gridManip';
 
 export class Player
 {
@@ -40,21 +39,25 @@ export class Player
 
 	constructor(__randomizer, __grid, __schedule, __complain) {
 		this._randomizer = __randomizer;
-		this._static = __grid ? newgrid(__grid) : __grid;
 		this._schedule = __schedule;
 		this._complain = __complain;
-
+		
+		this._static = __grid ? newgrid(__grid) : __grid;
+		this._activeBlock = nb(this._randomizer.next());
+		this._nextBlock = nb(this._randomizer.next());
 		/* spawn the first 2 blocks */
 		this._complain({
 			type: SOKREPLY,
 			payload: {
 				type: NEW_GRID,
-				payload: { gridtype: __grid },
+				payload: { gridtype: __grid, startBlocks: [this._activeBlock, this._nextBlock] },
 				meta: { reply:true }
 			}
 		});
-		this.newblock();
-		this.newblock();
+		// this.newblock();
+		// this.newblock();
+
+		this.execShedule();
 
 		// console.log('[PLAYER] static', this._static);
 	}
@@ -87,7 +90,7 @@ export class Player
 				// console.log('k', k);
 				const kNum = Number(k);
 				if (!isNaN(kNum)) {
-					console.log('[PLAYER] about to timeout', k);
+					console.log('[PLAYER] about to execute', k);
 
 					/* execute the single schedule action */
 					this._timeouts[kNum] = setTimeout(() => {

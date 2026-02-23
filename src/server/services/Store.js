@@ -17,7 +17,7 @@ const store = createStore(
   initialState,
   applyMiddleware(
 	thunk,
-	createLogger(),
+	// createLogger(),
 	/* check validity */
 	authMiddleware,
 	/* Block action */

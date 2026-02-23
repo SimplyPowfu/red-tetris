@@ -61,7 +61,7 @@ const reducer = (state = {}, action) => {
 			if (!state[lobbyId])
 				return state;
 
-			console.log('[TETRIS]', action.payload.ready);
+			// console.log('[TETRIS]', action.payload.ready);
 
 			const lobby = state[lobbyId];
 			lobby.setready(senderId);
@@ -71,6 +71,10 @@ const reducer = (state = {}, action) => {
 		case START_REQUEST:
 		{
 			const { lobbyId, map } = action.payload;
+
+			if (!state[lobbyId])
+				return state;
+			
 			const lobby = state[lobbyId];
 			lobby.startmatch(map);
 			
@@ -89,11 +93,16 @@ const reducer = (state = {}, action) => {
 		{
 			const { senderId, lobbyId } = action.meta;
 			const { move } = action.payload;
+
+			// check lobby
 			if (!state[lobbyId] || !state[lobbyId].ingame)
 				return state;
-			const match = state[lobbyId].game[senderId];
-			if (!match)
+
+			// check match
+			if (!state[lobbyId].game[senderId])
 				return state;
+			
+			const match = state[lobbyId].game[senderId];
 			match.move(move);
 
 			return state;

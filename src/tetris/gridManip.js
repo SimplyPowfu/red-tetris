@@ -1,10 +1,14 @@
 
 import { act } from "react";
 import { START_COLUMN, Tetriminos, produceBlock } from "./blocks";
+import Piece from "./Piece";
 
 // defined here but later import from game folder
-const COLUMNS_NUMBER = 10
-const ROWS_NUMBER = 20
+export const COLUMNS_NUMBER = 10
+export const ROWS_NUMBER = 20
+
+export const SHIFT_DOWN_SCORE = 1;
+export const MEGA_FALL_SCORE = 10;
 
 // type of custom blocks for Map mode
 const mapBlock = {
@@ -110,7 +114,7 @@ export function nb(blockType)
 	if (Object.keys(Tetriminos).find(k => k === blockType) === undefined)
 		return null;
 
-	return produceBlock(blockType);
+	return new Piece(blockType);
 }
 
 // @grid is the active grid, slides DOWN the block
@@ -230,7 +234,7 @@ export function cl(grid)
       Array(10).fill(null)
     );
 
-    console.log('[COLLAPSE] penality', penaltyLines);
+    // console.log('[COLLAPSE] penality', penaltyLines);
 
     return [...newEmptyLines, ...remainingPlayable, ...penaltyLines];
   }
@@ -272,7 +276,7 @@ export function pn(grid, lines)
 
 /* VALIDATE MOVE */
 export function isValidPosition(block, grid) {
-  console.log('[MANIP] valid', grid ? 'defined' : 'undefined');
+  // console.log('[MANIP] valid', grid ? 'defined' : 'undefined');
 	const { shape, row, column } = block;
     for (let i = 0; i < shape.length; i++) {
       for (let j = 0; j < shape[i].length; j++) {
@@ -285,7 +289,7 @@ export function isValidPosition(block, grid) {
             newRow >= ROWS_NUMBER ||
             (newRow >= 0 && grid[newRow][newCol] !== null)
           ) {
-            console.log('[COLLIDE]', newRow, newCol, block.type);
+            // console.log('[COLLIDE]', newRow, newCol, block.type);
             return false;
           }
         }

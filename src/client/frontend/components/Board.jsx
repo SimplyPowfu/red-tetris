@@ -106,7 +106,7 @@ function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 }
 
 // renders the game board
-export const BoardDiv = ({ statik, activeBlock, gameover }) => {
+export const Board = ({ statik, activeBlock, gameover }) => {
 
 	// console.log('[Board]', activeBlock, statik);
 	if (!statik)
@@ -142,4 +142,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, null)(BoardDiv)
+export default connect(mapStateToProps, null)(Board)

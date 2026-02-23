@@ -1,5 +1,5 @@
-export const ALERT_POP = 'ALERT_POP'
-export const ALERT_CLEAR = 'ALERT_CLEAR'
+export const ALERT_POP = 'alert/pop'
+export const ALERT_CLEAR = 'alert/clear'
 
 export const alert = (message) => {
   return {

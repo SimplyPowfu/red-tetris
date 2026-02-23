@@ -1,4 +1,4 @@
-import { SERVER_CONNECTED, SERVER_PING, SERVER_PONG } from '../actions/server.js'
+import { SERVER_CONNECTED, SERVER_LOG, SERVER_PING, SERVER_PONG } from '../actions/server.js'
 
 const reducer = (state = {} , action) => {
   switch(action.type)
@@ -19,6 +19,22 @@ const reducer = (state = {} , action) => {
         lastPongAt: Date.now(),
 		diff: Date.now() - state.lastPingAt + "ms"
 	  }
+	case SERVER_LOG:
+	{
+		if (!state.log) {
+			return {
+				...state,
+				log: [action.payload]
+			}
+		}
+		return {
+			...state,
+			log: [
+				...state.log,
+				action.payload,
+			]
+		}
+	}
 	default: 
 	  return state
   }

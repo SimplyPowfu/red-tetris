@@ -139,18 +139,16 @@ export default class Game
 
 					// Dispatch penality to clients
 					const alive = [];
-					for (const [key, p] of this._register)
+					for (const [key, p] of this._register) {
 						if (p.gameover === false)
 							alive.push(key);
+					}
+			
 					SHub.emitTo(
 						(auth) => auth.lobbyId === this._originId && auth.id !== senderId && alive.includes(auth.id),
 						'action',
 						penality(lines)
 					);
-					// DispatchQueue.push({
-					// 	...penality(lines),
-					// 	meta: { fromServer:true, lobbyCast:true, lobbyId:this._originId, senderId, avoid:senderId }
-					// }, `game:${this._originId}`);
 					
 					break ;
 				}
@@ -175,17 +173,6 @@ export default class Game
 	}
 
 	/* Match management actions */
-	// startmatch() {
-	// 	this._seed = Math.floor(Math.random() * 2147483648);
-	// 	for (const player of this._players) {
-	// 		// save player
-	// 		register[player] = new Player(Randomizer(this._seed),
-	// 			this._startGrid,
-	// 			this._loopSchedule,
-	// 			this.mommy(player),
-	// 		);
-	// 	}
-	// }
 	startmatch() {
 		this._seed = Math.floor(Math.random() * 2147483648);
 

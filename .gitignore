@@ -6,3 +6,5 @@ tmp
 node_modules
 package-*.json
 **/Leaderboard.json
+.nyc_output/
+test/demo

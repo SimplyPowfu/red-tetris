@@ -29,7 +29,7 @@ const synchLobby = store => next => action => {
 			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
 			SHub.emitTo(
 				(auth) => {
-					// console.log('[SYNCH] SHub check', auth, lobbyId);
+					// console.log('[SYNCH] SHub check-1', auth, auth.lobbyId === lobbyId);
 					return auth.lobbyId === lobbyId
 				},
 				'action',
@@ -56,7 +56,10 @@ const synchLobby = store => next => action => {
 			const { lobbyId } = action.meta;
 			// store.dispatch(lobbystate(lobbyId, { lobbyCast:true, lobbyId }));
 			SHub.emitTo(
-				(auth) => auth.lobbyId === lobbyId,
+				(auth) => {
+					// console.log('[SYNCH] SHub check-2', auth, auth.lobbyId === lobbyId);
+					return auth.lobbyId === lobbyId
+				},
 				'action',
 				lobbystate(state, lobbyId)
 			);

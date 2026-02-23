@@ -39,7 +39,7 @@ export class SocketHub
 
 	auth(__ID, __auth)
 	{
-		console.log('[SocketHub] auth', __auth);
+		// console.log('[SocketHub] auth', __auth);
 		const socket = this._sockets.get(__ID);
 		if (socket === undefined)
 		{
@@ -51,7 +51,7 @@ export class SocketHub
 		else
 		{
 			socket.auth = { ...__auth, id:__ID};
-			console.log('[SocketHub] auth ok', this._sockets);
+			// console.log('[SocketHub] auth ok', this._sockets);
 		}
 	}
 

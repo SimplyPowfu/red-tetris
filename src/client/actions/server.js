@@ -1,6 +1,7 @@
 export const SERVER_PING = 'server/ping';
 export const SERVER_PONG = 'pong';
-export const SERVER_CONNECTED = 'server/connected';
+export const SERVER_CONNECTED = 'connected';
+export const SERVER_LOG = 'log/server'
 
 export const ping = () => {
 	return (dispatch, getState) => {
@@ -10,9 +11,15 @@ export const ping = () => {
 
 		dispatch({
 			type: SERVER_PING,
-			meta: { sendToServer: true }
 		});
 	}
+}
+
+export const logaction = (action) => {
+	return ({
+		type: SERVER_LOG,
+		payload: { action }
+	})
 }
 
 export const connected = () => ({

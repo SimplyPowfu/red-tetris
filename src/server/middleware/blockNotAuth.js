@@ -60,7 +60,7 @@ const blockNotAuth = store => next => action => {
 
 	}
 
-	console.log('[BLOCK] ok', action.type);
+	// console.log('[BLOCK] ok', action.type);
 
 	return next(action);
 }

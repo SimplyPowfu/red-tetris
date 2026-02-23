@@ -113,16 +113,20 @@ export default class Lobby
 	}
 
 	/* Match management actions */
-	startmatch(mode) {
-		console.log('[LOBBY] starting match...', this._ready.size, this._players.size);
-		if (mode) {
-			if (GameModes[mode])
-				this._gameMode = GameModes[mode];
-		} 
-		if (this._ready.size >= this._players.size - 1) {
+	startmatch(mode)
+	{
+		if (this._ready.size >= this._players.size - 1)
+		{
+			console.log('[LOBBY] starting match...', this._ready.size, this._players.size);
+			
 			this._ingame = true;
 			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
 			
+			// Set the mode
+			if (mode) {
+				if (GameModes[mode]) this._gameMode = GameModes[mode];
+			}
+
 			// Send to client
 			DispatchQueue.push(requpdate(this._ID), `lobby:${this._ID}`);
 			// store.dispatch(requpdate(this._ID))

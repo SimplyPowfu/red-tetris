@@ -7,12 +7,21 @@ import SHub from '../services/SocketHub.js';
 
 // Checks login requests
 const authMiddleware = store => next => action => {
-	console.log('[LOGIN] got', action.type);
+	// console.log('[LOGIN] got', action.type);
 	if (action.type === LOGIN_REQUEST)
 	{
 		const state = store.getState();
 		const { username, lobbyId } = action.payload;
 		const { senderId } = action.meta;
+
+		if (!username || !lobbyId) {
+			// Dispatch conflict action to sender
+			SHub.emit(senderId, 'action', {
+				type: USER_CONFLICT,
+				message: 'Invalid payload',
+			});
+			return ;
+		}
 
 		// Check if user ID or username already exists
 		if (Object.values(state.users).some(u => u.username === username)) {

@@ -52,7 +52,7 @@ export const Tetriminos = {
 	[null,null,null]]
 }
 
-export function produceBlock(blockType) {
+/* export function produceBlock(blockType) {
 	if (!Tetriminos[blockType])
 		return null;
 
@@ -62,4 +62,4 @@ export function produceBlock(blockType) {
 		column: START_COLUMN,
 		type: blockType
 	}
-}
+} */
