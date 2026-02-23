@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
 import AuthPage from '../pages/AuthPage.jsx'
 import LobbyPage from '../pages/LobbyPage.jsx'
+import NotFound from '../pages/NotFound.jsx'
 
 
 // const App = ({message}) => {
@@ -24,8 +25,7 @@ const App = ({ user }) => {
       <Switch>
         <Route exact path="/" component={ AuthPage } />
         <Route exact path="/:room/:player" component={ LobbyPage } />
-        <Route path="/404" component={ <div>ciao</div> } />
-        {/* user.username ? <LobbyPage /> : <AuthPage /> */}
+        <Route path="*" component={ NotFound } />
       </Switch>
     </Router>
   )

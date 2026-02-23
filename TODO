@@ -1,6 +1,4 @@
 # MAJOR
-[4] aggiunto l'accesso via URL http://<ip>:<port>/<room>/<player_name>
-[5] aggiungre lo score permanente per le leaderboard
 
 # OPTIONAL
 
@@ -8,5 +6,7 @@
 [1] va tolto this dal randomizer, forbidden this.ecc...
 [2] check se la lobby e' startata o no
 [3] va aggiunta la possibilita' di ready e restart se in multiplayer dopo un game finito
+[4] aggiunto l'accesso via URL http://<ip>:<port>/<room>/<player_name>
+[5] aggiungre lo score permanente per le leaderboard
 [6] aggiungere modalita' nuove
 [7] resynch start game (lobby.ingame)
