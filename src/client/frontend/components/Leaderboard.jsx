@@ -15,7 +15,7 @@ const Leaderboard = () => {
       })
       .then((result) => {
         // sort descending by score
-        const sorted = result.sort((a, b) => b[0] - a[0]);
+        const sorted = result.sort((a, b) => b[1] - a[1]);
         setData(sorted);
       })
       .catch((err) => setError(err.message))
@@ -29,9 +29,9 @@ const Leaderboard = () => {
     <div style={{ padding: '10px' }}>
       <h1>Leaderboard</h1>
       <ol>
-        {data.map(([score, players], index) => (
+        {data.map(([username, score], index) => (
           <li key={index} style={{ marginBottom: '5px' }}>
-            <strong>{players.join(', ')}</strong> — {score} pts
+            <strong>{username}</strong> — {score} pts
           </li>
         ))}
       </ol>
