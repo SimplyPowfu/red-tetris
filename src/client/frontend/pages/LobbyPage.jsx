@@ -11,11 +11,28 @@ import NextBlock from '../components/NextBlock.jsx';
 
 import './Pages.css';
 
+function gameOver(winner)
+{
+    if (!winner) return null;
+
+    // const isMe = winner === user.username;
+    return (
+        <div className={`game-over-overlay win`}>
+            <h2>{'GAME OVER'}</h2>
+            <div className="winner-box">
+                <span className="label">WINNER</span>
+                <span className="winner-name">{winner}🏆</span>
+            </div>
+        </div>
+    );
+};
+
 const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
     
     const { room, player } = useParams()
     const history = useHistory()
     
+    /* Lobby updates */
     useEffect(() => {
             if (message) {
                 alert(message);
@@ -29,25 +46,13 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
         }
     }, [user.username, user.lobbyId]);
 
-
-    const gameOver = () => {
-        if (!winner) return null;
-
-        const isMe = winner === user.username;
-        return (
-            <div className={`game-over-overlay win`}>
-                <h2>{'GAME OVER'}</h2>
-                <div className="winner-box">
-                    <span className="label">WINNER</span>
-                    <span className="winner-name">{winner}🏆</span>
-                </div>
-            </div>
-        );
-    };
-
+    /* === Lobby Private States ==== */
     const maps = ["basic", "ghost", "invaders"];
     const [mapIndex, setMapIndex] = useState(0);
+    const [score, setScore] = useState(0);
+    const [opponents, setOpponents] = useState([]);
 
+    /* MAP */
     const changeMap = (direction) => {
         setMapIndex((prevIndex) => {
             const nextIndex = prevIndex + direction;
@@ -57,6 +62,15 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
         });
     };
 
+    /* Persist SCORE/OPPONENTS */
+    useEffect(() => {
+        if (lobby.ingame) {
+            setScore(user.score);
+            setOpponents(lobby.players.filter(p => p.username !== user.username));
+        }
+    }, [user.score, lobby.players]);
+
+    /* Player inputs */
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (winner)
@@ -74,9 +88,12 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
         return () => { window.removeEventListener('keydown', handleKeyDown); };
     }, [move, winner]);
 
+    /* ================================ */
+
+    /* Loading page */
     if (!user.username || !lobby.players) return <div className="lobby-loading">Loading...</div>;
 
-    const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
+    // const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
     const isHost = lobby.players && lobby.players.length && lobby.players[0].username === user.username;
 
     return (
@@ -89,7 +106,7 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                     <span className="player-name">{user.username}</span>
                 </div>
                 <div className="board-wrapper">
-                    {gameOver()}
+                    {gameOver(winner)}
                     <PlayerBoard />
                 </div>
             </div>
@@ -109,7 +126,7 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                 <div className="retro-box score-box">
                     <div className="retro-box-title">SCORE</div>
                     <div className="retro-box-content">
-                        <span className="score-val">{user.score ? user.score : '0'}</span>
+                        <span className="score-val">{score}</span>
                     </div>
                 </div>
 
@@ -138,7 +155,10 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                 <div className="opponents-layout">
                     {opponents.map(player => (
                         <div key={player.username} className="mini-board-wrapper">
-                            <SpectatorBoard player={player} />
+                            <SpectatorBoard
+                                player={player}
+                                gameover={player.gameover ? true : winner ? true : false}
+                            />
                         </div>
                     ))}
                 </div>
