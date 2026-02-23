@@ -56,6 +56,28 @@ const mapBlock = {
       [null, 'W', 'W', null, 'J', 'J', null, 'W', 'W', null],
       [null, 'W', null, null, 'Z', 'Z', null, null, 'W', null]
     ],
+    wiggly:[
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, 'Z'],
+      ['L', 'J', 'O', null, 'J', 'O', 'L', null, null, null],
+      ['O', null, 'L', null, 'L', null, 'J', null, null, 'L'],
+      ['J', null, 'J', null, 'O', null, 'O', null, null, 'O'],
+      ['L', null, 'O', 'L', 'J', null, 'L', 'J', 'O', 'J'],
+    ]
 }
 
 // returns a new grid

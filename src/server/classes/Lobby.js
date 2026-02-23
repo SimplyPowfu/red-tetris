@@ -35,6 +35,16 @@ const GameModes = {
 		},
 		startGrid:"invaders",
 	},
+	wiggly: {
+		loopSchedule: {
+			tickMs: 50,
+			2: 'Left',
+			4: 'Down',
+			7: 'Right',
+			9: 'Down'
+		},
+		startGrid:"wiggly",
+	},
 }
 
 export default class Lobby
@@ -117,15 +127,15 @@ export default class Lobby
 	{
 		if (this._ready.size >= this._players.size - 1)
 		{
-			console.log('[LOBBY] starting match...', this._ready.size, this._players.size);
-			
-			this._ingame = true;
-			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
+			console.log('[LOBBY] starting match...', mode);
 			
 			// Set the mode
 			if (mode) {
 				if (GameModes[mode]) this._gameMode = GameModes[mode];
 			}
+
+			this._ingame = true;
+			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
 
 			// Send to client
 			DispatchQueue.push(requpdate(this._ID), `lobby:${this._ID}`);

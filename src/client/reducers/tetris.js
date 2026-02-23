@@ -40,6 +40,10 @@ const reducer = (state = {} , action) => {
 		}
 	}
 	/* GRID actions */
+	case LOGIN_REPLY:
+		return {
+			static: newgrid("basic"),
+		}
 	case NEW_GRID:
 		return {
 				nextBlock: action.payload.startBlocks[1],

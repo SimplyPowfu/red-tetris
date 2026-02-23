@@ -47,7 +47,7 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
     }, [user.username, user.lobbyId]);
 
     /* === Lobby Private States ==== */
-    const maps = ["basic", "ghost", "invaders"];
+    const maps = ["basic", "ghost", "invaders", "wiggly"];
     const [mapIndex, setMapIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [opponents, setOpponents] = useState([]);

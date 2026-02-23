@@ -58,7 +58,7 @@ export default class Piece
 	shape = [];
 	row = 0;
 	column= START_COLUMN;
-	_type = 'Error';
+	type = 'Error';
 	_parent = null;
 
 	constructor(__blockType, __parent) {
@@ -66,7 +66,7 @@ export default class Piece
 			__blockType = 'I';
 
 		this.shape = Tetriminos[__blockType];
-		this._type = __blockType;
+		this.type = __blockType;
 		this._parent = __parent;
 	}
 
@@ -74,7 +74,7 @@ export default class Piece
 		return this._shape;
 	} */
 
-	get type() {
+	/* get type() {
 		return this._type;
-	}
+	} */
 }

@@ -74,6 +74,8 @@ const reducer = (state = {}, action) => {
 
 			if (!state[lobbyId])
 				return state;
+
+			console.log('[START_REQ] map', map);
 			
 			const lobby = state[lobbyId];
 			lobby.startmatch(map);
