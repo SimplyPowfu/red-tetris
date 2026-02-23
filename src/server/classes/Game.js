@@ -138,8 +138,12 @@ export default class Game
 					}
 
 					// Dispatch penality to clients
+					const alive = [];
+					for (const [key, p] of this._register)
+						if (p.gameover === false)
+							alive.push(key);
 					SHub.emitTo(
-						(auth) => auth.lobbyId === this._originId && auth.id !== senderId,
+						(auth) => auth.lobbyId === this._originId && auth.id !== senderId && alive.includes(auth.id),
 						'action',
 						penality(lines)
 					);
