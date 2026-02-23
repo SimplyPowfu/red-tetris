@@ -165,7 +165,7 @@ export function rr(activeBlock)
   if (activeBlock.type === 'O')
     return activeBlock;
 
-  const { shape, column } = activeBlock;
+  const { shape } = activeBlock;
   const rows = shape.length;
   const cols = shape[0].length;
   const rotated = Array.from({ length: cols }, () => Array(rows).fill(null));
@@ -199,7 +199,7 @@ export function rr(activeBlock)
 // pushes the active block as low as possible
 export function mf(activeBlock, grid)
 {
-	let newBlock = activeBlock;
+	let newBlock = { ...activeBlock};
 
 	if (activeBlock) {
 		while (isValidPosition(newBlock, grid))

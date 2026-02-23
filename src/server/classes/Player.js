@@ -84,7 +84,7 @@ export class Player
 
 		this._interval = setInterval(() => {
 			for (const k in this._schedule) {
-				console.log('k', k);
+				// console.log('k', k);
 				const kNum = Number(k);
 				if (!isNaN(kNum)) {
 					console.log('[PLAYER] about to timeout', k);
@@ -196,14 +196,14 @@ export class Player
 
 	penality(lines) {
 
+		this._static = pn(this._static, lines);
+
 		/* ! ! ! VALIDITY CHECK ! ! ! */
-		const newStatic = pn(this._static, lines);
-		if (!isValidPosition(this._activeBlock, newStatic)) {
+		if (!isValidPosition(this._activeBlock, this._static)) {
 			this.endgame();
 			return ;
 		}
 
-		this._static = pn(this._static, lines);
 	}
 
 	collapse() {
@@ -268,19 +268,21 @@ export class Player
 		if (!auto) this._score += SHIFT_DOWN_SCORE;
 
 		// send to client
-		this._complain({
-			type: SOKREPLY,
-			payload: {
-				...shiftdown(),
-			}
-		});
-
-		if (!auto) {
+		if (auto) {
+			this._complain({
+				type: SOKREPLY,
+				payload: {
+					...shiftdown(),
+				}
+			});
+		}
+		else
+		{
 			// Send the score update to the client
 			this._complain({
 				type: SOKREPLY,
 				payload: {
-					...score(this._score),
+					...shiftdown(this._score),
 				}
 			});
 		}
@@ -338,15 +340,7 @@ export class Player
 		this._complain({
 			type: SOKREPLY,
 			payload: {
-				...megafall(),
-			}
-		});
-
-		// Send the score update to the client
-		this._complain({
-			type: SOKREPLY,
-			payload: {
-				...score(this._score),
+				...megafall(this._score),
 			}
 		});
 	}

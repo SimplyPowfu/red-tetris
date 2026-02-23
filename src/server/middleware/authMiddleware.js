@@ -19,14 +19,9 @@ const authMiddleware = store => next => action => {
 			// Dispatch conflict action to sender
 			SHub.emit(senderId, 'action', {
 				type: USER_CONFLICT,
-				message: 'Match already started',
+				message: 'Username already exists',
 			});
 			return ;
-			// return next({
-			// 	type: USER_CONFLICT,
-			// 	message: 'Username already exists',
-			// 	meta: { reply: true, senderId, fromServer:true }
-			// });
 		}
 		const match = state.tetris[lobbyId];
 		if (match && match.ingame === true) {
@@ -34,11 +29,6 @@ const authMiddleware = store => next => action => {
 				type: USER_CONFLICT,
 				message: 'Match already started',
 			});
-			// return next({
-			// 	type: USER_CONFLICT,
-			// 	message: 'Match already started',
-			// 	meta: { reply: true, senderId, fromServer:true }
-			// });
 			return ;
 		}
 

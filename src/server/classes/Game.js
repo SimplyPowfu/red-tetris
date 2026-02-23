@@ -218,8 +218,9 @@ export default class Game
 			type: ENDMATCH,
 		});
 
-		for (const player of this._register.values()) {
+		for (const [id, player] of this._register) {
 			player.delete();
+			delete this._register[id];
 		}
 	}
 

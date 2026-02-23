@@ -6,9 +6,10 @@ export const MEGA_FALL = 'tetris/mega';
 
 /* actions to modify the game-state */
 
-export const shiftdown = () => {
+export const shiftdown = (score) => {
 	return {
 		type: SHIFT_DOWN,
+		payload: { score },
 	}
 }
 
@@ -30,8 +31,9 @@ export const rotate = () => {
 	}
 }
 
-export const megafall = () => {
+export const megafall = (score) => {
 	return {
 		type: MEGA_FALL,
+		payload: { score },
 	}
 }

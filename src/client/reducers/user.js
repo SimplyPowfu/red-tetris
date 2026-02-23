@@ -1,4 +1,5 @@
 import { LOBBY_STATE } from "../../server/actions/lobby"
+import { MEGA_FALL, SHIFT_DOWN } from "../../tetris/actions/moves";
 import { LOGIN_REPLY } from "../actions/auth"
 import { TETRIS_SCORE } from "../actions/tetris";
 
@@ -27,8 +28,12 @@ const reducer = (state = {} , action) => {
 			return state;
 		}
 	}
-	case TETRIS_SCORE:
+	case SHIFT_DOWN:
+	case MEGA_FALL:
 	{
+		if (!action.payload || !action.payload.score)
+			return state;
+
 		return {
 			...state,
 			score: action.payload.score,

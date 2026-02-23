@@ -1,10 +1,12 @@
 import Game, { ENDMATCH, HIGHSCORE, WINMATCH } from './Game';
 
 // Services
-import DispatchQueue from '../services/Queue';
-import SHub from '../services/SocketHub';
+import DispatchQueue from '../services/Queue.js';
+import SHub from '../services/SocketHub.js';
+// import store from '../services/Store.js'
 
 import { endmatch, winmatch, deletelobby, startmatch, highscore } from '../actions/tetris';
+import { requpdate } from '../actions/lobby.js';
 
 
 /* @loopSchedule programs 10 game ticks to be played on repeat, from 0 to 9
@@ -77,8 +79,10 @@ export default class Lobby
 		if (this._ingame && this._game[senderId])
 			this._game[senderId].delete();
 
-		if (this._players.size === 0)
+		if (this._players.size === 0) {
 			DispatchQueue.push(deletelobby(this._ID), `lobby:${this._ID}`);
+			// store.dispatch(deletelobby(this._ID));
+		}
 	}
 
 	setready(senderId) {
@@ -100,6 +104,7 @@ export default class Lobby
 					break ;
 				case HIGHSCORE:
 					DispatchQueue.push(highscore(issue.payload.senderId, issue.payload.score), `lobby:${this._ID}`);
+					// store.dispatch(highscore(issue.payload.senderId, issue.payload.score));
 					break ;
 				default:
 					console.warn('[LOBBY] invalid complaint of type', issue.type);
@@ -119,21 +124,27 @@ export default class Lobby
 			this._game = new Game(this._players, this._gameMode, this._ID, this.daddy());
 			
 			// Send to client
-			// DispatchQueue.push(startmatch(this._ID), `lobby:${this._ID}`);
-	
+			DispatchQueue.push(requpdate(this._ID), `lobby:${this._ID}`);
+			// store.dispatch(requpdate(this._ID))
+
 			this.game.startmatch();
 		}
 	}
 
 	winmatch(winner) {
+		if (this._ingame === false)
+			return ;
 		// Dispatch winmatch
 		DispatchQueue.push(winmatch(this._ID, winner), `lobby:${this._ID}`);
+		// store.dispatch(winmatch(this._ID, winner));
 
 		// endmatch
 		this.endmatch();
 	}
 
 	endmatch() {
+		if (this._ingame === false)
+			return ;
 		this._game = null;
 		this._ingame = false;
 		this._seed = 0;
@@ -141,6 +152,7 @@ export default class Lobby
 
 		// Dispatch endmatch
 		DispatchQueue.push(endmatch(this._ID), `lobby:${this._ID}`);
+		// store.dispatch(endmatch(this._ID))
 	}
 
 }

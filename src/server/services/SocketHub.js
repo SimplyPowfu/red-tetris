@@ -92,7 +92,7 @@ export class SocketHub
 	emitTo(check, __eventName, __event)
 	{
 		const target = [...this._sockets.values()].filter(socket => socket.auth && check(socket.auth));
-		console.log('[SocketHub] emitTo', target);
+		// console.log('[SocketHub] emitTo', target);
 		target.forEach(t => t.socket.emit(__eventName, __event))
 	}
 
