@@ -67,7 +67,7 @@ const AuthPage = ({ login, alertclear, user, message }) => {
 				{error && <div className="message">{error}</div>}
 			</form>
 
-			<Leaderboard/>
+			{!user.username &&<Leaderboard/>}
 		</div>
 	);
 }
