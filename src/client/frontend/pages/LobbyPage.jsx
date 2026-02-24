@@ -30,6 +30,7 @@ function gameOver(winner)
 const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
     
     const { room, player } = useParams()
+    const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
     const history = useHistory()
 
     const [isMobile, setIsMobile] = useState(false);
@@ -102,11 +103,10 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
         }
     }, [user.username, user.lobbyId]);
 
-    /* === Lobby Private States ==== */
+    /* Lobby Private States */
     const maps = ["basic", "ghost", "invaders", "wiggly"];
     const [mapIndex, setMapIndex] = useState(0);
     const [score, setScore] = useState(0);
-    const [opponents, setOpponents] = useState([]);
 
     /* MAP */
     const changeMap = (direction) => {
@@ -122,7 +122,6 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
     useEffect(() => {
         if (lobby.ingame) {
             setScore(user.score);
-            setOpponents(lobby.players.filter(p => p.username !== user.username));
         }
     }, [user.score, lobby.players]);
 
@@ -239,6 +238,23 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
                                 <div className="arrow-btn" onClick={() => changeMap(1)}>►</div>
                             </div>
                         </div>
+                    </div>
+                )}
+                {!lobby.ingame && lobby.players.length > 1 && (
+                    <div className="retro-box">
+                        {opponents.map(player => (
+                            <div key={player.username} className="status-item">
+                            <span className="player-name" title={player.username}>
+                                {player.username}
+                            </span>
+                            <span>
+                                {player.username === lobby.players[0].username 
+                                    ? "🌟" 
+                                    : (player.ready ? "✅" : "❌")
+                                }
+                            </span>
+                        </div>
+                        ))}
                     </div>
                 )}
                 {!isMobile && !lobby.ingame && (

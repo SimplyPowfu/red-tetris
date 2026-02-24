@@ -51,6 +51,7 @@ body {
         width: 90px; /* Più piccoli per starci affiancati */
         min-height: 70px;
         border-radius: 8px;
+        transform: scale(0.95);
     }
 
     .retro-box-title {
@@ -127,7 +128,22 @@ body {
 /* --- CENTRO (CONTROLLI) --- */
 .center-column {
     margin-top: 50px; /* Ridotto un po' il margine per far stare tutto */
-    gap: 20px;        /* Ridotto gap tra i box per compattezza */
+    gap: 10px;        /* Ridotto gap tra i box per compattezza */
+}
+
+.player-name {
+    max-width: 90px;         /* Imposta la larghezza massima desiderata */
+    white-space: nowrap;      /* Impedisce al nome di andare a capo */
+    overflow: hidden;         /* Nasconde la parte eccedente */
+    text-overflow: ellipsis;  /* Aggiunge i tre puntini (...) */
+    display: inline-block;    /* Necessario per applicare larghezza e troncamento */
+    vertical-align: middle;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
 /* STILE RETRO BOX GENERALE */
@@ -330,7 +346,7 @@ body {
 .winner-name {
     display: block;
     font-size: 1.5rem;
-    color: #ffd700; /* Oro per il nome del vincitore */
+    color: #ffd700;
     text-transform: uppercase;
     font-weight: bold;
 }
