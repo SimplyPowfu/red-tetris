@@ -83,7 +83,7 @@ const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, 
 
         if (deltaTime < 200 && absX < 15 && absY < 15)
             move('Rotate');
-        else if (deltaY > 60 && absY > absX && deltaTime < 250)
+        else if (deltaY > 100 && absY > absX && deltaTime < 250)
             move('Mega');
 
         touchStart.current = { x: 0, y: 0, lastX: 0, time: 0 };

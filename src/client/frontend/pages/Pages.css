@@ -20,6 +20,10 @@ body {
     gap: 20px;
 }
 
+.left-column {
+    padding-left: 10px;
+}
+
 @media (max-width: 959px) {
     .lobby-container {
         flex-direction: column; /* Su mobile, le colonne principali vanno una sotto l'altra */
