@@ -8,3 +8,5 @@ package-*.json
 **/Leaderboard.json
 .nyc_output/
 test/demo
+coverage/
+dist/

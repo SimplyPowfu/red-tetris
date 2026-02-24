@@ -11,7 +11,7 @@ export const SHIFT_DOWN_SCORE = 1;
 export const MEGA_FALL_SCORE = 10;
 
 // type of custom blocks for Map mode
-const mapBlock = {
+export const mapBlock = {
   ghost:[
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],

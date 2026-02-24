@@ -8,6 +8,9 @@ import { login } from "../src/client/actions/auth.js"
 import { readystate, startmatch } from "../src/client/actions/tetris.js"
 import { connected, ping } from "../src/client/actions/server.js"
 
+// Tetris
+import { mapBlock } from "../src/tetris/gridManip.js"
+
 // Server imports
 import {startServer, configureStore} from './helpers/server.js'
 import io from 'socket.io-client'
@@ -60,7 +63,6 @@ describe('Start-Match', function() {
 						state.lobby.ingame.should.equal(false)
 
 						// Step 3
-						console.log('starting...');
 						dispatch(startmatch('basic'))
 					}
 				},
@@ -68,9 +70,76 @@ describe('Start-Match', function() {
 					tries: 1, test: ({ getState }) => {
 						const state = getState()
 
-						state.tetris.static.should.exist
-						state.tetris.nextBlock.should.exist
-						state.tetris.activeBlock.should.exist
+						state.tetris.should.have.property("static")
+						state.tetris.should.have.property("nextBlock")
+						state.tetris.should.have.property("activeBlock")
+
+						// Final step
+						done()
+					}
+				}
+			}
+			/* --- Connect to Server --- */
+			const socket = io(params.server.url)
+			
+			const store = configureStore(rootReducer, socket, undefined, types)
+			
+			socket.on('connect', () => {
+				// Step 1
+				store.dispatch(connected());
+			});
+			
+			// Dispatch server actions
+			socket.on('action', (action) => {
+				const { meta, ...rest } = action;
+				store.dispatch(rest);
+			});
+			/* ------------------------ */
+		})
+
+		it('Custom Map', function(done) {
+
+			const types = {
+				'connected': {
+					tries: 1, test:({ dispatch, getState }) => {
+						const state = getState()
+
+						state.server.should.exist
+						state.server.connected.should.equal(true)
+
+						// Step 2
+						dispatch(login({ username: 'ronald', lobbyId: 'custom' }))
+					}
+				},
+				'login/reply': {
+					tries: 1, test: ({ getState }) => {
+						const state = getState()
+
+						// User check
+						state.user.username.should.equal('ronald')
+						state.user.lobbyId.should.equal('custom')
+					}
+				},
+				'lobby/state': {
+					tries: 1, test: ({ dispatch, getState }) => {
+						const state = getState()
+
+						// Lobby check
+						state.lobby.lobbyId.should.equal('custom')
+						state.lobby.ingame.should.equal(false)
+
+						// Step 3
+						dispatch(startmatch('ghost'))
+					}
+				},
+				'tetris/newgrid': {
+					tries: 1, test: ({ getState }) => {
+						const state = getState()
+
+						state.tetris.should.have.property("static")
+						state.tetris.should.have.property("nextBlock")
+						state.tetris.should.have.property("activeBlock")
+						state.tetris.static.should.equal(mapBlock["ghost"])	
 
 						// Final step
 						done()
