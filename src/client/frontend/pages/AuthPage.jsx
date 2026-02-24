@@ -6,7 +6,7 @@ import { alertclear } from '../../actions/alert.js';
 import '../main.css';
 import Leaderboard from '../components/Leaderboard.jsx';
 
-const AuthPage = ({ login, alertclear, user, message }) => {
+export const AuthPage = ({ login, alertclear, user, message }) => {
 	const [username, setUsername] = useState('');
 	const [error, setError] = useState('');
 	const [lobbyId, setLobbyId] = useState('');

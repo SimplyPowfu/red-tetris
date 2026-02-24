@@ -1,17 +1,17 @@
 import chai from "chai"
 
 // Default reducers
-import rootReducer from '../src/client/reducers/index.js'
+import rootReducer from '../../src/client/reducers/index.js'
 
 // Actions
-import { login } from "../src/client/actions/auth.js"
-import { readystate, startmatch } from "../src/client/actions/tetris.js"
-import { connected, ping } from "../src/client/actions/server.js"
+import { login } from "../../src/client/actions/auth.js"
+import { readystate, startmatch } from "../../src/client/actions/tetris.js"
+import { connected, ping } from "../../src/client/actions/server.js"
 
 // Server imports
-import {startServer, configureStore} from './helpers/server.js'
+import {startServer, configureStore} from '../helpers/server.js'
 import io from 'socket.io-client'
-import params from '../params.js'
+import params from '../../params.js'
 
 chai.should()
 
@@ -53,7 +53,7 @@ describe('Authentication', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -94,7 +94,7 @@ describe('Authentication', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -147,7 +147,7 @@ describe('Authentication', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -196,7 +196,7 @@ describe('Authentication', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -243,7 +243,7 @@ describe('Authentication', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket2 = io(params.server.url)
+		const socket2 = io(params.server.url, { transports: ['polling'] })
 		
 		const store2 = configureStore(rootReducer, socket2, undefined, types2)
 		
@@ -279,7 +279,7 @@ describe('Authentication', function(){
 				}
 			}
 		}
-		const socket1 = io(params.server.url)
+		const socket1 = io(params.server.url, { transports: ['polling'] })
 		const store1 = configureStore(rootReducer, socket1, undefined, types1)
 		socket1.on('connect', () => {
 			store1.dispatch(connected());

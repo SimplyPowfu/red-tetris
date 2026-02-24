@@ -1,17 +1,16 @@
 import chai from "chai"
 
 // Default reducers
-import rootReducer from '../src/client/reducers/index.js'
+import rootReducer from '../../src/client/reducers/index.js'
 
 // Actions
-import { connected, ping } from "../src/client/actions/server.js"
-import { USER_CONFLICT } from "../src/server/middleware/authMiddleware.js"
+import { connected, ping } from "../../src/client/actions/server.js"
+import { USER_CONFLICT } from "../../src/server/middleware/authMiddleware.js"
 
 // Server imports
-import {startServer, configureStore} from './helpers/server.js'
-import io from 'socket.io-client'
-import params from '../params.js'
-
+import {startServer, configureStore} from '../helpers/server.js'
+// import io from 'socket.io-client'
+// import params from '../params.js'
 
 chai.should()
 

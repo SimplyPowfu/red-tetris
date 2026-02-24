@@ -1,15 +1,15 @@
 import chai from "chai"
 
 // Default reducers
-import rootReducer from '../src/client/reducers/index.js'
+import rootReducer from '../../src/client/reducers/index.js'
 
 // Actions
-import { connected, ping } from "../src/client/actions/server.js"
+import { connected, ping } from "../../src/client/actions/server.js"
 
 // Server imports
-import {startServer, configureStore} from './helpers/server.js'
+import {startServer, configureStore} from '../helpers/server.js'
 import io from 'socket.io-client'
-import params from '../params.js'
+import params from '../../params.js'
 
 chai.should()
 
@@ -52,7 +52,7 @@ describe('Ping', function(){
 			},
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -72,7 +72,7 @@ describe('Ping', function(){
 	it('Failed: State not updated', function(done) {
 
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, {})
 		

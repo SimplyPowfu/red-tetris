@@ -9,7 +9,8 @@ export const login = (payload) => {
 		
 		// console.log('dispatching login', state.server.connected, interval);
 		
-		if (getState().server.connected) {
+		const state = getState();
+		if (state.server && state.server.connected) {
 			// console.log('DISPATCHING');
 			dispatch({
 				type: LOGIN_REQUEST,

@@ -1,21 +1,21 @@
 import chai from "chai"
 
 // Default reducers
-import rootReducer from '../src/client/reducers/index.js'
+import rootReducer from '../../src/client/reducers/index.js'
 
 // Actions
-import { login } from "../src/client/actions/auth.js"
-import { move, readystate, startmatch } from "../src/client/actions/tetris.js"
-import { connected, ping } from "../src/client/actions/server.js"
+import { login } from "../../src/client/actions/auth.js"
+import { move, readystate, startmatch } from "../../src/client/actions/tetris.js"
+import { connected, ping } from "../../src/client/actions/server.js"
 
 // Tetris import
-import { MEGA_FALL_SCORE, SHIFT_DOWN_SCORE } from "../src/tetris/gridManip.js"
+import { MEGA_FALL_SCORE, SHIFT_DOWN_SCORE } from "../../src/tetris/gridManip.js"
 
 // Server imports
-import {startServer, configureStore} from './helpers/server.js'
+import {startServer, configureStore} from '../helpers/server.js'
 import io from 'socket.io-client'
-import params from '../params.js'
-import { penality } from "../src/tetris/actions/grid.js"
+import params from '../../params.js'
+import { penality } from "../../src/tetris/actions/grid.js"
 
 chai.should()
 
@@ -76,7 +76,7 @@ describe('Match-Events', function(){
 			}
 		}
 		/* --- Connect to Server --- */
-		const socket = io(params.server.url)
+		const socket = io(params.server.url, { transports: ['polling'] })
 		
 		const store = configureStore(rootReducer, socket, undefined, types)
 		
@@ -106,7 +106,7 @@ describe('Match-Events', function(){
 	// 	}
 
 	// 	// ----- CLIENT 1 -----
-	// 	const socket1 = io(params.server.url)
+	// 	const socket1 = io(params.server.url, { transports: ['polling'] })
 
 	// 	const types1 = {
 	// 		'connected': {
@@ -175,7 +175,7 @@ describe('Match-Events', function(){
 
 
 	// 	// ----- CLIENT 2 -----
-	// 	const socket2 = io(params.server.url)
+	// 	const socket2 = io(params.server.url, { transports: ['polling'] })
 
 	// 	const types2 = {
 	// 		'connected': {

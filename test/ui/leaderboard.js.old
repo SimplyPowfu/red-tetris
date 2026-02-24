@@ -1,0 +1,40 @@
+const React = require('react');
+const { render, screen, cleanup } = require('@testing-library/react');
+const chai = require('chai');
+const Leaderboard = require('../../src/client/frontend/components/Leaderboard.jsx').default;
+
+chai.should();
+
+describe('Leaderboard Component', () => {
+    afterEach(() => {
+        cleanup();
+    });
+
+    it('renders loading initially', async () => {
+        // Mock fetch
+        const pendingPromise = new Promise(() => {});
+        global.fetch = () => pendingPromise;
+
+        render(<Leaderboard />);
+        
+        // Use a regex matcher. If this fails, look at the error output 
+        // to see if "Ignored nodes" includes the text container.
+        const loading = screen.getByText(/Loading leaderboard/i);
+        chai.expect(loading).to.exist;
+    });
+
+    it('renders data correctly after fetch', async () => {
+        const mockData = [['Charlie', 400], ['Alice', 300]];
+
+        global.fetch = () => Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockData)
+        });
+
+        render(<Leaderboard />);
+
+        // IMPORTANT: Increase timeout if JSDOM/Node 22 is sluggish
+        const charlie = await screen.findByText(/Charlie/i, {}, { timeout: 2000 });
+        charlie.should.exist;
+    });
+});

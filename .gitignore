@@ -10,3 +10,4 @@ package-*.json
 test/demo
 coverage/
 dist/
+coverage.json

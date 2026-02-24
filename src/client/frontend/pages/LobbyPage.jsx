@@ -27,7 +27,7 @@ function gameOver(winner)
     );
 };
 
-const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
+export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
     
     const { room, player } = useParams()
     const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
