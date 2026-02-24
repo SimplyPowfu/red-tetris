@@ -59,7 +59,7 @@ socket.on('connect', () => {
   store.dispatch(connected());
 });
 
-setTimeout(() => store.dispatch(ping()), 20);
+const pingInterval = setInterval(() => store.dispatch(ping()), 20000);
 
 // dispatch server actions to Redux
 socket.on('action', (action) => {
