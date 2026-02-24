@@ -57,7 +57,7 @@ export class Player
 		// this.newblock();
 		// this.newblock();
 
-		this.execShedule();
+		this.loopSchedule();
 
 		// console.log('[PLAYER] static', this._static);
 	}
@@ -74,6 +74,30 @@ export class Player
 
 	/* Scheduled forwards */
 	execShedule() {
+		console.log('[PLAYER] executing schedule', this._schedule);
+
+		const { tickMs } = this._schedule;
+
+		for (const k in this._schedule) {
+			// console.log('k', k);
+			const kNum = Number(k);
+			if (!isNaN(kNum)) {
+				console.log('[PLAYER] about to execute', k);
+
+				/* execute the single schedule action */
+				this._timeouts[kNum] = setTimeout(() => {
+					/* check if active block present */
+					if (this._activeBlock === null) {
+						return ;
+					}
+					this.move(this._schedule[k], true);
+				}, k * tickMs);
+			}
+		}
+	}
+
+	loopSchedule()
+	{
 		if (this._gameover === true || this._activeBlock === null)
 			return ;
 
@@ -81,28 +105,14 @@ export class Player
 			this.clearSchedule();
 		}
 
-		console.log('[PLAYER] executing schedule', this._schedule);
-
 		const { tickMs } = this._schedule;
 
-		this._interval = setInterval(() => {
-			for (const k in this._schedule) {
-				// console.log('k', k);
-				const kNum = Number(k);
-				if (!isNaN(kNum)) {
-					console.log('[PLAYER] about to execute', k);
+		// First exec
+		this.execShedule();
 
-					/* execute the single schedule action */
-					this._timeouts[kNum] = setTimeout(() => {
-						/* check if active block present */
-						if (this._activeBlock === null) {
-							clearInterval(this._interval);
-							return ;
-						}
-						this.move(this._schedule[k], true);
-					}, k * tickMs);
-				}
-			}
+		// Loop exec
+		this._interval = setInterval(() => {
+			this.execShedule();
 		}, 10 * tickMs);
 	}
 
@@ -153,7 +163,7 @@ export class Player
 				action = () => this.shot();
 				break ;
 			default:
-				console.ward('[PLAYER] invalid move', move);
+				console.warn('[PLAYER] invalid move', move);
 		}
 
 		/* validate move */
@@ -194,7 +204,7 @@ export class Player
 			return ;
 		}
 		/* loop stuff */
-		this.execShedule();
+		this.loopSchedule();
 	}
 
 	penality(lines) {
