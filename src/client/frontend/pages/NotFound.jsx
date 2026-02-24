@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import '../main.css';
 
-const NotFound = () => {
-	const history = useHistory();
+export const NotFound = ({ history: historyProp }) => {
+	const history = historyProp || useHistory();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();

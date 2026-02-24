@@ -12,16 +12,13 @@
     "test:logic": "mocha --require babel-core/register --require ignore-styles test/logic",
     "test:ui": "mocha --require babel-core/register --require ./test/ui/setup.js --require ignore-styles test/ui",
     "test": "npm run test:logic && npm run test:ui",
-"coverage:clean": "rm -rf .nyc_output coverage",
-  
-  "coverage:logic": "NODE_ENV=test nyc --silent --no-clean --instrument false mocha --require babel-core/register --require ignore-styles --require ./test/.scripts/dump-coverage.js test/logic",
-  
-  "coverage:ui": "NODE_ENV=test nyc --silent --no-clean --instrument false mocha --require babel-polyfill --require babel-core/register --require ./test/ui/setup.js --require ignore-styles --require ./test/.scripts/dump-coverage.js test/ui",
-  
-"coverage:report": "node test/.scripts/merge-reports.js && istanbul report lcov text",
-
-  "coverage": "npm run coverage:clean && npm run coverage:logic && npm run coverage:ui && npm run coverage:report"  },
-"dependencies": {
+    "coverage:clean": "rm -rf .nyc_output coverage",
+    "coverage:logic": "NODE_ENV=test nyc --silent --no-clean --instrument false mocha --require babel-core/register --require ignore-styles --require ./test/.scripts/dump-coverage.js test/logic",
+    "coverage:ui": "NODE_ENV=test nyc --silent --no-clean --instrument false mocha --require babel-polyfill --require babel-core/register --require ./test/ui/setup.js --require ignore-styles --require ./test/.scripts/dump-coverage.js test/ui",
+    "coverage:report": "node test/.scripts/merge-reports.js && istanbul report lcov text",
+    "coverage": "npm run coverage:clean && npm run coverage:logic && npm run coverage:ui && npm run coverage:report"
+  },
+  "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.5",
@@ -60,6 +57,7 @@
     "nyc": "^11.9.0",
     "react-shallow-renderer": "^16.15.0",
     "redux-mock-store": "^1.5.5",
+    "regenerator-runtime": "^0.14.1",
     "style-loader": "^0.13.2",
     "webpack": "^1.13.0",
     "webpack-dev-middleware": "^1.6.1",

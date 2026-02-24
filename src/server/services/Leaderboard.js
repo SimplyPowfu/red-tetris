@@ -5,6 +5,7 @@ class Leaderboard
 {
 	_scores = new Map();
 	_high_score = 0;
+	filePath = 'public/Leaderboard.json'
 
 	new(__score, __username)
 	{
@@ -30,25 +31,29 @@ class Leaderboard
 		return this._high_score;
 	}
 
-	load()
+	load(path)
 	{
-		return fs.readFile("public/Leaderboard.json", "utf-8")
+		this.filePath = path || this.filePath || "public/Leaderboard.json";
+		return fs.readFile(this.filePath, "utf-8")
 			.then((data) => {
 				this._scores = new Map(JSON.parse(data));
 				// console.log("Leaderboard loaded successfully!");
+			
+				this._high_score = Math.max(...this._scores.values(), 0);
 			})
 			.catch((err) => {
 				if (err.code === "ENOENT") {
 					// File does not exist yet
 					this._scores = new Map();
+					this._high_score = 0;
 				}
 			});
 	}
 
-	persist()
+	persist(path)
 	{
 		return fs.writeFile(
-			"public/Leaderboard.json",
+			path || this.filePath || "public/Leaderboard.json",
 			JSON.stringify(this.sorted())
 		)
 		.then(() => {

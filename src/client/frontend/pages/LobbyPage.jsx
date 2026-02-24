@@ -242,7 +242,7 @@ export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate,
                 )}
                 {!lobby.ingame && lobby.players.length > 1 && (
                     <div className="retro-box">
-                        {opponents.map(player => (
+                        {lobby.players.map(player => (
                             <div key={player.username} className="status-item">
                             <span className="player-name" title={player.username}>
                                 {player.username}

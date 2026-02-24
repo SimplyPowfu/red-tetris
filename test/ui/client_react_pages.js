@@ -9,8 +9,8 @@ const { render, screen, cleanup, fireEvent } = require('@testing-library/react')
 const configureStore = require('redux-mock-store').default
 
 const { AuthPage } = require('../../src/client/frontend/pages/AuthPage.jsx')/* .default */
-
 const { LobbyPage } = require('../../src/client/frontend/pages/LobbyPage.jsx')/* .default */
+const { NotFound } = require('../../src/client/frontend/pages/NotFound.jsx')
 
 chai.should()
 
@@ -41,8 +41,6 @@ describe('React Pages (.jsx)', () => {
 					message={message}
 				/>
 			)
-
-			// console.log(screen.getByText('Welcome to Red-Tetris'))
 
 			screen.getByText('Welcome to Red-Tetris').should.exist
 			screen.getByPlaceholderText("How they'll remember you").should.exist
@@ -245,5 +243,123 @@ describe('React Pages (.jsx)', () => {
 			moved.should.equal('Mega')
 		})
 
-  })
+		it('changes map when arrow buttons are clicked', () => {
+			const user = { username: 'host', score: 0 }
+			const lobby = { 
+				players: [{ username: 'host', ready: false }],
+				ingame: false 
+			}
+			const store = mockStore({ user, lobby, alert: {}, tetris: {} })
+
+			let selectedMap = null
+			const startmatch = (map) => { selectedMap = map }
+
+			render(
+				<Provider store={store}>
+					<MemoryRouter initialEntries={['/room1/host']}>
+						<Route path="/:room/:player">
+							<LobbyPage
+								user={user}
+								lobby={lobby}
+								login={() => {}}
+								startmatch={startmatch}
+								readystate={() => {}}
+								move={() => {}}
+							/>
+						</Route>
+					</MemoryRouter>
+				</Provider>
+			)
+
+			const mapName = screen.getByText(/basic|ghost|invaders|wiggly/i)
+			mapName.should.exist
+
+			const [leftArrow, rightArrow] = screen.getAllByText(/◄|►/i)
+
+			// Initial map is 'BASIC'
+			mapName.textContent.should.equal('BASIC')
+
+			// Click right arrow -> map should advance
+			fireEvent.click(rightArrow)
+			mapName.textContent.should.equal('GHOST')
+
+			// Click right arrow again -> next map
+			fireEvent.click(rightArrow)
+			mapName.textContent.should.equal('INVADERS')
+
+			// Click left arrow -> map goes back
+			fireEvent.click(leftArrow)
+			mapName.textContent.should.equal('GHOST')
+		})
+
+		it('renders the list of players and ready/unready symbols', () => {
+			const user = { username: 'host', score: 0 }
+			const lobby = { 
+				players: [
+					{ username: 'host', ready: false },
+					{ username: 'player2', ready: true },
+					{ username: 'player3', ready: false },
+				],
+				ingame: false 
+			}
+			const store = mockStore({ user, lobby, alert: {}, tetris: {} })
+
+			render(
+				<Provider store={store}>
+					<MemoryRouter initialEntries={['/room1/host']}>
+						<Route path="/:room/:player">
+							<LobbyPage
+								user={user}
+								lobby={lobby}
+								login={() => {}}
+								startmatch={() => {}}
+								readystate={() => {}}
+								move={() => {}}
+							/>
+						</Route>
+					</MemoryRouter>
+				</Provider>
+			)
+
+			// Check that all players are rendered
+			screen.getAllByText('host').length.should.be.at.least(1)
+			screen.getByText('player2').should.exist
+			screen.getByText('player3').should.exist
+
+			// Check ready/unready symbols
+			screen.getByText('❌').should.exist // host not ready
+			screen.getByText('✅').should.exist // player2 ready
+			screen.getAllByText('❌').length.should.be.at.least(1) // host & player3 not ready
+		})
+  	})
+
+	describe('NotFound', () => {
+
+		it('renders', () => {
+			// simple noop functions instead of Sinon spies
+
+			render(<NotFound/>)
+
+			screen.getByText('Page Not Found').should.exist
+		})
+
+		it('button click navigates home', () => {
+			// Create a mock history object
+			const pushCalls = []
+			const mockHistory = {
+				push: (path) => pushCalls.push(path)
+			}
+
+			// Render NotFound with mock history
+			render(<NotFound history={mockHistory} />)
+
+			// Click the button
+			const button = screen.getByText('Go Home')
+			fireEvent.click(button)
+
+			// Assert push('/') was called
+			pushCalls.length.should.equal(1)
+			pushCalls[0].should.equal('/')
+		})
+	})
 })
