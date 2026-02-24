@@ -108,30 +108,20 @@ function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 // renders the game board
 export const Board = ({ statik, activeBlock, gameover }) => {
 
-	// console.log('[Board]', activeBlock, statik);
-	if (!statik)
-		return (
-			<p>Nothing yet to render</p>
-		);
-
-	const ghostRow = activeBlock ? getGhostRow(statik, activeBlock) : null;
-
+	const displayGrid = statik || Array.from({ length: 20 }, () => Array(10).fill(0));
+	const ghostRow = (statik && activeBlock) ? getGhostRow(statik, activeBlock) : null;
 	return (
-    <div className="game-container">
-      <div className="griglia">
-	  	{/* gameover && (
-          <div className="game-over-overlay">
-            <h2>YOU SUCK</h2>
-            <button onClick={alert('Saik')}>Riprova</button>
-          </div>
-        ) */}
-        {statik.map((riga, i) =>
-          riga.map((cella, j) => drawCell(i, j, cella, ghostRow, activeBlock, gameover))
-        )}
-      </div>
-    </div>
-  );
-}
+		<div className="game-container">
+		<div className="griglia">
+			{displayGrid.map((riga, i) =>
+			riga.map((cella, j) => 
+				drawCell(i, j, cella, ghostRow, activeBlock, gameover)
+			)
+			)}
+		</div>
+		</div>
+	);
+};
 
 const mapStateToProps = (state) => {
 	return {
