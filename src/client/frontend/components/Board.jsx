@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import './Board.css';
@@ -106,19 +106,35 @@ function drawCell(i, j, cella, ghostRow, activeBlock, gameover)
 }
 
 // renders the game board
-export const Board = ({ statik, activeBlock, gameover }) => {
+export const Board = ({ statik, activeBlock, gameover, mode }) => {
+	const [isVisible, setIsVisible] = useState(true);
+	useEffect(() => {
+        let interval = null;
+        if (mode === 'ghost') {
+            interval = setInterval(() => {
+                setIsVisible((prev) => !prev);
+            }, 2000);
+        } else {
+            setIsVisible(true);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [mode]);
 
 	const displayGrid = statik || Array.from({ length: 20 }, () => Array(10).fill(0));
-	const ghostRow = (statik && activeBlock) ? getGhostRow(statik, activeBlock) : null;
+	const effectiveActiveBlock = isVisible ? activeBlock : null;
+	const ghostRow = mode !== 'ghost' ? ((statik && activeBlock) ? getGhostRow(statik, activeBlock) : null) : null;
+	
 	return (
 		<div className="game-container">
-		<div className="griglia">
-			{displayGrid.map((riga, i) =>
-			riga.map((cella, j) => 
-				drawCell(i, j, cella, ghostRow, activeBlock, gameover)
-			)
-			)}
-		</div>
+			<div className="griglia">
+				{displayGrid.map((riga, i) =>
+				riga.map((cella, j) => 
+					drawCell(i, j, cella, ghostRow, effectiveActiveBlock, gameover)
+				)
+				)}
+			</div>
 		</div>
 	);
 };
@@ -128,7 +144,8 @@ const mapStateToProps = (state) => {
 		statik: state.tetris.static,
 		activeBlock: state.tetris.activeBlock,
 		gameover: state.tetris.gameover,
-		score: state.tetris.score
+		score: state.tetris.score,
+		mode: state.tetris.mode
 	}
 }
 

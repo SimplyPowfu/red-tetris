@@ -50,6 +50,7 @@ const reducer = (state = {} , action) => {
 				activeBlock: action.payload.startBlocks[0],
 				static: newgrid(action.payload.gridtype),
 				gameover:false,
+				mode: action.payload.gridtype,
 			}
 	case NEW_BLOCK:
 	{
