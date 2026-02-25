@@ -14,7 +14,7 @@ const initApp = (app, params, cb) => {
 	const { host, port } = params
 
 	const handler = (req, res) => {
-		if (req.url === '/bundle.js' || req.url === '/')
+		if (req.url === '/bundle.js' || req.url === '/index.html' ||req.url === '/')
 		{
 			const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'
 			fs.readFile(__dirname + file, (err, data) => {

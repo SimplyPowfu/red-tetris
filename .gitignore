@@ -3,11 +3,20 @@
 *.swo
 log
 tmp
+
+# Dev
 node_modules
 package-*.json
+
+# Temp
 **/Leaderboard.json
-.nyc_output/
 test/demo
-coverage/
+
+# Builds
 dist/
+build/
+
+# Coverage
+.nyc_output/
 coverage.json
+coverage/

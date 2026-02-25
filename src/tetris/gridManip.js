@@ -1,7 +1,7 @@
 
 import { act } from "react";
-import { START_COLUMN, Tetriminos, produceBlock } from "./blocks";
-import Piece from "./Piece";
+import Piece, { START_COLUMN, Tetriminos, produceBlock } from "./Piece.js";
+// import Piece from "./Piece";
 
 // defined here but later import from game folder
 export const COLUMNS_NUMBER = 10

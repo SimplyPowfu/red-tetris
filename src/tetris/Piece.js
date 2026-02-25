@@ -1,5 +1,5 @@
 
-const START_COLUMN = 3
+export const START_COLUMN = 3
 
 export const BlockColor = {
   I: '#00E5FF', // azzurro

@@ -26,7 +26,7 @@ export const HIGHSCORE = 'priv/highscore';
 	startgrid: any;
 } */
 
-
+const INT_MAX_2 = 1073741824
 
 export default class Game
 {
@@ -174,7 +174,7 @@ export default class Game
 
 	/* Match management actions */
 	startmatch() {
-		this._seed = Math.floor(Math.random() * 2147483648);
+		this._seed = Math.floor(INT_MAX_2 + Math.random() * INT_MAX_2);
 
 		for (const playerId of this._players) {
 			console.log('[GAME] starting', playerId);

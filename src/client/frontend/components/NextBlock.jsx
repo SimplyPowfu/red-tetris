@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BlockColor } from '../../../tetris/blocks';
+import { BlockColor } from '../../../tetris/Piece.js';
 
 import './Board.css';
 
