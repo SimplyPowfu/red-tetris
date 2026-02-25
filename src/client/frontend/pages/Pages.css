@@ -33,7 +33,6 @@ body {
         overflow-x: hidden; /* Evita lo scroll laterale */
     }
 
-    /* Colonna sinistra (La tua area di gioco) */
     .left-column {
         display: flex;
         flex-direction: column;
@@ -44,7 +43,7 @@ body {
     /* Spostiamo la colonna dei widget SOPRA la board */
     .center-column {
         order: -1; /* Questo la sposta in cima a tutto */
-        flex-direction: row !important; /* Mette widget affiancati per risparmiare altezza */
+        flex-direction: row !important;
         margin-top: 0 !important;
         width: 100%;
         justify-content: center;
@@ -52,7 +51,7 @@ body {
     }
 
     .retro-box {
-        width: 90px; /* Più piccoli per starci affiancati */
+        width: 90px;
         min-height: 70px;
         border-radius: 8px;
         transform: scale(0.95);
@@ -71,13 +70,12 @@ body {
     .board-wrapper {
         margin-top: 0px;
         margin-bottom: 10px;
-        /* Riduciamo leggermente il padding per risparmiare spazio */
         padding: 5px; 
     }
 
     .controls-container {
         margin-top: 15px;
-        transform: scale(0.85); /* Leggermente più piccoli per non uscire dal bordo */
+        transform: scale(0.85);
     }
 
     .opponents-layout {
@@ -85,20 +83,59 @@ body {
     }
 }
 
-/* Per schermi molto piccoli (es. iPhone SE) */
-@media (max-height: 700px) {
+/* Per schermi molto piccoli (iPhone SE) */
+@media (max-width: 400px) {
+    .lobby-container {
+        padding-top: 0px !important;
+        gap: 0px !important;
+    }
+
+    .player-header {
+        margin-bottom: -5px !important;
+        font-size: 1rem;
+    }
+
     .board-wrapper {
-        transform: scale(0.7);
-        margin-bottom: -80px;
+        transform: scale(0.75);
+        transform-origin: top center; 
+        margin-top: -10px;
+        margin-bottom: -120px;
     }
+
+    .center-column {
+        margin-top: 0 !important;
+        gap: 5px !important;
+        transform: scale(0.9);
+    }
+
     .controls-container {
-        transform: scale(0.8);
+        margin-top: -24px !important;
+        transform: scale(0.70);
     }
-    .controls-container button {
-        width: 45px !important;
-        height: 45px !important;
-        font-size: 1.1rem !important;
+
+    .center-column .retro-box {
+        width: 100px !important;
+        min-height: 60px !important;
+        padding: 5px !important;
     }
+
+    .retro-box-title {
+        font-size: 0.8rem !important;
+        margin-bottom: 0px !important;
+    }
+
+    .map-selector .arrow-btn {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .start-btn {
+        padding: 8px 30px !important;
+        font-size: 1rem !important;
+        margin-top: -5px !important;
+    }
+
 }
 
 /* --- COLONNE --- */
@@ -112,7 +149,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-size: 1.2rem;
     align-self: flex-start;
     padding-left: 5px;
@@ -131,16 +168,16 @@ body {
 
 /* --- CENTRO (CONTROLLI) --- */
 .center-column {
-    margin-top: 50px; /* Ridotto un po' il margine per far stare tutto */
-    gap: 10px;        /* Ridotto gap tra i box per compattezza */
+    margin-top: 50px;
+    gap: 10px;
 }
 
 .player-name {
-    max-width: 90px;         /* Imposta la larghezza massima desiderata */
-    white-space: nowrap;      /* Impedisce al nome di andare a capo */
-    overflow: hidden;         /* Nasconde la parte eccedente */
-    text-overflow: ellipsis;  /* Aggiunge i tre puntini (...) */
-    display: inline-block;    /* Necessario per applicare larghezza e troncamento */
+    max-width: 90px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
     vertical-align: middle;
 }
 
@@ -152,8 +189,8 @@ body {
 
 /* STILE RETRO BOX GENERALE */
 .retro-box {
-    width: 140px;          /* Larghezza fissa per allinearli tutti */
-    min-height: 100px;     /* Altezza minima */
+    width: 140px;
+    min-height: 100px;
     border: 2px solid #333;
     border-radius: 15px;
     display: flex;
@@ -180,7 +217,6 @@ body {
     width: 100%;
 }
 
-/* Override specifico per NEXT BLOCK (ridimensionamento) */
 .retro-box-content > .next-block {
     transform: scale(0.8);
     transform-origin: center;
@@ -263,7 +299,7 @@ body {
 .opponents-layout {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;       /* FONDAMENTALE: Se non c'è spazio laterale, va a capo (uno sotto l'altro) */
+    flex-wrap: wrap;       /* Se non c'è spazio laterale, va a capo (uno sotto l'altro) */
     justify-content: center; /* Se c'è spazio, li centra. Se sono in riga, li centra. */
     gap: 30px;             /* Spazio tra le board */
     width: 100%;
@@ -273,7 +309,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Opzionale: assicura che il wrapper non si schiacci troppo */
     min-width: 160px; 
 }
 
@@ -285,7 +320,6 @@ body {
     width: 100%;
 }
 
-/* --- FIX GRIGLIA (Invariato ma incluso per completezza) --- */
 .right-column .griglia {
     display: grid !important;
     grid-template-columns: repeat(10, 15px) !important; 
@@ -311,7 +345,6 @@ body {
     display: inline-block;
 }
 
-/* Stile base (quello che avevi già, con aggiunte) */
 .game-over-overlay {
     position: absolute;
     top: 0;
