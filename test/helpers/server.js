@@ -10,7 +10,8 @@ export const startServer = (params, cb) => {
 }
 
 import alertMiddleware from '../../src/client/middleware/alertMiddleware'
-import socketMiddleware from '../../src/client/middleware/socketMiddleware'
+import { logaction } from '../../src/client/actions/server'
+// import socketMiddleware from '../../src/client/middleware/socketMiddleware'
 // import storeStateMiddleware from '../../src/client/middleware/storeStateMiddleware'
 
 export const configureStore = (reducer, socket, initialState, types) => createStore( 
@@ -22,7 +23,7 @@ export const configureStore = (reducer, socket, initialState, types) => createSt
     testMiddleware(types),
 
     /* Insert Your Middlewares */
-    socketMiddleware(socket),
+    socketIoMiddleWare(socket),
     alertMiddleware,
     // storeStateMiddleware,
   )
@@ -45,12 +46,26 @@ const testMiddleware = (types={}) => {
   }
 }
 
-/* const socketIoMiddleWare = socket => ({dispatch, getState}) => {
-  if(socket) socket.on('action', dispatch)
-  return next => action => {
-    if(socket && action.type && action.type.indexOf('server/') === 0) {
-      socket.emit('action', action)
+const socketIoMiddleWare = socket => ({dispatch, getState}) => {
+  // if(socket) socket.on('action', dispatch)
+
+    return next => action => {
+      if(action.type && action.type.indexOf('server/') === 0)
+        {
+          const state = getState();
+          if (socket && state.server && state.server.connected === true) {
+            socket.emit('action', action);
+          }
+          dispatch(logaction(action));
+        }
+        return next(action)
     }
-    return next(action)
-  }
-} */
+
+
+  // return next => action => {
+  //   if(socket && action.type && action.type.indexOf('server/') === 0) {
+  //     socket.emit('action', action)
+  //   }
+  //   return next(action)
+  // }
+}

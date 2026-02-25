@@ -1,6 +1,7 @@
 export const LOGIN_REQUEST = 'server/login/request';
 export const LOGIN_REPLY = 'login/reply';
 export const LOGOUT_REQUEST = 'server/logout/request';
+export const LOGOUT_REPLY = 'logout/reply';
 
 let interval = null;
 
@@ -39,4 +40,10 @@ export const login = (payload) => {
 			}, 100);
 		}
 	}
+}
+
+export const logout = () => {
+	return ({
+		type: LOGOUT_REPLY,
+	});
 }

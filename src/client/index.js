@@ -21,10 +21,11 @@ import reducer from './reducers/index.js'
 
 // Frontend
 import App from './frontend/containers/App.jsx';
+import { getSocket } from './services/socket.js'
 
 
 const initialState = {}
-const socket = socketIO.default(`http://${window.location.hostname}:3004`);
+// const socket = socketIO.default(`http://${window.location.hostname}:3004`);
 
 /* This build the Redux store object.
 @reducer: The reducers that will be called after the middleware pipeline.
@@ -38,11 +39,13 @@ const store = createStore(
   applyMiddleware(
     thunk,
     // createLogger(),
-    socketMiddleware(socket),
+    socketMiddleware,
     alertMiddleware,
     storeStateMiddleware,
   )
 );
+
+export const dispatch = store.dispatch;
 
 ReactDom.render((
   <Provider store={store}>
@@ -55,14 +58,14 @@ ReactDom.render((
 /* All client-server operation pass trough Redux's store */
 
 // dispath ping action to the Server
-socket.on('connect', () => {
-  store.dispatch(connected());
-});
+// socket.on('connect', () => {
+//   store.dispatch(connected());
+// });
 
-const pingInterval = setInterval(() => store.dispatch(ping()), 20000);
+// const pingInterval = setInterval(() => store.dispatch(ping()), 20000);
 
-// dispatch server actions to Redux
-socket.on('action', (action) => {
-  const { meta, ...rest } = action;
-  store.dispatch(rest);
-});
+// // dispatch server actions to Redux
+// socket.on('action', (action) => {
+//   const { meta, ...rest } = action;
+//   store.dispatch(rest);
+// });

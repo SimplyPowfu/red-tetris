@@ -14,7 +14,19 @@ const initApp = (app, params, cb) => {
 	const { host, port } = params
 
 	const handler = (req, res) => {
-		if (req.url === '/bundle.js' || req.url === '/index.html' ||req.url === '/')
+		if (req.url === '/leaderboard')
+		{
+			const data = JSON.stringify(Leaderboard.sorted());
+			
+			// Add CORS headers
+			res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
+			res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+			res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+			
+			res.writeHead(200);
+			res.end(data);
+		}
+		else
 		{
 			const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'
 			fs.readFile(__dirname + file, (err, data) => {
@@ -26,18 +38,6 @@ const initApp = (app, params, cb) => {
 				res.writeHead(200);
 				res.end(data);
 			});
-		}
-		else if (req.url === '/leaderboard')
-		{
-			const data = JSON.stringify(Leaderboard.sorted());
-			
-			// Add CORS headers
-			res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
-			res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-			res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-			
-			res.writeHead(200);
-			res.end(data);
 		}
 	}
 

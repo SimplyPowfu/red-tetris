@@ -1,4 +1,5 @@
 import { LOBBY_STATE } from '../../server/actions/lobby';
+import { LOGOUT_REPLY } from '../actions/auth';
 
 const reducer = (state = {} , action) => {
 	// console.log('[reducer/user] reducing action', action);
@@ -11,6 +12,8 @@ const reducer = (state = {} , action) => {
 			...action.payload
 		}
 	}
+	case LOGOUT_REPLY:
+		return {};
 	default: 
 		return state 
 	}

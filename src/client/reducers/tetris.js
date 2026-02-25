@@ -17,7 +17,7 @@ import {
 
 import { newgrid, ts, nb, cl, pn, sd, sl, sr, rr, mf, st } from '../../tetris/gridManip'
 import { GAME_OVER, gameover, WIN_MATCH } from '../actions/tetris'
-import { LOGIN_REPLY } from '../actions/auth'
+import { LOGIN_REPLY, LOGOUT_REPLY } from '../actions/auth'
 
 const reducer = (state = {} , action) => {
   switch(action.type)
@@ -119,6 +119,8 @@ const reducer = (state = {} , action) => {
 			...state,
 			activeBlock: mf(state.activeBlock, state.static),
 	}
+	case LOGOUT_REPLY:
+		return {};
 	default: 
 	  return state
   }
