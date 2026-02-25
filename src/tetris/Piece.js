@@ -78,3 +78,36 @@ export default class Piece
 		return this._type;
 	} */
 }
+
+export function produceBlock(__blockType)
+{
+	const shape = Tetriminos[__blockType];
+	if (!shape) {
+		return ({
+			shape: [],
+			row: 0,
+			column: START_COLUMN,
+			type: 'Error',
+		});
+	}
+	else
+	{
+		return ({
+			shape,
+			row: 0,
+			column: START_COLUMN,
+			type: __blockType,
+		})
+	}
+}
+
+export function isblock(block)
+{
+	return (block
+		&& block.shape != undefined
+		&& block.type !== undefined
+		&& block.type !== 'Error'
+		&& block.row !== undefined
+		&& block.column !== undefined
+	);
+}

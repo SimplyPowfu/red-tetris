@@ -1,7 +1,5 @@
-
 import { act } from "react";
-import Piece, { START_COLUMN, Tetriminos, produceBlock } from "./Piece.js";
-// import Piece from "./Piece";
+import { Tetriminos, produceBlock, isblock } from "./Piece.js";
 
 // defined here but later import from game folder
 export const COLUMNS_NUMBER = 10
@@ -82,14 +80,20 @@ export const mapBlock = {
 
 // returns a new grid
 export function newgrid(map) {
-	const grid = Array.from({ length: ROWS_NUMBER }, () => Array(COLUMNS_NUMBER).fill(null))
   if (map && map !== "basic")
     return mapBlock[map];
-  return grid;
+  return Array.from({ length: ROWS_NUMBER }, () => Array(COLUMNS_NUMBER).fill(null));
+}
+
+export function isgrid(grid)
+{
+    return (grid || Array.isArray(grid) || grid.length === ROWS_NUMBER || Array.isArray(grid[0]) || grid[0].length === COLUMNS_NUMBER);
 }
 
 export function st(grid)
 {
+  if (!isgrid(grid))
+    return grid;
 
   const newGrid = grid.map(row => [...row]);
 
@@ -136,41 +140,29 @@ export function nb(blockType)
 	if (Object.keys(Tetriminos).find(k => k === blockType) === undefined)
 		return null;
 
-	return new Piece(blockType);
+	return produceBlock(blockType);
 }
 
 // @grid is the active grid, slides DOWN the block
 export function sd(activeBlock)
 {
-	if (!activeBlock) return;
+	if (!isblock(activeBlock))
+    return activeBlock;
+
     const { /* shape, */ row/* , column */ } = activeBlock;
     const newRow = row + 1;
 
-    // if (isValidPosition(shape, newRow, column, grid)) {
 	return { ...activeBlock, row: newRow };
-    /* } else {
-      const newGrid = grid.map(r => [...r]);
-
-      for (let i = 0; i < shape.length; i++) {
-        for (let j = 0; j < shape[i].length; j++) {
-          if (shape[i][j] !== null) {
-            newGrid[row + i][column + j] = shape[i][j];
-          }
-        }
-      }
-      const cleared = checkLines(newGrid);
-      setGrid(cleared);
-      setActiveBlock(null);
-      addBlock();
-    } */
 }
 
 // @grid is the active grid, slides LEFT the block
 export function sl(activeBlock)
 {
-    if (!activeBlock) return;
-    const { column } = activeBlock;
-    const newColumn = column - 1;
+  if (!isblock(activeBlock))
+    return activeBlock;
+
+  const { column } = activeBlock;
+  const newColumn = column - 1;
 
 	return { ...activeBlock, column: newColumn };
 }
@@ -178,9 +170,11 @@ export function sl(activeBlock)
 // @grid is the active grid, slides RIGHT the block
 export function sr(activeBlock)
 {
-	if (!activeBlock) return;
-    const { column } = activeBlock;
-    const newColumn = column + 1;
+	if (!isblock(activeBlock))
+    return activeBlock;
+
+  const { column } = activeBlock;
+  const newColumn = column + 1;
 
 	return { ...activeBlock, column: newColumn };
 }
@@ -188,7 +182,7 @@ export function sr(activeBlock)
 // @grid is the active grid, ROTATES the block
 export function rr(activeBlock)
 {
-  if (activeBlock.type === 'O')
+  if (!isblock(activeBlock) || activeBlock.type === 'O')
     return activeBlock;
 
   const { shape } = activeBlock;
@@ -225,6 +219,9 @@ export function rr(activeBlock)
 // pushes the active block as low as possible
 export function mf(activeBlock, grid)
 {
+  if (!isgrid(grid) || !isblock(activeBlock))
+    return activeBlock;
+
 	let newBlock = { ...activeBlock};
 
 	if (activeBlock) {
@@ -242,6 +239,9 @@ export function mf(activeBlock, grid)
 // @grid is the static grid, collapse the passed line
 export function cl(grid)
 {
+  if (!isgrid(grid))
+    return grid;
+
 	const penaltyLines = grid.filter(row => row.includes('X'));
   const playableLines = grid.filter(row => !row.includes('X'));
 
@@ -268,6 +268,9 @@ export function cl(grid)
 // moves the active block in the grid
 export function ts(activeBlock, grid)
 {
+  if (!isgrid(grid) || !isblock(activeBlock))
+    return grid;
+
   const newGrid = grid.map(row => [...row]);
 
 	if (activeBlock) {
@@ -275,7 +278,8 @@ export function ts(activeBlock, grid)
 		for (let i = 0; i < shape.length; i++) {
 			for (let j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] !== null) {
-					newGrid[row + i][column + j] = shape[i][j];
+					if(newGrid[row + i] !== undefined && newGrid[row + i][column + j] !== undefined)
+            newGrid[row + i][column + j] = shape[i][j];
 				}
 			}
 		}
@@ -287,7 +291,7 @@ export function ts(activeBlock, grid)
 // @grid is the static grid, adds a penality layer
 export function pn(grid, lines)
 {
-  if (lines <= 0)
+  if (lines <= 0 || !isgrid(grid))
     return grid;
 
   const newGrid = grid.slice(lines);
@@ -298,7 +302,10 @@ export function pn(grid, lines)
 
 /* VALIDATE MOVE */
 export function isValidPosition(block, grid) {
-  // console.log('[MANIP] valid', grid ? 'defined' : 'undefined');
+
+  if (!isgrid(grid) || !isblock(block))
+    return false;
+
 	const { shape, row, column } = block;
     for (let i = 0; i < shape.length; i++) {
       for (let j = 0; j < shape[i].length; j++) {
@@ -321,6 +328,9 @@ export function isValidPosition(block, grid) {
 }
 
 export function isValidBlock(block) {
+  if (!isblock(block))
+    return false;
+
 	const { shape, row, column } = block;
     for (let i = 0; i < shape.length; i++) {
       for (let j = 0; j < shape[i].length; j++) {
@@ -344,6 +354,9 @@ export function isValidSpawn(oldBlock, newBlock)
 {
   if (oldBlock === null)
     return true;
+
+  if (!isblock(oldBlock) || !isblock(newBlock))
+    return false;
 
   const oldShape = oldBlock.shape;
   const newShape = newBlock.shape;

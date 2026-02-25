@@ -29,11 +29,13 @@ function gameOver(winner)
 
 export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate, move, winner }) => {
     
-    const { room, player } = useParams()
+    const { room, player } = useParams();
     const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
-    const history = useHistory()
-
+    const history = useHistory();
+    
+    /* ============== MOBILE =============== */
     const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {
         const checkMobile = () => {
             const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -88,15 +90,19 @@ export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate,
 
         touchStart.current = { x: 0, y: 0, lastX: 0, time: 0 };
     };
+    /* =============================== */
     
-    /* Lobby updates */
-    useEffect(() => {
-            if (message) {
-                alert(message);
-                history.push('/');
-            }
-        }, [message]);
+    /* ============== Lobby updates ============= */
 
+    // Back to home on alert
+    useEffect(() => {
+        if (message) {
+            alert(message);
+            history.push('/');
+        }
+    }, [message]);
+
+    // Autologin
     useEffect(() => {
         if (!user.username) {
             login({ username: player, lobbyId: room });
@@ -107,6 +113,7 @@ export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate,
     const maps = ["basic", "ghost", "invaders", "wiggly"];
     const [mapIndex, setMapIndex] = useState(0);
     const [score, setScore] = useState(0);
+    const [isHost, setIsHost] = useState(false);
 
     /* MAP */
     const changeMap = (direction) => {
@@ -117,6 +124,21 @@ export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate,
             return nextIndex;
         });
     };
+
+    /* Get Host status */
+    useEffect(() => {
+        if (lobby.players) {
+            if ((lobby.players.length > 1 && lobby.players[0].username === user.username)
+                || lobby.players.length <= 1)
+                setIsHost(true);
+            else
+                // Alone
+                setIsHost(false);
+        }
+        // No players
+        else
+            setIsHost(true);
+    }, [lobby]);
 
     /* Persist SCORE/OPPONENTS */
     useEffect(() => {
@@ -147,9 +169,6 @@ export const LobbyPage = ({ message, lobby, user, login, startmatch, readystate,
 
     /* Loading page */
     if (!user.username || !lobby.players) return <div className="lobby-loading">Loading...</div>;
-
-    // const opponents = lobby.players ? lobby.players.filter(p => p.username !== user.username) : [];
-    const isHost = lobby.players && lobby.players.length && lobby.players[0].username === user.username;
 
     return (
         <div className="lobby-container">
