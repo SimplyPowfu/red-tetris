@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth.js';
@@ -11,12 +11,17 @@ export const AuthPage = ({ login, alertclear, user, message }) => {
 	const [error, setError] = useState('');
 	const [lobbyId, setLobbyId] = useState('');
 	const history = useHistory();
+	const firstMount = useRef(true);
 
 	useEffect(() => {
+		if (firstMount.current === true) {
+			firstMount.current = false;
+			return ;
+		}
         if (user.username) {
             history.push(`/${user.lobbyId}/${user.username}`);
         }
-    }, [user.username, user.lobbyId, history]);
+    }, [user.username, user.lobbyId]);
 
 	useEffect(() => {
         if (message) {
