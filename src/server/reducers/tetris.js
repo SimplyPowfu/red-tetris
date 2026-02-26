@@ -47,8 +47,12 @@ const reducer = (state = {}, action) => {
 		{
 			const { senderId, lobbyId } = action.meta;
 
+			console.log('[LOGOUT]', senderId, lobbyId);
+
 			if (!state[lobbyId])
 				return state;
+
+			console.log('[LOGOUT] leaving...');
 
 			const lobby = state[lobbyId];
 			lobby.leave(senderId);

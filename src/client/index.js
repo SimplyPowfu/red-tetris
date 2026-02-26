@@ -38,7 +38,7 @@ const store = createStore(
   initialState,
   applyMiddleware(
     thunk,
-    // createLogger(),
+    createLogger(),
     socketMiddleware,
     alertMiddleware,
     storeStateMiddleware,

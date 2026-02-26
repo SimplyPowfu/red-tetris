@@ -172,6 +172,16 @@ export default class Game
 		});
 	}
 
+	leave(senderId)
+	{
+		const player = this._register.get(senderId);
+		if (player === undefined)
+			return;
+		console.log('[GAME] leaving', senderId);
+		player.delete();
+		this._register.delete(senderId);
+	}
+
 	/* Match management actions */
 	startmatch() {
 		this._seed = Math.floor(INT_MAX_2 + Math.random() * INT_MAX_2);
@@ -211,7 +221,7 @@ export default class Game
 
 		for (const [id, player] of this._register) {
 			player.delete();
-			delete this._register[id];
+			this._register.delete(id);
 		}
 	}
 
