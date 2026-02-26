@@ -4,6 +4,7 @@
   "author": "ecarbona, topiana-",
   "license": "MIT",
   "scripts": {
+    "build": "npm run client-dist && npm run srv-dist",
     "eslint": "eslint src",
     "client-dist": "NODE_ENV=production webpack --progress --colors",
     "client-dev": "webpack-dev-server --colors --hot --inline --history-api-fallback --host 0.0.0.0 --port 8080",
