@@ -24,27 +24,37 @@ const initApp = (app, params, cb) => {
 			res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 			
 			res.writeHead(200);
-			res.end(data);
+			return res.end(data);
 		}
-		else
-		{
-			const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'
-			fs.readFile(__dirname + file, (err, data) => {
-				if (err) {
-					logerror(err);
-					res.writeHead(500);
-					return res.end('Error loading index.html');
-				}
-				res.writeHead(200);
-				res.end(data);
-			});
-		}
+
+		// Gestione file statici
+        let filePath = '';
+        let contentType = 'text/html';
+
+        if (req.url === '/build/bundle.js' || req.url === '/bundle.js') {
+            filePath = '/../../build/bundle.js';
+            contentType = 'application/javascript';
+        } else {
+            filePath = '/../../index.html';
+            contentType = 'text/html';
+        }
+
+        fs.readFile(__dirname + filePath, (err, data) => {
+            if (err) {
+                logerror(err);
+                res.writeHead(500);
+                return res.end('Error loading resource');
+            }
+            res.setHeader('Content-Type', contentType);
+            res.writeHead(200);
+            res.end(data);
+        });
 	}
 
 	app.on('request', handler);
 
 	app.listen({host, port}, () =>{
-		loginfo(`tetris listen on ${params.url}`);
+		loginfo(`tetris listen on port ${port}`);
 		cb();
 	})
 }

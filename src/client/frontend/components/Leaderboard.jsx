@@ -6,7 +6,7 @@ const Leaderboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://${window.location.hostname}:3004/leaderboard`)
+    fetch(`/leaderboard`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
