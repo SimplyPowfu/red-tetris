@@ -86,7 +86,7 @@ export default class Lobby
 		this._players.delete(senderId);
 		this._ready.delete(senderId);
 
-		console.log('[LOBBY]', this.ingame, this._game[senderId] !== undefined)
+		// console.log('[LOBBY]', this.ingame, this._game[senderId] !== undefined)
 		if (this._ingame && this._game[senderId] !== undefined) {
 			this._game.leave(senderId);
 		}
