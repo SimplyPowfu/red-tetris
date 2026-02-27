@@ -27,28 +27,28 @@ const initApp = (app, params, cb) => {
 			return res.end(data);
 		}
 
-		// Gestione file statici
-        let filePath = '';
-        let contentType = 'text/html';
-
-        if (req.url === '/build/bundle.js' || req.url === '/bundle.js') {
-            filePath = '/../../build/bundle.js';
-            contentType = 'application/javascript';
-        } else {
-            filePath = '/../../index.html';
-            contentType = 'text/html';
-        }
-
-        fs.readFile(__dirname + filePath, (err, data) => {
-            if (err) {
-                logerror(err);
-                res.writeHead(500);
-                return res.end('Error loading resource');
-            }
-            res.setHeader('Content-Type', contentType);
-            res.writeHead(200);
-            res.end(data);
-        });
+		if (req.url.endsWith('bundle.js')) {
+			fs.readFile(__dirname + '/../../build/bundle.js', (err, data) => {
+				if (err) {
+					res.writeHead(404);
+					return res.end('Bundle not found');
+				}
+				res.setHeader('Content-Type', 'application/javascript');
+				res.writeHead(200);
+				res.end(data);
+			});
+			return;
+		}
+		fs.readFile(__dirname + '/../../index.html', (err, data) => {
+			if (err) {
+				logerror(err);
+				res.writeHead(500);
+				return res.end('Error loading index.html');
+			}
+			res.setHeader('Content-Type', 'text/html');
+			res.writeHead(200);
+			res.end(data);
+		});
 	}
 
 	app.on('request', handler);
