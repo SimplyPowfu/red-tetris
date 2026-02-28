@@ -6,8 +6,8 @@
 @media (max-width: 959px) {
   :root {
     /* full - container-padding - cell-padding - safety-mesure */
-    --tile-size-width: calc((100vw - 2 * 20px - 9px - 30px) / 10);
-    --tile-size-height: calc((100vh - 2 * 20px - 19px - 30px) / 20);
+    --tile-size-width: calc((100vw - 2 * 20px - 9px - 50px) / 10);
+    --tile-size-height: calc((100vh - 2 * 20px - 19px - 50px) / 20);
 
     /* get the min of those size */
     --tile-size: min(var(--tile-size-width), var(--tile-size-height));
