@@ -54,7 +54,16 @@ export const AuthPage = ({ login, alertclear, user, message }) => {
             duration: 1,
             stagger: 0.2
         });
-		tl.to(".pixelated", { opacity: 1, duration: 0.5 }, 1.5);
+		tl.to(".pixelated", {
+			opacity: 1,
+			duration: 0.5 
+		}, 1.5);
+		tl.from(".auth-form, .leaderboard", {
+			y: -60,
+			opacity: 0,
+			duration: 0.6,
+			ease: "power2.out"
+		}, 1);
     }, { scope: container });
 
 	useEffect(() => {
@@ -124,7 +133,7 @@ export const AuthPage = ({ login, alertclear, user, message }) => {
 				{error && <div className="message">{error}</div>}
 			</form>
 
-			{!user.username &&<Leaderboard/>}
+			{!user.username && <div className='leaderboard'><Leaderboard/></div>}
 		</div>
 	);
 }
