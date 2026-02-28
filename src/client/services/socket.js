@@ -5,7 +5,7 @@ import { connected, ping } from '../actions/server';
 let socket;
 
 export const createSocket = ({ dispatch }) => {
-	socket = socketIO.default();
+	socket = socketIO.default('http://localhost:3004');
 
 	socket.on('connect', () => {
 		dispatch(connected());
