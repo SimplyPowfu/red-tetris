@@ -7,7 +7,7 @@ body {
 }
 
 /* --- CONTAINER PRINCIPALE --- */
-.lobby-container {
+.pc-lobby-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -25,7 +25,7 @@ body {
 }
 
 @media (max-width: 959px) {
-    .lobby-container {
+    .pc-lobby-container {
         flex-direction: column; /* Su mobile, le colonne principali vanno una sotto l'altra */
         align-items: center;
         padding-top: 5px;
@@ -67,7 +67,7 @@ body {
     }
 
     /* Gestione Board e Controlli */
-    .board-wrapper {
+    .pc-board-wrapper {
         margin-top: 0px;
         margin-bottom: 10px;
         padding: 5px; 
@@ -85,7 +85,7 @@ body {
 
 /* Per schermi molto piccoli (iPhone SE) */
 @media (max-width: 400px) {
-    .lobby-container {
+    .pc-lobby-container {
         padding-top: 0px !important;
         gap: 0px !important;
     }
@@ -95,7 +95,7 @@ body {
         font-size: 1rem;
     }
 
-    .board-wrapper {
+    .pc-board-wrapper {
         transform: scale(0.75);
         transform-origin: top center; 
         margin-top: -10px;
@@ -157,7 +157,7 @@ body {
 
 .star-icon { color: red; }
 
-.board-wrapper {
+.pc-board-wrapper {
     position: relative;
     border: 2px solid #333;
     border-radius: 2px;
@@ -449,7 +449,7 @@ body {
     letter-spacing: 1px;
 }
 
-.board-wrapper {
+.pc-board-wrapper {
     user-select: none;
     -webkit-touch-callout: none;
 }
@@ -465,14 +465,14 @@ body {
     }
 }
 
-.mobile-interactive-area {
+.pc-interactive-area {
     margin-top: 0px;
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
-.mobile-lobby-controls {
+.pc-lobby-controls {
     display: flex;
     flex-direction: column;
     align-items: center;

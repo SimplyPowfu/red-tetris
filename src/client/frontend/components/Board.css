@@ -2,9 +2,16 @@
   --tile-size: 30px; /* Dimensione PC */
 }
 
+/* calc cell size allowing 20px of padding all-around */
 @media (max-width: 959px) {
   :root {
-    --tile-size: 20px; /* Dimensione Mobile: quasi la metà */
+    /* full - container-padding - cell-padding */
+    --tile-size-width: calc((100lvw - 2 * 20px - 9px) / 10);
+    --tile-size-height: calc((100lvh - 2 * 20px - 19px) / 20);
+
+    /* get the min of those size */
+    --tile-size: min(var(--tile-size-width), var(--tile-size-height));
+    --next-tile-size: clamp(8px, 8vw, 16px);
   }
 }
 
@@ -51,7 +58,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 .griglia {
@@ -74,24 +81,22 @@
   border-radius: 4px;
 }
 
+/* MOBILE STYLES */
 
-.game-over-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(5, 10, 23, 0.85); /* Blu trasparente */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  backdrop-filter: blur(4px);
+.next-block-mobile .cella {
+  width: var(--next-tile-size);
+  height: var(--next-tile-size);
 }
 
-.game-over-overlay h2 {
-  color: #ff1744;
-  font-family: 'Courier New', Courier, monospace;
-  margin-bottom: 20px;
+.next-block-mobile {
+  display: grid;
+  grid-template-columns: repeat(4, var(--next-tile-size));
+  grid-auto-rows: var(--next-tile-size);
+  gap: 1px;
+  background: #333;
+  padding: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: fit-content;
+  border-radius: 2px;
 }
