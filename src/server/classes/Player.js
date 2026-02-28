@@ -120,8 +120,9 @@ export class Player
 		for (const t of this._timeouts) {
 			clearTimeout(t);
 		}
-		this._timeouts = Array.from({ length:10 });
 		clearInterval(this._interval);
+		this._timeouts = Array.from({ length:10 });
+		this._interval = null;
 	}
 
 	/* Player inputs */

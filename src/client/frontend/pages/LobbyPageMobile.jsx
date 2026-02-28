@@ -68,7 +68,7 @@ export const LobbyPageMobile = ({ message, lobby, user, login, startmatch, ready
         const deltaY = currentY - touchStart.current.y;
 
         // If horizontal swipe, prevent browser back/forward
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (Math.abs(deltaX) || Math.abs(deltaY)) {
             e.preventDefault();
         }
 
