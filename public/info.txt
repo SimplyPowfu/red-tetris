@@ -1,4 +1,0 @@
-Red-Tetris a multiplayer tetris platform. Just play tetris with your friends (or worst enemies) and when you collapse some lines, they will receive one penality line for each line you collapse, minus one.
-Also highscores will be saved into the Leaderboard only if you played the entirety of your match agains at least one opponent.
-No password needed, you can yoink your friend accout, just use it wisely.
-Now go play.
