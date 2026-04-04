@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "rootDir": ".",            // root of source files
+    "outDir": "dist",          // compiled output
+    "declaration": true,       // generate .d.ts files
+    "strict": true,
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "lib": ["ES2022"],
+  },
+  "include": ["classes", "types"],  // include only source folders
+  "exclude": ["node_modules", "dist"]
+}

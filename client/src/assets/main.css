@@ -1,0 +1,61 @@
+/* Importazione Font Pixel Art */
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+
+/* Reset e basi */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+:root {
+	--red-primary: #ff0000;
+	--red-dark: #550000;
+  --red-chill: #f24;
+  --blue-shallow: #1675dc;
+	--bg-black: #000;
+	--input-bg: #111;
+	--tile-size: 30px;
+	--next-tile-size: 18px;
+}
+
+@media (max-width: 959px) {
+  :root {
+    /* Slightly smaller for mobile screens */
+    --tile-size: clamp(15px, 5vw, 25px);
+  }
+}
+
+/* Reset global font to match your old site */
+#app {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--bg-black);
+  color: #fff;
+}
+
+/* Reusable Pixel Header */
+.pixelated {
+  font-family: 'Silkscreen', sans-serif !important;
+  color: var(--red-primary);
+  text-shadow: 3px 3px 0px var(--red-dark);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Global Retro UI classes */
+.retro-border {
+  border: 2px solid #444;
+  background-color: #050505;
+  position: relative;
+}
+
+.retro-header {
+  background-color: #222;
+  border-bottom: 1px solid #444;
+  padding: 5px 10px;
+  font-family: 'Silkscreen', sans-serif;
+  font-size: 0.75rem;
+  color: #ff0000;
+}
