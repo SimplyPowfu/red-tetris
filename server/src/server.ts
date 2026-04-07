@@ -235,6 +235,7 @@ function create(params:ServerParams, cb: () => void): () => void {
 	});
 
 	const stop = () => {
+		console.log('tetris shutting down ...');
 		io.close();
 		app.close(() => {
 			app.unref();

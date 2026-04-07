@@ -39,6 +39,9 @@ class BoardService/*  implements Service  */{
 	private _boards:Map<string, Board> = new Map();
 	private _board_to_lobby:Map<string, [string, Set<string>]> = new Map();
 
+	// Event listeners (debug)
+	private _evl:number = 0;
+
 	constructor() {
 		// This service "reacts" to the system without being called directly
 		bus.on('match:start', ({ lobbyId, mode, players }) => {
@@ -63,12 +66,20 @@ class BoardService/*  implements Service  */{
 
 	/* logging */
 	public list() {
-		console.log('>Boards');
+		console.log(this.status());
+	}
+
+	// returns the status string
+	public status(): string {
+		let status:string = '>Boards\n';
 		let i = 0;
 		for (const [id, board] of this._boards) {
-			console.log(`${i}. ${id} - ${board.score}`);
+			status += `${i}. ${id} - ${board.score}'\n`;
 			++i;
 		}
+		status += 'Total number of BOARDS: ' + i + '\n';
+		status += 'Total number of Private EVL: ' + this._evl + '\n';
+		return status;
 	}
 
 	/* --- event listeners --- */
@@ -116,6 +127,8 @@ class BoardService/*  implements Service  */{
 		// also remove the socket listener
 		if (socket && (socket as any)._mvHandler) {
 			socket.off('move', (socket as any)._mvHandler);
+			(socket as any)._mvHandler = undefined;
+			this._evl--;
 		}
 
 		// remove from maps
@@ -187,6 +200,8 @@ class BoardService/*  implements Service  */{
 					// also remove the socket listener
 					if ((socket as any)._mvHandler) {
 						socket.off('move', (socket as any)._mvHandler);
+						(socket as any)._mvHandler = undefined;
+						this._evl--;
 					}
 					break ;
 				default:
@@ -199,12 +214,14 @@ class BoardService/*  implements Service  */{
 			// remove old if exists
 			if ((socket as any)._mvHandler) {
 				socket.off('move', (socket as any)._mvHandler);
+				this._evl--;
 			}
 			// store reference
 			(socket as any)._mvHandler = mv;
 
 			// add handler
 			socket.on('move', mv);
+			this._evl++;
 		}
 
 		console.log('[Board] OK');

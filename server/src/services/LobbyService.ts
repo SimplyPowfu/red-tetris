@@ -66,12 +66,19 @@ class LobbyService/*  implements Service */ {
 
 	/* logging */
 	public list() {
-		console.log('>Lobbies');
+		console.log(this.status());
+	}
+
+	// returns the status string
+	public status(): string {
+		let status:string = '>Lobbies\n';
 		let i = 0;
 		for (const [id, lobby] of this._lobbies) {
-			console.log(`${i}. ${id} - ${lobby.players}`);
+			status += `${i}. ${id} - ${lobby.players}'\n`;
 			++i;
 		}
+		status += 'Total number of LOBBIES: ' + i + '\n';
+		return status;
 	}
 
 	// #todo better lobby find

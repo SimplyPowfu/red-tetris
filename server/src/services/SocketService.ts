@@ -42,12 +42,19 @@ export class SocketService /* implements Service */
 
 	/* logging */
 	public list() {
-		console.log('>Sockets');
+		console.log(this.status());
+	}
+
+	// returns the status string
+	public status(): string {
+		let status:string = '>Sockets\n';
 		let i = 0;
 		for (const [id, socket] of this._sockets) {
-			console.log(`${i}. ${id} - ${socket.auth.username}:${socket.auth.lobbyId}`);
+			status += `${i}. ${id} - ${socket.auth.username}:${socket.auth.lobbyId}\n`;
 			++i;
 		}
+		status += 'Total number of SOCKETS: ' + i + '\n';
+		return status;
 	}
 
 	private playerLogin(username:string, lobbyId:string, socket:EventSocket)

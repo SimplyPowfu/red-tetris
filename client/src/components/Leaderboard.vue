@@ -12,6 +12,7 @@ const error = ref<string | null>(null)
 // Side Effect (Replacing useEffect)
 onMounted(async () => {
   try {
+    // const response = await fetch('http://localhost:3000/leaderboard') // dev
     const response = await fetch('/leaderboard') // production
     
     if (!response.ok) {

@@ -5,9 +5,11 @@
 html, body {
   margin: 0 !important;
   padding: 0 !important;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  /* Change height: 100vh to min-height and remove overflow: hidden */
+  min-height: 100%; 
+  overflow-x: hidden; /* Prevent horizontal drift */
+  overflow-y: auto;   /* Allow vertical scroll */
 }
 
 :root {

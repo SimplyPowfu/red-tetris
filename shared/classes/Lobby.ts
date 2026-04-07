@@ -79,7 +79,13 @@ class Lobby
 	}
 
 	public canStart(): boolean {
-		return (this.ingame === false && this._ready.size === this._players.size);
+		
+		return (
+			// solo player
+			(this.size === 1)
+			// all ready
+			|| (this.ingame === false && this._ready.size === this._players.size)
+		);
 	}
 }
 

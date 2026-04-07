@@ -81,13 +81,22 @@ class PlayerService /* implements Service */ {
 
 	/* logging */
 	public list() {
-		console.log('>Players');
+		console.log(this.status());
+	}
+
+	// returns the status string
+	public status(): string {
+		let status:string = '>Players\n';
 		let i = 0;
 		for (const [id, player] of this._players) {
-			console.log(`${i}. ${id} - ${player.username}:${player.lobby}`);
+			status += `${i}. ${id} - ${player.username}:${player.lobby}\n`;
 			++i;
 		}
+		status += 'Total number of PLAYERS: ' + i + '\n';
+		return status;
 	}
+
+	
 
 	/* simple getter */
 	public get(socketId:string) {

@@ -17,7 +17,7 @@ console.log('lobbySore', lobby);
     <div class="players-list">
       <div v-for="[id, p] in lobby.players" :key="p.username" class="player-row">
         <span v-if="p.username === lobby.hostName" class="host-star">★</span>
-        <span :class="{ 'is-me': p.username === auth.username }">{{ p.username }}</span>
+        <span :class="{ 'is-me': p.username === auth.username }" class="username-text">{{ p.username.length > 10 ? p.username.slice(0, 6) + '...' : p.username }}</span>
         <span class="status">{{ p.ready ? 'READY' : '...' }}</span>
       </div>
     </div>
@@ -41,10 +41,24 @@ console.log('lobbySore', lobby);
 .player-row {
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Vertical alignment */
   font-family: Arial, sans-serif;
   font-size: 0.9rem;
   color: white;
   margin-bottom: 5px;
+  gap: 5px; /* Space between name and status */
+}
+.username-text {
+  flex: 1;           /* Take all available space */
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;      /* Required for flexbox truncation */
+}
+.status {
+  flex-shrink: 0;    /* Never squash the READY text */
+  text-align: right;
+  min-width: 60px;   /* Keep status column aligned */
 }
 .is-me { color: var(--blue-shallow); font-weight: bold; }
 .host-star { color: var(--red-primary) }

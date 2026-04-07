@@ -137,9 +137,13 @@ onMounted(() => {
 
   window.addEventListener('keydown', handleKeyDown)
 
-  window.addEventListener('touchstart', handleTouchStart, { passive: true });
-  window.addEventListener('touchmove', handleTouchMove, { passive: false });
-  window.addEventListener('touchend', handleTouchEnd, { passive: true });
+  window.addEventListener('touchstart', handleTouchStart, { passive: true })
+  window.addEventListener('touchmove', handleTouchMove, { passive: false })
+  window.addEventListener('touchend', handleTouchEnd, { passive: true })
+
+   // Lock the scroll when entering the lobby
+   document.documentElement.style.overflow = 'hidden'
+  document.body.style.overflow = 'hidden'
 })
 
 // Clean up when the user leaves the page
@@ -148,9 +152,13 @@ onUnmounted(() => {
 
 	window.removeEventListener('keydown', handleKeyDown)
 
-  window.removeEventListener('touchstart', handleTouchStart);
-  window.removeEventListener('touchmove', handleTouchMove);
-  window.removeEventListener('touchend', handleTouchEnd);
+  window.removeEventListener('touchstart', handleTouchStart)
+  window.removeEventListener('touchmove', handleTouchMove)
+  window.removeEventListener('touchend', handleTouchEnd)
+
+  // Unlock the scroll when leaving
+  document.documentElement.style.overflow = 'auto'
+  document.body.style.overflow = 'auto'
 })
 </script>
 
@@ -175,8 +183,13 @@ onUnmounted(() => {
       <div class="column board-col">
         <TetrisBoard />
 
-        <div v-if="settingsStore.isMobile" class="mobile-settings-anchor">
-          <SettingsBox />
+        <div v-if="settingsStore.isMobile">
+          <div class="mobile-kiwi-anchor">
+            <MusicPlayer />
+          </div>
+          <div class="mobile-settings-anchor">
+            <SettingsBox />
+          </div>
         </div>
 
         <div v-if="settingsStore.isMobile && lobbyStore.ingame === false" class="overlay-host-ui">
@@ -318,6 +331,18 @@ onUnmounted(() => {
     top: 0;
     right: -50px; /* Pushes it outside the centered board */
     z-index: 20;
+  }
+
+  .mobile-kiwi-anchor {
+    position: absolute;
+    /* Position it at the top right of the board area */
+    top: 0;
+    left: 5px;
+    opacity: 0.5;
+    z-index: 20;
+    
+    transform-origin: top left; 
+    transform: scale(0.7); /* shrink it down */
   }
 
   .overlay-host-ui {

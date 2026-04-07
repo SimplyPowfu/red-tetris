@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "build-watch": "tsc --watch",
     "serve-js": "nodemon --watch dist --ext js --exec 'node dist/index.js'",
-    "dev": "concurrently \"npm:build-watch\" \"npm:serve-js\""
+    "dev": "export NODE_ENV=dev; concurrently \"npm:build-watch\" \"npm:serve-js\""
   },
   "dependencies": {
     "@red/shared": "file:../shared",

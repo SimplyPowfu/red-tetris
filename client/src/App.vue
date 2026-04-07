@@ -71,6 +71,7 @@ onUnmounted(() => {
   flex-direction: column;
   background-color: #000; /* Match main.css */
   color: #fff;
+  min-height: 100dvh; 
 }
 
 .content-area {
@@ -78,8 +79,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
 
-  min-width: 100vw;
-  min-height: 100vh;
+  width: 100%; 
+  min-height: 100dvh;
 }
 
 .navbar {

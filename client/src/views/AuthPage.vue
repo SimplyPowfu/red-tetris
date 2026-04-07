@@ -33,7 +33,7 @@ onMounted(async () => {
     duration: 0.5 
   }, 1.5)
 
-  tl.from(".auth-form, .leaderboard", {
+  tl.from(".content-wrapper", {
     y: -60,
     opacity: 0,
     duration: 0.6,
@@ -68,36 +68,38 @@ const handleSubmit = () => {
       <h1 class="pixelated" style="opacity: 0">Red Tetris</h1>
     </div>
 
-    <form @submit.prevent="handleSubmit" class="auth-form">
-      <div class="input-group">
-        <label>Username</label>
-        <input
-			v-model="username"
-			type="text"
-			placeholder="How they'll remember you"
-			required
-		/>
-      </div>
-      <div class="input-group">
-        <label>Lobby</label>
-        <input
-			v-model="lobbyId"
-			type="text"
-			required
-			placeholder="Enter something pretty"
-		/>
-      </div>
-      <button type="submit" class="join-btn">Join Lobby</button>
-      <div v-if="authStore.error" class="message">{{ authStore.error }}</div>
-    </form>
-
-    <Leaderboard />
-
-    <button @click="router.push('/hall-of-fame')" class="hof-btn">
-      <span class="laurel-left">🌿</span>
-      <span class="btn-text">Hall of Fame</span>
-      <span class="laurel-right">🌿</span>
-    </button>
+    <div class="content-wrapper">
+      <form @submit.prevent="handleSubmit" class="auth-form">
+        <div class="input-group">
+          <label>Username</label>
+          <input
+        v-model="username"
+        type="text"
+        placeholder="How they'll remember you"
+        required
+      />
+        </div>
+        <div class="input-group">
+          <label>Lobby</label>
+          <input
+        v-model="lobbyId"
+        type="text"
+        required
+        placeholder="Enter something pretty"
+      />
+        </div>
+        <button type="submit" class="join-btn">Join Lobby</button>
+        <div v-if="authStore.error" class="message">{{ authStore.error }}</div>
+      </form>
+  
+      <Leaderboard />
+  
+      <button @click="router.push('/hall-of-fame')" class="hof-btn">
+        <span class="laurel-left">🌿</span>
+        <span class="btn-text">Hall of Fame</span>
+        <span class="laurel-right">🌿</span>
+      </button>
+    </div>
 
   </div>
 </template>
@@ -107,13 +109,23 @@ const handleSubmit = () => {
 
 /* Ensure this page takes full height if not handled by App.vue */
 .auth-page {
-  height: 100vh;
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  overflow: hidden;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  /* layering */
+  z-index: 10;
+  background-color: transparent;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 /* Local style adjustments if needed */
@@ -163,13 +175,24 @@ input:focus {
 }
 
 .tetris-grid {
-	width: 400px;
-	height: 200px;
-	position: relative;
+  /* styling */
+	width: 90%;
+  max-width: 400px;
+	aspect-ratio: 2 / 1;
+  height: auto;
 	background-color: #000;
 	background-size: 20px 20px;
 	box-sizing: content-box;
+  
+  /* positioning */
+	position: relative;
 	margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+
+  overflow: visible !important;
+  z-index: 1;
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -191,17 +214,28 @@ input:focus {
 }
 
 .pixelated {
+  /* styling */
   font-family: 'Silkscreen', sans-serif !important;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 8vw, 2rem); 
   color: #ff0000;
   text-shadow: 3px 3px 0px #550000;
   margin: 0;
   letter-spacing: 2px;
   opacity: 0; 
+
+  /* positioning */
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* This perfectly offsets the element's own width/height */
+  
   z-index: 10;
+  white-space: nowrap; /* Prevents the title from wrapping on small screens */
+  text-align: center;
+  margin: 0;
+  
+  opacity: 0; 
   will-change: filter, opacity; 
-  transform: translateZ(0); 
 }
 
 .pixelated::after {
@@ -219,7 +253,7 @@ input:focus {
 
 /* --- Hall of Fame Button Styling --- */
 .hof-btn {
-  margin-top: 30px;
+  margin-top: 20px;
   background: none;
   border: none;
   cursor: pointer;
@@ -275,5 +309,17 @@ input:focus {
 /* Retro "Click" animation */
 .hof-btn:active {
   transform: scale(0.95);
+}
+
+/* Mobile adjustments */
+@media (max-width: 959px) {
+  .tetris-grid {
+    overflow: visible; /* Let pieces be visible even if they fly "behind" the form */
+    margin-bottom: 40px; /* Space to prevent total overlap */
+  }
+  
+  .auth-page {
+    padding-top: 20px;
+  }
 }
 </style>

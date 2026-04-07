@@ -14,11 +14,14 @@ const CELL_SIZE = 20
 
 const dynamicStyle = computed(() => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${shape.value[0]!.length}, ${CELL_SIZE}px)`,
-  top: `${props.row * CELL_SIZE}px`,
-  left: `${props.col * CELL_SIZE}px`,
-  width: `${shape.value[0]!.length * CELL_SIZE}px`,
-  height: `${shape.value.length * CELL_SIZE}px`,
+  gridTemplateColumns: `repeat(${shape.value[0]!.length}, 1fr)`,
+
+  top: `${(props.row / 10) * 100}%`,
+  left: `${(props.col / 20) * 100}%`,
+
+  width: `${(shape.value[0]!.length / 20) * 100}%`,
+  height: `${(shape.value.length / 10) * 100}%`,
+  
   transform: `rotate(${props.rotate}deg)`,
   position: 'absolute' as const
 }))

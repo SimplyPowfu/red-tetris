@@ -25,7 +25,8 @@ const formatDate = (timestamp: number) => {
 onMounted(async () => {
   try {
     // Assuming your endpoint provides the new structure
-    const response = await fetch('/hall-of-fame')
+    // const response = await fetch('http://localhost:3000/hall-of-fame') // dev
+    const response = await fetch('/hall-of-fame') // production
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -73,157 +74,137 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+@import url('https://googleapis.com');
+
 .hof-container {
-  margin-top: 5px;
-  padding: 20px;
+  padding: 15px; /* Reduced for mobile edges */
   width: 100%;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* Use dynamic viewport height */
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 h1 {
   text-align: center;
-  /* 1. Remove bottom margin to prevent double-spacing */
-  margin-top: 0;
-  margin-bottom: 0; 
-  padding-bottom: 15px;
+  margin: 0;
+  padding: 15px 0;
+  font-family: 'Silkscreen', sans-serif;
+  color: darkred;
+  flex-shrink: 0;
 }
 
 .scroll-area {
-  max-height: 50vh;
+  flex: 1; /* Occupies all available middle space */
   overflow-y: auto;
-  border-top: 1px solid #eee;
-  
-  /* 2. Ensure no top padding here so the first row touches the border */
-  padding-top: 0; 
-  
+  border-top: 1px solid #333;
+  padding-right: 5px; /* Space for scrollbar */
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
 }
 
-/* Scrollbar Logic (Chrome/Safari/Edge) */
+/* Scrollbar Logic (Chrome/Safari) */
 .scroll-area::-webkit-scrollbar {
-  width: 8px;
-}
-.scroll-area::-webkit-scrollbar-track {
-  background: transparent;
+  width: 6px;
 }
 .scroll-area::-webkit-scrollbar-thumb {
-  background-color: transparent;
+  background-color: #444;
   border-radius: 10px;
 }
-.scroll-area:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-}
 
-/* Layout for the items */
 ol {
   list-style: none;
-  /* 3. Reset default browser list margins */
   padding: 0;
-  margin: 0; 
+  margin: 0;
 }
 
 li {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Keeps score right, name left */
   align-items: center;
-  /* 4. Use consistent padding for all rows */
-  padding: 12px 15px; 
-  border-bottom: 1px solid #f5f5f5;
-}
-
-/* 1st Place: Violet */
-li:nth-child(1) .score {
-  color: #ff0000; 
-  font-size: 1.1em;
-}
-
-/* 2nd Place: Light Blue */
-li:nth-child(2) .score {
-  color: #aa00ff;
-}
-
-/* 3rd Place: Yellow/Gold */
-li:nth-child(3) .score {
-  color: #00e5ff;
+  padding: 12px 5px; 
+  border-bottom: 1px solid #222;
+  gap: 10px;
 }
 
 .player-info {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   align-items: center;
+  flex: 1; /* Takes remaining space */
+  min-width: 0; /* Critical for text-overflow to work */
 }
 
 .rank {
-  color: #aeadad;
-  font-size: 1.3em;
-  min-width: 30px;
+  color: #666;
+  font-size: 1.1rem;
+  min-width: 25px;
+  font-family: 'Silkscreen', sans-serif;
+}
+
+.username {
+  color: #eee;
+  font-size: 1rem;
+  /* Truncate long names to prevent pushing scores off-screen */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .score-details {
   display: flex;
   flex-direction: column;
   text-align: right;
+  flex-shrink: 0; /* Never let the score squash or vanish */
 }
 
 .score {
   font-weight: bold;
   color: #d8d8d8;
+  font-family: 'Silkscreen', sans-serif;
+  font-size: 0.9rem;
 }
+
+/* Medals / Top 3 Colors */
+li:nth-child(1) .score { color: #ff0000; } /* 1st */
+li:nth-child(2) .score { color: #aa00ff; } /* 2nd */
+li:nth-child(3) .score { color: #00e5ff; } /* 3rd */
 
 .date {
-  font-size: 0.75em;
-  color: #999;
+  font-size: 0.65rem;
+  color: #666;
+  margin-top: 2px;
 }
 
-/* --- Back Button Styling --- */
 .back-btn {
-  /* 1. Full width like the READY button */
+  flex-shrink: 0;
   width: 100%;
-  margin-top: 20px;
-  
-  /* 2. Retro Font & Colors */
+  margin-top: 15px;
+  margin-bottom: 10px;
   font-family: 'Silkscreen', sans-serif;
   background-color: darkred;
   color: white;
-  
-  /* 3. Blocky/Sharp Edges */
   border: none;
-  border-radius: 0; 
-  padding: 15px;
-  font-size: 1.1rem;
-  letter-spacing: 2px;
-  
+  padding: 16px;
+  font-size: 1rem;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  
-  /* 4. Shadow for depth */
   box-shadow: 0 4px 0px #550000;
-}
-
-.back-btn:hover {
-  background-color: rgb(160, 0, 0);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0px #550000;
+  transition: transform 0.1s;
 }
 
 .back-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 0px 0px #550000;
+  box-shadow: 0 1px 0px #550000;
 }
 
-/* Ensure the container doesn't feel too tight with the new big button */
-.hof-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 60vh; /* Gives the container some vertical weight */
-}
-
-.error-msg, .status-text {
+.status-text, .error-msg {
   text-align: center;
-  padding: 20px;
+  padding: 40px;
+  color: #999;
 }
 </style>

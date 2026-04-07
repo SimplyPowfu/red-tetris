@@ -42,16 +42,6 @@ export const connectSocket = (username: string, lobbyId: string) => {
 	//----------------------
 
 	//----------------------
-	// Clean up old listeners to prevent "double-firing" 
-	socket.off('lobbyUpdate');
-	socket.off('lobbyMode');
-	socket.off('matchStarted');
-	socket.off('playerJoined');
-	socket.off('playerReady');
-	socket.off('playerUpdate');
-	socket.off('playerWin');
-	socket.off('boardUpdate');
-	socket.off('boardEvent');
 
 	// Handle standard lifecycle events
 	socket.on('connect', () => {
@@ -66,6 +56,22 @@ export const connectSocket = (username: string, lobbyId: string) => {
 	});
 
 	socket.on('disconnect', (reason) => {
+
+		// Clean up old listeners to prevent "double-firing"
+		if (socket) {
+			socket.off('lobbyUpdate');
+			socket.off('lobbyMode');
+			socket.off('matchStarted');
+			socket.off('playerJoined');
+			socket.off('playerLeft');
+			socket.off('playerReady');
+			socket.off('playerUpdate');
+			socket.off('playerGameover');
+			socket.off('playerWin');
+			socket.off('boardUpdate');
+			socket.off('boardEvent');
+		}
+
 		console.log('Disconnected:', reason);
 		authStore.setConnected(false);
 	});
